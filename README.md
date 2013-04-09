@@ -1,7 +1,7 @@
-Heroku buildpack: Node.js
+Heroku buildpack: pgbouncer
 =========================
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Node.js apps.
+This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that supplies pgbouncer and is meant to be used as a [multi-buildpack](https://github.com/ddollar/heroku-buildpack-multi) 
 It uses [NPM](http://npmjs.org/) and [SCons](http://www.scons.org/).
 
 Usage

@@ -5,7 +5,7 @@ set -e
 manifest_type="$1"
 
 if [ "$manifest_type" == "" ]; then
-  echo "usage: $0 <nodejs|npm>"
+  echo "usage: $0 <pgbouncer|stunnel>"
   exit 1
 fi
 
@@ -27,7 +27,7 @@ fi
 basedir="$( cd -P "$( dirname "$0" )" && pwd )"
 
 # make a temp directory
-tempdir="$( mktemp -t node_XXXX )"
+tempdir="$( mktemp -t pgbouncer_XXXX )"
 rm -rf $tempdir
 mkdir -p $tempdir
 pushd $tempdir

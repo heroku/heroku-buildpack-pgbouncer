@@ -18,7 +18,7 @@ The [ddollar/test buildpack](https://github.com/ddollar/buildpack-test) is for t
 heroku build -b ddollar/test # -b can also point to a local directory
 ```
 
-## Compiling new versions of node and npm using Vulcan
+## Compiling new versions of pgbouncer and stunnel using Vulcan
 
 Install [vulcan](https://github.com/heroku/vulcan) and create your own build server. Use any
 app name you want and vulcan will remember it in a `~/.vulcan` config file.
@@ -32,26 +32,26 @@ Store your S3 credentials in `~/.aws/`
 
 ```
 mkdir -p ~/.aws
-echo 'YOUR_AWS_KEY' > ~/.aws/key-nodejs.access
-echo 'YOUR_AWS_SECRET' > ~/.aws/key-nodejs.secret
+echo 'YOUR_AWS_KEY' > ~/.aws/key-pgbouncer.access
+echo 'YOUR_AWS_SECRET' > ~/.aws/key-pgbouncer.secret
 ```
 
 Add a credentials exporter to your `.bash_profile` or `.bashrc`
 
 ```
-setup_nodejs_env () {
-  export AWS_ID=$(cat ~/.aws/key-nodejs.access)
-  export AWS_SECRET=$(cat ~/.aws/key-nodejs.secret)
-  export S3_BUCKET="heroku-buildpack-nodejs"
+setup_pgbouncer_env () {
+  export AWS_ID=$(cat ~/.aws/key-pgbouncer.access)
+  export AWS_SECRET=$(cat ~/.aws/key-pgbouncer.secret)
+  export S3_BUCKET="heroku-buildpack-pgbouncer"
 }
 ```
 
 Build:
 
 ```
-setup_nodejs_env
-support/package_nodejs <node-version>
-support/package_npm <npm-version>
+setup_pgbouncer_env
+support/package_pgbouncer <pgbouncer-version>
+support/package_stunnel <stunnel-version>
 ```
 
 ## Publishing buildpack updates
@@ -59,16 +59,11 @@ support/package_npm <npm-version>
 ```
 heroku plugins:install https://github.com/heroku/heroku-buildpacks
 
-cd heroku-buildpack-nodejs
+cd heroku-buildpack-pgbouncer
 git checkout master
-heroku buildpacks:publish heroku/nodejs
+heroku buildpacks:publish heroku/pgbouncer
 ```
 
 - Email [dos@heroku.com](mailto:dos@heroku.com) if changes are significant.
 - Add a [changelog item](https://devcenter.heroku.com/admin/changelog_items/new).
-- Update [Node Devcenter articles](https://devcenter.heroku.com/admin/articles/owned) as necessary.
-
-## Keeping up with the Nodeses
-
-- Run `npm info npm version` to find out the latest available version of npm.
-- Follow [@nodejs](https://twitter.com/nodejs) and [@npmjs](https://twitter.com/npmjs) on Twitter.
+- Update [pgbouncer Devcenter articles](https://devcenter.heroku.com/admin/articles/owned) as necessary.
