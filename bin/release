@@ -4,5 +4,5 @@
 cat <<EOF
 ---
 config_vars:
-  PATH: bin:node_modules/.bin:/usr/local/bin:/usr/bin:/bin
+  PGBOUNCER_URL:127.0.0.1:6000
 EOF
