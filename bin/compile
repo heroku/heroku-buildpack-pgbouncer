@@ -67,7 +67,7 @@ echo "-----> Fetching and vendoring stunnel into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
 package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}"
 
-echo "-----> Generating the config script"
+echo "-----> Generating the configuration generation script"
 mkdir -p $BUILD_DIR/.profile.d
 cat >>$BUILD_DIR/.profile.d/generate-conf.sh <<'EOF'
 #!/usr/bin/env bash
@@ -79,6 +79,8 @@ PASS=${DB_URI[1]}
 HOST=${DB_URI[2]}
 PORT=${DB_URI[3]}
 DBNAME=${DB_URI[4]}
+
+export PGBOUNCER_URI=${PGBOUNCER_URI:127.0.0.1:6000/$DBNAME }
 
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 chroot = /app/vendor/stunnel/var/lib/stunnel/
@@ -123,12 +125,12 @@ EOFEOF
 EOF
 chmod +x $BUILD_DIR/.profile.d/generate-conf.sh
 
-echo "-----> Generating the config script"
-cat >>$BUILD_DIR/bin/start.sh <<EOF
+echo "-----> Generating the startup script"
+cat >>$BUILD_DIR/bin/pgbouncer-stunnel.sh <<EOF
 #!/usr/bin/env bash
 $VENDORED_STUNNEL/bin/stunnel $VENDORED_STUNNEL/stunnel-pgbouncer.conf
 $VENDORED_PGBOUNCER/bin/pgbouncer $VENDORED_PGBOUNCER/pgbouncer.ini
 EOF
-chmod +x $BUILD_DIR/bin/start.sh
+chmod +x $BUILD_DIR/bin/pgbouncer-stunnel.sh
 
 echo "-----> pgbouncer/stunnel done"

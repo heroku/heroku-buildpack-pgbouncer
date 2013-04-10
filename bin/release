@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# bin/release <build-dir>
-
-cat <<EOF
----
-config_vars:
-  PGBOUNCER_URL:127.0.0.1:6000
-EOF
