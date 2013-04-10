@@ -35,7 +35,7 @@ cd $tempdir
 # build and package pgbouncer for heroku
 vulcan build -v \
   -n pgbouncer \
-  -c "cd pgbouncer-${pgbouncer_version} && ./configure --prefix=/app/vendor/pgbouncer && make install" \
+  -c "cd pgbouncer-${pgbouncer_version} && ./configure --prefix=/app/vendor/pgbouncer && make && make install" \
   -p /app/vendor/pgbouncer \
   -s http://pgfoundry.org/frs/download.php/3393/pgbouncer-${pgbouncer_version}.tar.gz \
   -o $tempdir/pgbouncer-${pgbouncer_version}.tgz
