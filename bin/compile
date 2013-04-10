@@ -69,9 +69,18 @@ package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL
 
 echo "-----> Generating the config script"
 mkdir -p $BUILD_DIR/.profile.d
-cat >>$BUILD_DIR/.profile.d/generate-conf.sh <<EOF
+cat >>$BUILD_DIR/.profile.d/generate-conf.sh <<'EOF'
 #!/usr/bin/env bash
-cat >> $VENDORED_STUNNEL/stunnel-pgbouncer.conf << EOFEOF
+
+DB=$(echo $DATABASE_URL | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
+DB_URI=( $DB )
+USER=${DB_URI[0]}
+PASS=${DB_URI[1]}
+HOST=${DB_URI[2]}
+PORT=${DB_URI[3]}
+DBNAME=${DB_URI[4]}
+
+cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 chroot = /app/vendor/stunnel/var/lib/stunnel/
 setuid = nobody
 setgid = nogroup
@@ -89,16 +98,14 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 [heroku-postgres]
 client=yes
 accept  = 127.0.0.1:6002
-# TODO: This is broken
-connect = $DATABASE_URL
+connect = $HOST:$PORT
 retry = yes
 
 EOFEOF
 
-cat >> $VENDORED_PGBOUNCER/pgbouncer.ini << EOFEOF
+cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
-; TODO: This is broken
-heroku_postgres = host=127.0.0.1 port=6002 user=baz password=foo client_encoding=UNICODE datestyle=ISO connect_query='SELECT 1'
+heroku_postgres = host=127.0.0.1 port=6002 dbname=$DBNAME user=$USER password=$PASS
 [pgbouncer]
 logfile = /dev/stdout
 listen_addr = 127.0.0.1
