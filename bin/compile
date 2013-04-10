@@ -13,7 +13,7 @@ unset GIT_DIR
 # config
 PGBOUNCER_VERSION="1.5.4"
 STUNNEL_VERSION="4.56"
-S3_BUCKET="heroku-buildpack-pgbouncer"
+S3_BUCKET="gregburek-buildpack-pgbouncer"
 
 # parse and derive params
 BUILD_DIR=$1
@@ -25,13 +25,6 @@ function error() {
   exit 1
 }
 
-function mktmpdir() {
-  dir=$(mktemp -t pgbouncer-$1-XXXX)
-  rm -rf $dir
-  mkdir -p $dir
-  echo $dir
-}
-
 function indent() {
   c='s/^/       /'
   case $(uname) in
@@ -40,8 +33,14 @@ function indent() {
   esac
 }
 
-function manifest_versions() {
-  curl "http://${S3_BUCKET}.s3.amazonaws.com/manifest.${1}" -s -o - | tr -s '\n' ' '
+function package_download() {
+  engine="$1"
+  version="$2"
+  location="$3"
+
+  mkdir -p $location
+  package="http://${S3_BUCKET}.s3.amazonaws.com/$engine-$version.tgz"
+  curl $package -s -o - | tar xzf - -C $location
 }
 
 echo "Using pgbouncer version: ${PGBOUNCER_VERSION}" | indent
@@ -53,64 +52,78 @@ PGBOUNCER_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/pgbouncer-${PGBOUNCER_VE
 STUNNEL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/stunnel-${STUNNEL_VERSION}.tgz"
 
 # vendor directories
-VENDORED_PGBOUNCER="$(mktmpdir pgbouncer)"
-VENDORED_STUNNEL="$(mktmpdir stunnel)"
-
-# download and unpack packages
-echo "-----> Fetching pgbouncer binaries"
-package_download "pgbouncer" "${PGBOUNCER_VERSION}" "${VENDORED_PGBOUNCER}"
-package_download "stunnel" "${STUNNEL_VERSION}" "${VENDORED_STUNNEL}"
+VENDORED_PGBOUNCER="vendor/pgbouncer"
+VENDORED_STUNNEL="vendor/stunnel"
 
 # vendor pgbouncer into the slug
-PATH="$BUILD_DIR/bin:$PATH"
-echo "-----> Vendoring pgbouncer into slug"
-mkdir -p "$BUILD_DIR/bin"
-cp "$VENDORED_PGBOUNCER/bin/pgbouncer" "$BUILD_DIR/bin/pgbouncer"
+PATH="$BUILD_DIR/$VENDORED_PGBOUNCER/bin:$PATH"
+echo "-----> Fetching and vendoring pgbouncer into slug"
+mkdir -p "$BUILD_DIR/$VENDORED_PGBOUNCER"
+package_download "pgbouncer" "${PGBOUNCER_VERSION}" "${BUILD_DIR}/${VENDORED_PGBOUNCER}"
 
-echo "-----> Building runtime environment"
+# vendor stunnel into the slug
+PATH="$BUILD_DIR/$VENDORED_STUNNEL/bin:$PATH"
+echo "-----> Fetching and vendoring stunnel into slug"
+mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
+package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}"
+
+echo "-----> Generating the config script"
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"\$HOME/bin:\$HOME/pgbouncer_modules/.bin:\$PATH\"" > $BUILD_DIR/.profile.d/pgbouncer.sh
-
-MONIT_BINARY="https://heroku-monit.s3.amazonaws.com/monit-5.4.tgz"
-MONIT_VENDOR="vendor/monit"
-
-GETTEXT_BINARY="http://heroku-monit.s3.amazonaws.com/gettext-0.18.tgz"
-GETTEXT_VENDOR="vendor/gettext"
-
-# Vendor Monit
-echo "-----> Downloading monit"
-echo "$1/$MONIT_VENDOR"
-mkdir -p $1/$MONIT_VENDOR
-curl $MONIT_BINARY -o - | tar -xz -C $1/$MONIT_VENDOR -f -
-
-# Vendor GNU gettext
-echo "-----> Downloading gettext"
-mkdir -p $1/$GETTEXT_VENDOR
-curl $GETTEXT_BINARY -o - | tar -xz -C $1/$GETTEXT_VENDOR -f -
-
-mkdir -p $1/bin
-
-echo "-----> Generating the boot script"
-cat >>$1/bin/boot.sh <<'EOF'
+cat >>$BUILD_DIR/.profile.d/generate-conf.sh <<EOF
 #!/usr/bin/env bash
+cat >> $VENDORED_STUNNEL/stunnel-pgbouncer.conf << EOFEOF
+chroot = /app/vendor/stunnel/var/lib/stunnel/
+setuid = nobody
+setgid = nogroup
+pid = /stunnel.pid
+foreground = yes
+output = /dev/stdout
 
-mkdir -p conf.d
-mkdir -p tmp/conf
+options = NO_SSLv2
+options = SINGLE_ECDH_USE
+options = SINGLE_DH_USE
+socket = r:TCP_NODELAY=1
+options = NO_SSLv3
+ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 
-if [ "$SYSTEM_NAME" == "" ]; then
-  export SYSTEM_NAME=Heroku
-fi
+[heroku-postgres]
+client=yes
+accept  = 127.0.0.1:6002
+# TODO: This is broken
+connect = $DATABASE_URL
+retry = yes
 
-for f in `ls conf.d`
-do
-  echo "Processing conf.d/$f file..."
-  (cat  conf.d/$f | vendor/gettext/bin/envsubst) > tmp/conf/$f.tmp && mv tmp/conf/$f.tmp conf.d/$f
-done
+EOFEOF
 
-(cat monitrc | vendor/gettext/bin/envsubst) > monitrc.tmp && mv monitrc.tmp monitrc
+cat >> $VENDORED_PGBOUNCER/pgbouncer.ini << EOFEOF
+[databases]
+; TODO: This is broken
+heroku_postgres = host=127.0.0.1 port=6002 user=baz password=foo client_encoding=UNICODE datestyle=ISO connect_query='SELECT 1'
+[pgbouncer]
+logfile = /dev/stdout
+listen_addr = 127.0.0.1
+listen_port = 6000
+auth_type = any
 
-vendor/monit/bin/monit -c monitrc -p tmp/.monit.pid -s tmp/.monit.state -I
+; When server connection is released back to pool:
+;   session      - after client disconnects
+;   transaction  - after transaction finishes
+;   statement    - after statement finishes
+pool_mode = session
+server_reset_query = DISCARD ALL
+max_client_conn = 100
+default_pool_size = 20
+
+EOFEOF
 EOF
-chmod +x $1/bin/boot.sh
+chmod +x $BUILD_DIR/.profile.d/generate-conf.sh
 
-echo "-----> Done"
+echo "-----> Generating the config script"
+cat >>$BUILD_DIR/bin/start.sh <<EOF
+#!/usr/bin/env bash
+$VENDORED_STUNNEL/bin/stunnel $VENDORED_STUNNEL/stunnel-pgbouncer.conf
+$VENDORED_PGBOUNCER/bin/pgbouncer $VENDORED_PGBOUNCER/pgbouncer.ini
+EOF
+chmod +x $BUILD_DIR/bin/start.sh
+
+echo "-----> pgbouncer/stunnel done"
