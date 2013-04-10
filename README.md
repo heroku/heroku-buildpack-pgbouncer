@@ -46,6 +46,8 @@ Example usage:
            └── connect@1.6.2
            Dependencies installed
 
-The buildpack will install and configure pgbouncer and stunnel to connect to `DATABASE_URL` over a secure connection. Add `bin/pgbouncer-stunnel.sh && ` to any process in the Procfile to run pgbouncer and stunnel alongside that process. 
+The buildpack will install and configure pgbouncer and stunnel to connect to `DATABASE_URL` over a secure connection. Add `bin/pgbouncer-stunnel.sh && ` to any process in the Procfile to run pgbouncer and stunnel alongside that process.
+
+Use `PGBOUNCER_URI` as your database uri in your app and it will be generated on dyno boot. 
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
