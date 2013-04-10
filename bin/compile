@@ -65,7 +65,7 @@ package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL
 
 echo "-----> Generating the configuration generation script"
 mkdir -p $BUILD_DIR/.profile.d
-cat >>$BUILD_DIR/.profile.d/generate-conf.sh <<'EOF'
+cat >>$BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh <<'EOF'
 #!/usr/bin/env bash
 
 DB=$(echo $DATABASE_URL | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
@@ -95,6 +95,8 @@ connect = $HOST:$PORT
 retry = yes
 
 EOFEOF
+EOF
+chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
@@ -112,10 +114,7 @@ pool_mode = session
 server_reset_query = DISCARD ALL
 max_client_conn = 100
 default_pool_size = 20
-
 EOFEOF
-EOF
-chmod +x $BUILD_DIR/.profile.d/generate-conf.sh
 
 echo "-----> Generating the startup script"
 cat >>$BUILD_DIR/bin/pgbouncer-stunnel.sh <<EOF
