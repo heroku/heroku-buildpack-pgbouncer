@@ -97,8 +97,6 @@ connect = $HOST:$PORT
 retry = yes
 
 EOFEOF
-EOF
-chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
@@ -117,6 +115,8 @@ server_reset_query = DISCARD ALL
 max_client_conn = 100
 default_pool_size = 20
 EOFEOF
+EOF
+chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 
 echo "-----> Generating the startup script"
 cat >>$BUILD_DIR/bin/pgbouncer-stunnel.sh <<EOF
