@@ -39,17 +39,13 @@ function package_download() {
   location="$3"
 
   mkdir -p $location
-  package="http://${S3_BUCKET}.s3.amazonaws.com/$engine-$version.tgz"
+  package="https://${S3_BUCKET}.s3.amazonaws.com/$engine-$version.tgz"
   curl $package -s -o - | tar xzf - -C $location
 }
 
 echo "Using pgbouncer version: ${PGBOUNCER_VERSION}" | indent
 
 echo "Using stunnel version: ${STUNNEL_VERSION}" | indent
-
-# s3 packages
-PGBOUNCER_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/pgbouncer-${PGBOUNCER_VERSION}.tgz"
-STUNNEL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/stunnel-${STUNNEL_VERSION}.tgz"
 
 # vendor directories
 VENDORED_PGBOUNCER="vendor/pgbouncer"
