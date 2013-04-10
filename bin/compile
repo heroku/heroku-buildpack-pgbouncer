@@ -79,10 +79,6 @@ DBNAME=${DB_URI[4]}
 export PGBOUNCER_URI=${PGBOUNCER_URI:postgres://127.0.0.1:6000/$DBNAME }
 
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
-chroot = /app/vendor/stunnel/var/lib/stunnel/
-setuid = nobody
-setgid = nogroup
-pid = /stunnel.pid
 foreground = yes
 
 options = NO_SSLv2
