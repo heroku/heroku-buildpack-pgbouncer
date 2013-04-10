@@ -80,6 +80,7 @@ export PGBOUNCER_URI=postgres://$USER:$PASS@127.0.0.1:6000/$DBNAME
 export OLD_DATABASE_URL=$DATABASE_URL
 export DATABASE_URL=$PGBOUNCER_URI
 
+mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 foreground = yes
 
