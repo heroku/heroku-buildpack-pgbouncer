@@ -86,7 +86,6 @@ setuid = nobody
 setgid = nogroup
 pid = /stunnel.pid
 foreground = yes
-output = /dev/stdout
 
 options = NO_SSLv2
 options = SINGLE_ECDH_USE
@@ -107,7 +106,6 @@ cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
 heroku_postgres = host=127.0.0.1 port=6002 dbname=$DBNAME user=$USER password=$PASS
 [pgbouncer]
-logfile = /dev/stdout
 listen_addr = 127.0.0.1
 listen_port = 6000
 auth_type = any
