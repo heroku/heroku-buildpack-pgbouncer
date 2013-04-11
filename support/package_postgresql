@@ -1,0 +1,69 @@
+#!/bin/sh
+
+set -e
+
+postgresql_version="$1"
+
+if [ "$postgresql_version" == "" ]; then
+  echo "usage: $0 VERSION"
+  exit 1
+fi
+
+if [ "$AWS_ID" == "" ]; then
+  echo "must set AWS_ID"
+  exit 1
+fi
+
+if [ "$AWS_SECRET" == "" ]; then
+  echo "must set AWS_SECRET"
+  exit 1
+fi
+
+if [ "$S3_BUCKET" == "" ]; then
+  echo "must set S3_BUCKET"
+  exit 1
+fi
+
+basedir="$( cd -P "$( dirname "$0" )" && pwd )"
+
+# make a temp directory
+tempdir="$( mktemp -t postgresql_XXXX )"
+rm -rf $tempdir
+mkdir -p $tempdir
+cd $tempdir
+
+# build and package postgresql for heroku
+vulcan build -v \
+  -n postgresql \
+  -c "cd postgresql-${postgresql_version} && \
+  LDFLAGS='-Wl,--as-needed -Wl,-z,now' \
+  CFLAGS='-fPIC -DLINUX_OOM_ADJ=0' \
+  ./configure --prefix=/app/vendor/postgresql \
+  --enable-integer-datetimes \
+  --enable-thread-safety \
+  --enable-debug \
+  --disable-rpath \
+  --with-gnu-ld \
+  --with-pgport=5432 \
+  --with-system-tzdata=/usr/share/zoneinfo \
+  --without-tcl \
+  --without-perl \
+  --without-python \
+  --with-krb5 \
+  --with-gssapi \
+  --with-openssl \
+  --with-libxml \
+  --with-libxslt \
+  --with-openssl && \
+  make && \
+  make install" \
+  -p /app/vendor/postgresql \
+  -s http://ftp.postgresql.org/pub/source/v${postgresql_version}/postgresql-${postgresql_version}.tar.gz \
+  -o $tempdir/postgresql-${postgresql_version}.tgz
+
+# upload postgresql to s3
+$basedir/aws/s3 put $S3_BUCKET \
+  postgresql-${postgresql_version}.tgz $tempdir/postgresql-${postgresql_version}.tgz
+
+# generate manifest
+$basedir/manifest postgresql
