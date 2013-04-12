@@ -138,8 +138,13 @@ cat >>$BUILD_DIR/bin/pgbouncer-stunnel.sh <<EOF
 #!/usr/bin/env bash
 export OLD_DATABASE_URL=\$DATABASE_URL
 export DATABASE_URL=\$PGBOUNCER_URI
-$VENDORED_STUNNEL/bin/stunnel $VENDORED_STUNNEL/stunnel-pgbouncer.conf &
-$VENDORED_PGBOUNCER/bin/pgbouncer $VENDORED_PGBOUNCER/pgbouncer.ini &
+if [ `/sbin/ifconfig -a | grep -c 172\.[123][0-9]\.` -gt "0" ]; then
+  $VENDORED_STUNNEL/bin/stunnel $VENDORED_STUNNEL/stunnel-pgbouncer.conf &
+  $VENDORED_PGBOUNCER/bin/pgbouncer $VENDORED_PGBOUNCER/pgbouncer.ini &
+else
+  echo "This dyno does not have containerized networking. Crashing...."
+  exit 1
+fi
 EOF
 chmod +x $BUILD_DIR/bin/pgbouncer-stunnel.sh
 
