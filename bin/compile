@@ -69,7 +69,7 @@ package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL
 PATH="$BUILD_DIR/$VENDORED_POSTGRESQL/bin:$PATH"
 echo "-----> Fetching and vendoring postgresql into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_POSTGRESQL"
-package_download "stunnel" "${POSTGRESQL_VERSION}" "${BUILD_DIR}/${VENDORED_POSTGRESQL}"
+package_download "postgresql" "${POSTGRESQL_VERSION}" "${BUILD_DIR}/${VENDORED_POSTGRESQL}"
 
 echo "-----> Generating the configuration generation script"
 mkdir -p $BUILD_DIR/.profile.d
