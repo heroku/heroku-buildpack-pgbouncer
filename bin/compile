@@ -107,7 +107,7 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 
 [heroku-postgres]
 client=yes
-accept  = 127.0.0.1:6002
+accept  = localhost:6002
 connect = $HOST:$PORT
 retry = yes
 
@@ -115,9 +115,9 @@ EOFEOF
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
-heroku_postgres = host=127.0.0.1 port=6002
+heroku_postgres = host=localhost port=6002
 [pgbouncer]
-listen_addr = 127.0.0.1
+listen_addr = localhost
 listen_port = 6000
 auth_type = any
 
