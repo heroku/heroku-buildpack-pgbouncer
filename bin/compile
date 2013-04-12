@@ -74,6 +74,9 @@ package_download "postgresql" "${POSTGRESQL_VERSION}" "${BUILD_DIR}/${VENDORED_P
 echo "-----> Generating the configuration generation script"
 mkdir -p $BUILD_DIR/.profile.d
 cat >>$BUILD_DIR/.profile.d/libpq-env-vars.sh <<EOF
+export PATH="/app/$VENDORED_POSTGRESQL/bin:\$PATH"
+export CFLAGS="-I/app/$VENDORED_POSTGRESQL/include"
+export LDFLAGS="-L/app/$VENDORED_POSTGRESQL/lib -R/app/$VENDORED_POSTGRESQL/lib"
 export LD_LIBRARY_PATH="/app/$VENDORED_POSTGRESQL/lib:\$LD_LIBRARY_PATH"
 EOF
 chmod +x $BUILD_DIR/.profile.d/libpq-env-vars.sh
@@ -146,3 +149,7 @@ EOF
 chmod +x $BUILD_DIR/bin/pgbouncer-stunnel.sh
 
 echo "-----> pgbouncer/stunnel done"
+export PATH="/app/$VENDORED_POSTGRESQL/bin:$PATH"
+export CFLAGS="-I/app/$VENDORED_POSTGRESQL/include"
+export LDFLAGS="-L/app/$VENDORED_POSTGRESQL/lib -R/app/$VENDORED_POSTGRESQL/lib"
+export LD_LIBRARY_PATH="/app/$VENDORED_POSTGRESQL/lib:$LD_LIBRARY_PATH"
