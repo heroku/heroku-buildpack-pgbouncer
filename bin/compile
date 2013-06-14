@@ -136,8 +136,6 @@ chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 echo "-----> Generating the startup script"
 cat >>$BUILD_DIR/bin/pgbouncer-stunnel.sh <<EOF
 #!/usr/bin/env bash
-export OLD_DATABASE_URL=\$DATABASE_URL
-export DATABASE_URL=\$PGBOUNCER_URI
 if [ `/sbin/ifconfig -a | grep -c 172\.[123][0-9]\.` -gt "0" ]; then
   $VENDORED_STUNNEL/bin/stunnel $VENDORED_STUNNEL/stunnel-pgbouncer.conf &
   $VENDORED_PGBOUNCER/bin/pgbouncer $VENDORED_PGBOUNCER/pgbouncer.ini &
