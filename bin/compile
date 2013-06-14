@@ -115,7 +115,7 @@ EOFEOF
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
-heroku_postgres = host=localhost port=6002
+$DBNAME = host=localhost port=6002
 [pgbouncer]
 listen_addr = localhost
 listen_port = 6000
