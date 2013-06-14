@@ -106,7 +106,8 @@ options = NO_SSLv3
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 
 [heroku-postgres]
-client=yes
+client = yes
+protocol = pgsql
 accept  = localhost:6002
 connect = $HOST:$PORT
 retry = yes
