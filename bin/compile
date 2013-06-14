@@ -134,7 +134,7 @@ auth_file = /app/vendor/pgbouncer/users.txt
 pool_mode = session
 server_reset_query = DISCARD ALL
 max_client_conn = 100
-default_pool_size = 20
+default_pool_size = 1
 EOFEOF
 EOF
 chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
