@@ -113,13 +113,18 @@ retry = yes
 
 EOFEOF
 
+cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+"$USER" ""
+EOFEOF
+
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
 $DBNAME = host=localhost port=6002
 [pgbouncer]
 listen_addr = localhost
 listen_port = 6000
-auth_type = any
+auth_type = trust
+auth_file = /app/vendor/pgbouncer/users.txt 
 
 ; When server connection is released back to pool:
 ;   session      - after client disconnects
