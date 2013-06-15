@@ -131,8 +131,8 @@ auth_file = /app/vendor/pgbouncer/users.txt
 ;   session      - after client disconnects
 ;   transaction  - after transaction finishes
 ;   statement    - after statement finishes
-pool_mode = session
-server_reset_query = DISCARD ALL
+pool_mode = transaction
+server_reset_query =
 max_client_conn = 100
 default_pool_size = 1
 EOFEOF
