@@ -56,4 +56,13 @@ The buildpack will install and configure pgbouncer and stunnel to connect to
 `DATABASE_URL` over a SSL connection. Prepend `bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI `
 to any process in the Procfile to run pgbouncer and stunnel alongside that process.
 
+Parameters available for override
+-----
+Some settings are configurable through app config vars. Refer to the appropriate
+documentation for
+[pgbouncer](http://pgbouncer.projects.pgfoundry.org/doc/config.html#_generic_settings)
+and [stunnel](http://linux.die.net/man/8/stunnel) configuration.
+
+- `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
+
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
