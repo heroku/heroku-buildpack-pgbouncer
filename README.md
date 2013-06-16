@@ -39,10 +39,8 @@ Example usage:
     =====> Detected Framework: pgbouncer
            Using pgbouncer version: 1.5.4
            Using stunnel version: 4.56
-           Using postgres version: 9.2.4
     -----> Fetching and vendoring pgbouncer into slug
     -----> Fetching and vendoring stunnel into slug
-    -----> Fetching and vendoring postgresql into slug
     -----> Generating the configuration generation script
     -----> Generating the startup script
     -----> pgbouncer/stunnel done
