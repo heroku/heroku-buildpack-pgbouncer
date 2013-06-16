@@ -1,8 +1,17 @@
 Heroku buildpack: pgbouncer
 =========================
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that supplies pgbouncer and is meant to be used as a [multi-buildpack](https://github.com/ddollar/heroku-buildpack-multi) 
-It uses [stunnel](http://stunnel.org/).
+This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that
+allows one to run pgbouncer and stunnel in a dyno alongside application code.
+It is meant to be used inconjunction with other buildpacks as part of a
+[multi-buildpack](https://github.com/ddollar/heroku-buildpack-multi).
+
+The primary use of this buildpack is to allow for transaction pooling of a
+PostgreSQL connection among multiple workers in a dyno. For example, 10 unicorn
+workers would be able to share a single database connection, avoiding connection
+limits and Out Of Memory errors Postgres from too many connections. 
+
+It uses [stunnel](http://stunnel.org/) and [pgbouncer](http://wiki.postgresql.org/wiki/PgBouncer).
 
 Usage
 -----
@@ -10,44 +19,41 @@ Usage
 Example usage:
 
     $ ls -a
-    Procfile  package.json  web.js  .buildpacks
+    .buildpacks  Gemfile  Gemfile.lock  Procfile  config/  config.ru
 
     $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
     $ cat .buildpacks
     https://github.com/heroku/heroku-buildpack-pgbouncer.git
-    https://github.com/heroku/heroku-buildpack-nodejs.git
+    https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ cat Procfile
-    web: bin/pgbouncer-stunnel.sh && node web.js
+    web:    bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
+    worker: bundle exec rake worker
 
     $ git push heroku master
     ...
-    -----> Heroku receiving push
-    -----> Fetching custom buildpack
+    -----> Fetching custom git buildpack... done
     -----> Multipack app detected
-    =====> Downloading Buildpack: https://github.com/heroku/heroku-buildpack-pgbouncer.git
+    =====> Downloading Buildpack: https://github.com/gregburek/heroku-buildpack-pgbouncer.git
     =====> Detected Framework: pgbouncer
            Using pgbouncer version: 1.5.4
            Using stunnel version: 4.56
+           Using postgres version: 9.2.4
     -----> Fetching and vendoring pgbouncer into slug
     -----> Fetching and vendoring stunnel into slug
+    -----> Fetching and vendoring postgresql into slug
     -----> Generating the configuration generation script
     -----> Generating the startup script
     -----> pgbouncer/stunnel done
-    =====> Downloading Buildpack: https://github.com/heroku/heroku-buildpack-nodejs
-    =====> Detected Framework: Node.js
-    -----> Node.js app detected
-    -----> Vendoring node 0.4.7
-    -----> Installing dependencies with npm 1.0.8
-           express@2.1.0 ./node_modules/express
-           ├── mime@1.2.2
-           ├── qs@0.3.1
-           └── connect@1.6.2
-           Dependencies installed
+    =====> Downloading Buildpack: https://github.com/heroku/heroku-buildpack-ruby.git
+    =====> Detected Framework: Ruby/Rack
+    -----> Using Ruby version: ruby-1.9.3
+    -----> Installing dependencies using Bundler version 1.3.2
+    ...
 
-The buildpack will install and configure pgbouncer and stunnel to connect to `DATABASE_URL` over a secure connection. Prepend `bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI ` to any process in the Procfile to run pgbouncer and stunnel alongside that process.
-
-Use `PGBOUNCER_URI` as your database uri in your app and it will be generated on dyno boot. 
+The buildpack will install and configure pgbouncer and stunnel to connect to
+`DATABASE_URL` over a SSL connection. Prepend `bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI `
+to any process in the Procfile to run pgbouncer and stunnel alongside that process.
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
