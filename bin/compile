@@ -13,7 +13,6 @@ unset GIT_DIR
 # config
 PGBOUNCER_VERSION="1.5.4"
 STUNNEL_VERSION="4.56"
-POSTGRESQL_VERSION="9.2.4"
 S3_BUCKET="gregburek-buildpack-pgbouncer"
 
 # parse and derive params
@@ -47,12 +46,10 @@ function package_download() {
 
 echo "Using pgbouncer version: ${PGBOUNCER_VERSION}" | indent
 echo "Using stunnel version: ${STUNNEL_VERSION}" | indent
-echo "Using postgres version: ${POSTGRESQL_VERSION}" | indent
 
 # vendor directories
 VENDORED_PGBOUNCER="vendor/pgbouncer"
 VENDORED_STUNNEL="vendor/stunnel"
-VENDORED_POSTGRESQL="vendor/postgresql"
 
 # vendor pgbouncer into the slug
 PATH="$BUILD_DIR/$VENDORED_PGBOUNCER/bin:$PATH"
@@ -65,12 +62,6 @@ PATH="$BUILD_DIR/$VENDORED_STUNNEL/bin:$PATH"
 echo "-----> Fetching and vendoring stunnel into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
 package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}"
-
-# vendor postgresql into the slug
-PATH="$BUILD_DIR/$VENDORED_POSTGRESQL/bin:$PATH"
-echo "-----> Fetching and vendoring postgresql into slug"
-mkdir -p "$BUILD_DIR/$VENDORED_POSTGRESQL"
-package_download "postgresql" "${POSTGRESQL_VERSION}" "${BUILD_DIR}/${VENDORED_POSTGRESQL}"
 
 echo "-----> Generating the configuration generation script"
 mkdir -p $BUILD_DIR/.profile.d
@@ -91,7 +82,3 @@ EOF
 chmod +x $BUILD_DIR/bin/pgbouncer-stunnel.sh
 
 echo "-----> pgbouncer/stunnel done"
-export PATH="/app/$VENDORED_POSTGRESQL/bin:$PATH"
-export CFLAGS="-I/app/$VENDORED_POSTGRESQL/include"
-export LDFLAGS="-L/app/$VENDORED_POSTGRESQL/lib -R/app/$VENDORED_POSTGRESQL/lib"
-export LD_LIBRARY_PATH="/app/$VENDORED_POSTGRESQL/lib:$LD_LIBRARY_PATH"

@@ -1,10 +1,2 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
-
-cat <<EOF
----
-config_vars:
-  PATH: /app/vendor/postgresql/bin:/usr/local/bin:/usr/bin:/bin
-  CFLAGS: -I/app/vendor/postgresql/include
-  LDFLAGS: -L/app/vendor/postgresql/lib -R/app/vendor/postgresql/lib
-EOF
