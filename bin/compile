@@ -20,6 +20,7 @@ S3_BUCKET="gregburek-buildpack-pgbouncer"
 BUILD_DIR=$1
 CACHE_DIR=$2
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
+BUILDPACK_DIR="$(dirname $(dirname $0))"
 
 function error() {
   echo " !     $*" >&2
@@ -73,70 +74,7 @@ package_download "postgresql" "${POSTGRESQL_VERSION}" "${BUILD_DIR}/${VENDORED_P
 
 echo "-----> Generating the configuration generation script"
 mkdir -p $BUILD_DIR/.profile.d
-cat >>$BUILD_DIR/.profile.d/libpq-env-vars.sh <<EOF
-export PATH="/app/$VENDORED_POSTGRESQL/bin:\$PATH"
-export CFLAGS="-I/app/$VENDORED_POSTGRESQL/include"
-export LDFLAGS="-L/app/$VENDORED_POSTGRESQL/lib -R/app/$VENDORED_POSTGRESQL/lib"
-export LD_LIBRARY_PATH="/app/$VENDORED_POSTGRESQL/lib:\$LD_LIBRARY_PATH"
-EOF
-chmod +x $BUILD_DIR/.profile.d/libpq-env-vars.sh
-
-cat >>$BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh <<'EOF'
-#!/usr/bin/env bash
-
-DB=$(echo $DATABASE_URL | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
-DB_URI=( $DB )
-USER=${DB_URI[0]}
-PASS=${DB_URI[1]}
-HOST=${DB_URI[2]}
-PORT=${DB_URI[3]}
-DBNAME=${DB_URI[4]}
-
-export PGBOUNCER_URI=postgres://$USER:$PASS@127.0.0.1:6000/$DBNAME
-
-mkdir -p /app/vendor/stunnel/var/run/stunnel/
-cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
-foreground = yes
-
-options = NO_SSLv2
-options = SINGLE_ECDH_USE
-options = SINGLE_DH_USE
-socket = r:TCP_NODELAY=1
-options = NO_SSLv3
-ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-
-[heroku-postgres]
-client = yes
-protocol = pgsql
-accept  = localhost:6002
-connect = $HOST:$PORT
-retry = yes
-
-EOFEOF
-
-cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$USER" "$PASS"
-EOFEOF
-
-cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-[databases]
-$DBNAME = host=localhost port=6002
-[pgbouncer]
-listen_addr = localhost
-listen_port = 6000
-auth_type = md5
-auth_file = /app/vendor/pgbouncer/users.txt 
-
-; When server connection is released back to pool:
-;   session      - after client disconnects
-;   transaction  - after transaction finishes
-;   statement    - after statement finishes
-pool_mode = transaction
-server_reset_query =
-max_client_conn = 100
-default_pool_size = 1
-EOFEOF
-EOF
+cp "$BUILDPACK_DIR/bin/gen-pgbouncer-conf.sh" $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 
 echo "-----> Generating the startup script"
