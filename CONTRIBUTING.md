@@ -61,9 +61,5 @@ heroku plugins:install https://github.com/heroku/heroku-buildpacks
 
 cd heroku-buildpack-pgbouncer
 git checkout master
-heroku buildpacks:publish heroku/pgbouncer
+heroku buildpacks:publish gregburek/pgbouncer
 ```
-
-- Email [dos@heroku.com](mailto:dos@heroku.com) if changes are significant.
-- Add a [changelog item](https://devcenter.heroku.com/admin/changelog_items/new).
-- Update [pgbouncer Devcenter articles](https://devcenter.heroku.com/admin/articles/owned) as necessary.
