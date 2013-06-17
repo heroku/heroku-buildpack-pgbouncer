@@ -7,11 +7,20 @@ It is meant to be used inconjunction with other buildpacks as part of a
 [multi-buildpack](https://github.com/ddollar/heroku-buildpack-multi).
 
 The primary use of this buildpack is to allow for transaction pooling of a
-PostgreSQL connection among multiple workers in a dyno. For example, 10 unicorn
+PostgreSQL connections among multiple workers in a dyno. For example, 10 unicorn
 workers would be able to share a single database connection, avoiding connection
-limits and Out Of Memory errors Postgres from too many connections. 
+limits and Out Of Memory errors on the Postgres server from too many connections.
 
 It uses [stunnel](http://stunnel.org/) and [pgbouncer](http://wiki.postgresql.org/wiki/PgBouncer).
+
+
+FAQ
+----
+- Q: Why should I use transaction pooling?
+- A: You have many workers that hold open idle Postgres connections [More complete answer](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
+
+- Q: When shouldn't I use transaction pooling?
+- A: If you need to "use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level." [Feature Matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes)
 
 Usage
 -----

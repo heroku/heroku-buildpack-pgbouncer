@@ -63,7 +63,7 @@ echo "-----> Fetching and vendoring stunnel into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
 package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}"
 
-echo "-----> Generating the configuration generation script"
+echo "-----> Moving the configuration generation script into place"
 mkdir -p $BUILD_DIR/.profile.d
 cp "$BUILDPACK_DIR/bin/gen-pgbouncer-conf.sh" $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
