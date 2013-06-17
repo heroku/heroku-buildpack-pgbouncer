@@ -50,6 +50,6 @@ auth_file = /app/vendor/pgbouncer/users.txt
 pool_mode = transaction
 server_reset_query =
 max_client_conn = 100
-default_pool_size = ${DEFAULT_POOL_SIZE:-1}
+default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-2}
 EOFEOF
 
