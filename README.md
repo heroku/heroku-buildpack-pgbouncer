@@ -3,13 +3,14 @@ Heroku buildpack: pgbouncer
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that
 allows one to run pgbouncer and stunnel in a dyno alongside application code.
-It is meant to be used inconjunction with other buildpacks as part of a
+It is meant to be used in conjunction with other buildpacks as part of a
 [multi-buildpack](https://github.com/ddollar/heroku-buildpack-multi).
 
-The primary use of this buildpack is to allow for transaction pooling of a
-PostgreSQL connections among multiple workers in a dyno. For example, 10 unicorn
-workers would be able to share a single database connection, avoiding connection
-limits and Out Of Memory errors on the Postgres server from too many connections.
+The primary use of this buildpack is to allow for transaction pooling of
+PostgreSQL database connections among multiple workers in a dyno. For example,
+10 unicorn workers would be able to share a single database connection, avoiding
+connection limits and Out Of Memory errors on the Postgres server from too many
+connections.
 
 It uses [stunnel](http://stunnel.org/) and [pgbouncer](http://wiki.postgresql.org/wiki/PgBouncer).
 
@@ -17,10 +18,12 @@ It uses [stunnel](http://stunnel.org/) and [pgbouncer](http://wiki.postgresql.or
 FAQ
 ----
 - Q: Why should I use transaction pooling?
-- A: You have many workers that hold open idle Postgres connections [More complete answer](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
+- A: You have many workers per dyno that hold open idle Postgres connections and
+and you want to reduce the number of unused connections. [A slight more complete answer from stackoverflow](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
 
 - Q: When shouldn't I use transaction pooling?
-- A: If you need to "use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level." [Feature Matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes)
+- A: If you need to "use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level."
+Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes) for all caveats.
 
 Usage
 -----
@@ -63,12 +66,11 @@ The buildpack will install and configure pgbouncer and stunnel to connect to
 `DATABASE_URL` over a SSL connection. Prepend `bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI `
 to any process in the Procfile to run pgbouncer and stunnel alongside that process.
 
-Customize settings through configuration variables
+Tweak settings
 -----
-Some settings are configurable through app config vars. To find uses, please
-refer to the appropriate documentation for
+Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
 [pgbouncer](http://pgbouncer.projects.pgfoundry.org/doc/config.html#_generic_settings)
-and [stunnel](http://linux.die.net/man/8/stunnel) configuration.
+and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what settings are right for you.
 
 - `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 2
 

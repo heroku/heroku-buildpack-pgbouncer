@@ -1,23 +1,3 @@
-## Testing buildpack changes using Anvil
-
-[Anvil](https://github.com/ddollar/anvil) is a generic build server for Heroku.
-
-```
-gem install anvil-cli
-```
-
-The [heroku-anvil CLI plugin](https://github.com/ddollar/heroku-anvil) is a wrapper for anvil.
-
-```
-heroku plugins:install https://github.com/ddollar/heroku-anvil
-```
-
-The [ddollar/test buildpack](https://github.com/ddollar/buildpack-test) is for testing things: it runs `bin/test` on your app.
-
-```
-heroku build -b ddollar/test # -b can also point to a local directory
-```
-
 ## Compiling new versions of pgbouncer and stunnel using Vulcan
 
 Install [vulcan](https://github.com/heroku/vulcan) and create your own build server. Use any
