@@ -41,7 +41,7 @@ $DBNAME = host=localhost port=6002
 listen_addr = localhost
 listen_port = 6000
 auth_type = md5
-auth_file = /app/vendor/pgbouncer/users.txt 
+auth_file = /app/vendor/pgbouncer/users.txt
 
 ; When server connection is released back to pool:
 ;   session      - after client disconnects
