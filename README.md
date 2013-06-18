@@ -71,6 +71,8 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 [pgbouncer](http://pgbouncer.projects.pgfoundry.org/doc/config.html#_generic_settings)
 and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what settings are right for you.
 
-- `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 2
+- `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
+- `PGBOUNCER_RESERVE_POOL_SIZE` Default is 1
+- `PGBOUNCER_RESERVE_POOL_TIMEOUT` Default is 5.0 seconds
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
