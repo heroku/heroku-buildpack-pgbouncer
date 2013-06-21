@@ -5,7 +5,7 @@ DB_URI=( $DB )
 USER=${DB_URI[0]}
 PASS=${DB_URI[1]}
 HOST=${DB_URI[2]}
-PORT=${DB_URI[3]}
+DB_PORT=${DB_URI[3]}
 DBNAME=${DB_URI[4]}
 
 export PGBOUNCER_URI=postgres://$USER:$PASS@127.0.0.1:6000/$DBNAME
@@ -25,7 +25,7 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 client = yes
 protocol = pgsql
 accept  = localhost:6002
-connect = $HOST:$PORT
+connect = $HOST:$DB_PORT
 retry = yes
 
 EOFEOF
