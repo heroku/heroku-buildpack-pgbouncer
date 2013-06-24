@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # bin/detect <build-dir>
 
-echo "pgbouncer/stunnel"
+echo 'pgbouncer-stunnel'
 exit 0
