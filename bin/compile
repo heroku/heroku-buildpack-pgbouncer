@@ -69,6 +69,7 @@ cp "$BUILDPACK_DIR/bin/gen-pgbouncer-conf.sh" $BUILD_DIR/.profile.d/gen-pgbounce
 chmod +x $BUILD_DIR/.profile.d/gen-pgbouncer-conf.sh
 
 echo "-----> Generating the startup script"
+mkdir -p $BUILD_DIR/bin
 cat >>$BUILD_DIR/bin/pgbouncer-stunnel.sh <<EOF
 #!/usr/bin/env bash
 if [ `/sbin/ifconfig -a | grep -c 172\.[123][0-9]\.` -gt "0" ]; then
