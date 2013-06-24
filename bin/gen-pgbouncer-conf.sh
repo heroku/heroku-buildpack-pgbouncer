@@ -2,13 +2,13 @@
 
 DB=$(echo $DATABASE_URL | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
 DB_URI=( $DB )
-USER=${DB_URI[0]}
-PASS=${DB_URI[1]}
-HOST=${DB_URI[2]}
+DB_USER=${DB_URI[0]}
+DB_PASS=${DB_URI[1]}
+DB_HOST=${DB_URI[2]}
 DB_PORT=${DB_URI[3]}
-DBNAME=${DB_URI[4]}
+DB_NAME=${DB_URI[4]}
 
-export PGBOUNCER_URI=postgres://$USER:$PASS@127.0.0.1:6000/$DBNAME
+export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
@@ -25,18 +25,18 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 client = yes
 protocol = pgsql
 accept  = localhost:6002
-connect = $HOST:$DB_PORT
+connect = $DB_HOST:$DB_PORT
 retry = yes
 
 EOFEOF
 
 cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$USER" "$PASS"
+"$DB_USER" "$DB_PASS"
 EOFEOF
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
-$DBNAME = host=localhost port=6002
+$DB_NAME = host=localhost port=6002
 [pgbouncer]
 listen_addr = localhost
 listen_port = 6000
