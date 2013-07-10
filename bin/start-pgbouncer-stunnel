@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
+DATABASE_URL=$PGBOUNCER_URI
+
 psmgr=/tmp/pgbouncer-buildpack-wait
 rm -f $psmgr
 mkfifo $psmgr
