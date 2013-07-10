@@ -35,11 +35,11 @@ Example usage:
     $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
     $ cat .buildpacks
-    https://github.com/heroku/heroku-buildpack-pgbouncer.git
+    https://github.com/heroku/heroku-buildpack-pgbouncer.git#v0.2
     https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ cat Procfile
-    web:    bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
+    web:    bin/start-pgbouncer-stunnel bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
     worker: bundle exec rake worker
 
     $ git push heroku master
@@ -47,13 +47,13 @@ Example usage:
     -----> Fetching custom git buildpack... done
     -----> Multipack app detected
     =====> Downloading Buildpack: https://github.com/gregburek/heroku-buildpack-pgbouncer.git
-    =====> Detected Framework: pgbouncer
+    =====> Detected Framework: pgbouncer-stunnel
            Using pgbouncer version: 1.5.4
            Using stunnel version: 4.56
     -----> Fetching and vendoring pgbouncer into slug
     -----> Fetching and vendoring stunnel into slug
-    -----> Generating the configuration generation script
-    -----> Generating the startup script
+    -----> Moving the configuration generation script into app/.profile.d
+    -----> Moving the start-pgbouncer-stunnel script into app/bin
     -----> pgbouncer/stunnel done
     =====> Downloading Buildpack: https://github.com/heroku/heroku-buildpack-ruby.git
     =====> Detected Framework: Ruby/Rack
@@ -62,7 +62,7 @@ Example usage:
     ...
 
 The buildpack will install and configure pgbouncer and stunnel to connect to
-`DATABASE_URL` over a SSL connection. Prepend `bin/pgbouncer-stunnel.sh && DATABASE_URL=$PGBOUNCER_URI `
+`DATABASE_URL` over a SSL connection. Prepend `bin/start-pgbouncer-stunnel`
 to any process in the Procfile to run pgbouncer and stunnel alongside that process.
 
 Tweak settings
