@@ -9,6 +9,7 @@ DB_PORT=${DB_URI[3]}
 DB_NAME=${DB_URI[4]}
 
 if [ $PGBOUNCER_PREPARED_STATEMENTS== 'false' ]
+then
   export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME?prepared_statements=false
 else
   export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME
