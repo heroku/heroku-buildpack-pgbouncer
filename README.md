@@ -27,7 +27,8 @@ Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgB
 
 Disable Prepared Statements
 -----
-Some ORMs (like ActiveRecord 3.2.14) allow prepared statements to be disabled
+Some ORMs (like ActiveRecord [3.2.9](https://github.com/rails/rails/pull/5872))
+allow prepared statements to be disabled
 by appending `?prepared_statements=false` to the database's URI. Set
 the `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack
 to do that for you.
