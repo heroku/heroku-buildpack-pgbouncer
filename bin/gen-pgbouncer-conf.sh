@@ -8,7 +8,12 @@ DB_HOST=${DB_URI[2]}
 DB_PORT=${DB_URI[3]}
 DB_NAME=${DB_URI[4]}
 
-export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME
+if [ $PGBOUNCER_PREPARED_STATEMENTS== 'false' ]
+  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME?prepared_statements=false
+else
+  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME
+fi
+
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF

@@ -24,6 +24,15 @@ and you want to reduce the number of unused connections. [This is a slightly mor
 - A: If you need to use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level.
 Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes) for all transaction pooling caveats.
 
+
+Disable Prepared Statements
+-----
+Some ORMs (like ActiveRecord 3.2.14) allow prepared statements to be disabled
+by appending `?prepared_statements=false` to the database's URI. Set
+the `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack
+to do that for you.
+
+
 Usage
 -----
 
