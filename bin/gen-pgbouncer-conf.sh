@@ -53,7 +53,7 @@ auth_file = /app/vendor/pgbouncer/users.txt
 ;   session      - after client disconnects
 ;   transaction  - after transaction finishes
 ;   statement    - after statement finishes
-pool_mode = transaction
+pool_mode = ${PGBOUNCER_POOL_MODE:-transaction}
 server_reset_query =
 max_client_conn = 100
 default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-1}
