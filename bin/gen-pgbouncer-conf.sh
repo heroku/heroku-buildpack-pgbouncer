@@ -10,9 +10,9 @@ DB_NAME=${DB_URI[4]}
 
 if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
 then
-  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME?prepared_statements=false
+  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME?prepared_statements=false
 else
-  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@localhost:6000/$DB_NAME
+  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME
 fi
 
 
@@ -44,7 +44,7 @@ cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
 $DB_NAME = host=localhost port=6002
 [pgbouncer]
-listen_addr = localhost
+listen_addr = *
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
