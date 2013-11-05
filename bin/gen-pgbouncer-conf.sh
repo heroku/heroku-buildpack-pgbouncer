@@ -44,7 +44,7 @@ cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
 $DB_NAME = host=localhost port=6002
 [pgbouncer]
-listen_addr = *
+listen_addr = localhost
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
