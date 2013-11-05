@@ -45,7 +45,7 @@ Example usage:
     $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
     $ cat .buildpacks
-    https://github.com/heroku/heroku-buildpack-pgbouncer.git#v0.2
+    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.2.1
     https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ cat Procfile
