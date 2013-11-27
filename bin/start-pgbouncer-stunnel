@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
-DATABASE_URL=$PGBOUNCER_URI
+POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+
+for POSTGRES_URL in $POSTGRES_URLS
+do
+  eval ${POSTGRES_URL}=\$${POSTGRES_URL}_PGBOUNCER
+done
 
 psmgr=/tmp/pgbouncer-buildpack-wait
 rm -f $psmgr

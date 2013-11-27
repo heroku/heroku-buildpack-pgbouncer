@@ -1,20 +1,7 @@
 #!/usr/bin/env bash
 
-DB=$(echo $DATABASE_URL | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
-DB_URI=( $DB )
-DB_USER=${DB_URI[0]}
-DB_PASS=${DB_URI[1]}
-DB_HOST=${DB_URI[2]}
-DB_PORT=${DB_URI[3]}
-DB_NAME=${DB_URI[4]}
-
-if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
-then
-  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME?prepared_statements=false
-else
-  export PGBOUNCER_URI=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME
-fi
-
+POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+n=1
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
@@ -26,23 +13,9 @@ options = SINGLE_DH_USE
 socket = r:TCP_NODELAY=1
 options = NO_SSLv3
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-
-[heroku-postgres]
-client = yes
-protocol = pgsql
-accept  = localhost:6002
-connect = $DB_HOST:$DB_PORT
-retry = yes
-
-EOFEOF
-
-cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$DB_USER" "$DB_PASS"
 EOFEOF
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-[databases]
-$DB_NAME = host=localhost port=6002
 [pgbouncer]
 listen_addr = localhost
 listen_port = 6000
@@ -59,5 +32,43 @@ max_client_conn = 100
 default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-1}
 reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-1}
 reserve_pool_timeout = ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-5.0}
+[databases]
 EOFEOF
 
+for POSTGRES_URL in $POSTGRES_URLS
+do
+  eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
+  DB=$(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
+  DB_URI=( $DB )
+  DB_USER=${DB_URI[0]}
+  DB_PASS=${DB_URI[1]}
+  DB_HOST=${DB_URI[2]}
+  DB_PORT=${DB_URI[3]}
+  DB_NAME=${DB_URI[4]}
+
+  if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
+  then
+    export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME?prepared_statements=false
+  else
+    export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME
+  fi
+
+  cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
+[$POSTGRES_URL]
+client = yes
+protocol = pgsql
+accept  = localhost:610${n}
+connect = $DB_HOST:$DB_PORT
+retry = yes
+EOFEOF
+
+  cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+"$DB_USER" "$DB_PASS"
+EOFEOF
+
+  cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+$DB_NAME = host=localhost port=610${n}
+EOFEOF
+
+let "n += 1"
+done
