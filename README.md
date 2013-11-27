@@ -75,6 +75,23 @@ The buildpack will install and configure pgbouncer and stunnel to connect to
 `DATABASE_URL` over a SSL connection. Prepend `bin/start-pgbouncer-stunnel`
 to any process in the Procfile to run pgbouncer and stunnel alongside that process.
 
+
+Multiple Databases
+----
+It is possible to connect to multiple databases through pgbouncer by setting
+`POSTGRES_URLS` to a list of config vars. Example:
+
+    $ heroku config:add PGBOUNCER_URLS="DATABASE_URL HEROKU_POSTGRESQL_ROSE_URL"
+    $ heroku run bash
+
+    ~ $ env | grep 'HEROKU_POSTGRESQL_ROSE_UR\|DATABASE_URL'
+    HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@ec2-107-20-228-134.compute-1.amazonaws.com:5482/db6h3bkfuk5430
+    DATABASE_URL=postgres://uf2782hv7b3uqe:password@ec2-50-19-210-113.compute-1.amazonaws.com:5622/deamhhcj6q0d31
+
+    ~ $ bin/start-pgbench-stunnel env # filtered for brevity
+    HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db6h3bkfuk5430
+    DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/deamhhcj6q0d31
+
 Tweak settings
 -----
 Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
@@ -85,5 +102,6 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
 - `PGBOUNCER_RESERVE_POOL_SIZE` Default is 1
 - `PGBOUNCER_RESERVE_POOL_TIMEOUT` Default is 5.0 seconds
+- `POSTGRES_URLS` Default is DATABASE_URL
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
