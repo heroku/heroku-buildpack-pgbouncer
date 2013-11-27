@@ -1,3 +1,8 @@
+## v0.2.2 (November 26, 2013)
+
+* Uses `PGBOUNCER_URLS` to connect to multiple databases
+* Uses unix sockets for pgbouncer to stunnel in-dyno communication
+
 ## v0.2.1 (July 15, 2013)
 
 * Added `PGBOUNCER_PREPARED_STATEMENTS` config var to append
