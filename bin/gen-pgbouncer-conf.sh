@@ -57,7 +57,7 @@ do
 [$POSTGRES_URL]
 client = yes
 protocol = pgsql
-accept  = localhost:610${n}
+accept  = /tmp/.s.PGSQL.610${n}
 connect = $DB_HOST:$DB_PORT
 retry = yes
 EOFEOF
@@ -67,7 +67,7 @@ EOFEOF
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-$DB_NAME = host=localhost port=610${n}
+$DB_NAME= port=610${n}
 EOFEOF
 
 let "n += 1"
