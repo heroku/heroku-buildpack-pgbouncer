@@ -79,7 +79,7 @@ to any process in the Procfile to run pgbouncer and stunnel alongside that proce
 Multiple Databases
 ----
 It is possible to connect to multiple databases through pgbouncer by setting
-`POSTGRES_URLS` to a list of config vars. Example:
+`PGBOUNCER_URLS` to a list of config vars. Example:
 
     $ heroku config:add PGBOUNCER_URLS="DATABASE_URL HEROKU_POSTGRESQL_ROSE_URL"
     $ heroku run bash
@@ -102,6 +102,6 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
 - `PGBOUNCER_RESERVE_POOL_SIZE` Default is 1
 - `PGBOUNCER_RESERVE_POOL_TIMEOUT` Default is 5.0 seconds
-- `POSTGRES_URLS` Default is DATABASE_URL
+- `PGBOUNCER_URLS` Default is DATABASE_URL
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
