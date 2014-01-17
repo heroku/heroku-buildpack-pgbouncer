@@ -35,6 +35,7 @@ reserve_pool_timeout = ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-5.0}
 log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
 log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
 log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
+stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 [databases]
 EOFEOF
 
