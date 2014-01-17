@@ -45,7 +45,7 @@ Example usage:
     $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
     $ cat .buildpacks
-    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.2.1
+    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.2.2
     https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ cat Procfile
@@ -88,7 +88,7 @@ It is possible to connect to multiple databases through pgbouncer by setting
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@ec2-107-20-228-134.compute-1.amazonaws.com:5482/db6h3bkfuk5430
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@ec2-50-19-210-113.compute-1.amazonaws.com:5622/deamhhcj6q0d31
 
-    ~ $ bin/start-pgbench-stunnel env # filtered for brevity
+    ~ $ bin/start-pgbouncer-stunnel env # filtered for brevity
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db6h3bkfuk5430
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/deamhhcj6q0d31
 
