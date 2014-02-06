@@ -12,6 +12,11 @@ psmgr=/tmp/pgbouncer-buildpack-wait
 rm -f $psmgr
 mkfifo $psmgr
 
+#Generate config files
+echo 'buildpack=pgbouncer at=config-gen-start'
+source bin/gen-pgbouncer-conf.sh
+echo 'buildpack=pgbouncer at=config-gen-end'
+
 #Start App Server
 (
 	#Take the command passed to this bin and start it.
