@@ -51,6 +51,8 @@ do
   DB_NAME=${DB_URI[4]}
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
+  echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
+
   if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
   then
     export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$DB_NAME?prepared_statements=false
