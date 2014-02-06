@@ -79,3 +79,4 @@ EOFEOF
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*
+chmod go-rwx /app/vendor/stunnel/*
