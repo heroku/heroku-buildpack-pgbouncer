@@ -62,7 +62,7 @@ Example usage:
            Using stunnel version: 4.56
     -----> Fetching and vendoring pgbouncer into slug
     -----> Fetching and vendoring stunnel into slug
-    -----> Moving the configuration generation script into app/.profile.d
+    -----> Moving the configuration generation script into app/bin
     -----> Moving the start-pgbouncer-stunnel script into app/bin
     -----> pgbouncer/stunnel done
     =====> Downloading Buildpack: https://github.com/heroku/heroku-buildpack-ruby.git
