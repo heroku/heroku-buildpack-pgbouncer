@@ -49,6 +49,7 @@ do
   DB_HOST=${DB_URI[2]}
   DB_PORT=${DB_URI[3]}
   DB_NAME=${DB_URI[4]}
+  DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
   if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
   then
@@ -67,12 +68,14 @@ retry = ${PGBOUNCER_CONNECTION_RETRY:-"no"}
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$DB_USER" "$DB_PASS"
+"$DB_USER" "$DB_MD5_PASS"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 $DB_NAME= port=610${n}
 EOFEOF
 
-let "n += 1"
+  let "n += 1"
 done
+
+chmod go-rwx /app/vendor/pgbouncer/*
