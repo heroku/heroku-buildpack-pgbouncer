@@ -27,11 +27,24 @@ Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgB
 
 Disable Prepared Statements
 -----
-Some ORMs (like ActiveRecord [3.2.9](https://github.com/rails/rails/pull/5872))
-allow prepared statements to be disabled
-by appending `?prepared_statements=false` to the database's URI. Set
-the `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack
-to do that for you.
+With Rails 4.1, you can disable prepared statements by appending `?prepared_statements=false` to the database's URI.
+Set the `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack to do that for you.
+
+Rails 3.2 - 4.0 also requires an initializer to properly cast the prepared_statements configuration string as a boolean. This initializer is adapted from [this commit](https://github.com/rails/rails/commit/e54acf1308e2e4df047bf90798208e03e1370098). In file config/initializers/database_connection.rb insert the following:
+
+```ruby
+require "active_record/connection_adapters/postgresql_adapter"
+
+class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
+  alias initialize_without_config_boolean_coercion initialize
+  def initialize(connection, logger, connection_parameters, config)
+    if config[:prepared_statements] == 'false'
+      config = config.merge(prepared_statements: false)
+    end
+    initialize_without_config_boolean_coercion(connection, logger, connection_parameters, config)
+  end
+end
+```
 
 
 Usage
