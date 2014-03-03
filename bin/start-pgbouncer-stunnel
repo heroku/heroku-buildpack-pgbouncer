@@ -23,9 +23,8 @@ mkfifo $psmgr
 (
 	#Take the command passed to this bin and start it.
 	#E.g. bin/start-pgbouncer-stunnel bundle exec unicorn -c config/unicorn.rb
-	exec $@ &
-	echo "buildpack=pgbouncer at=start-app cmd=$@"
-	wait
+	echo "buildpack=pgbouncer at=app-start cmd=$*"
+	"$@"
 	echo 'app' >$psmgr
 ) &
 
