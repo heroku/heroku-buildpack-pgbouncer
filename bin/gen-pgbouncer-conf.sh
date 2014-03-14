@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
 POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+POOL_MODE=${PGBOUNCER_POOL_MODE:-transaction}
+SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY}
 n=1
+
+# if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
+# http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
+if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
+    SERVER_RESET_QUERY="DISCARD ALL;"
+fi
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
@@ -26,8 +34,8 @@ auth_file = /app/vendor/pgbouncer/users.txt
 ;   session      - after client disconnects
 ;   transaction  - after transaction finishes
 ;   statement    - after statement finishes
-pool_mode = ${PGBOUNCER_POOL_MODE:-transaction}
-server_reset_query =
+pool_mode = ${POOL_MODE}
+server_reset_query = ${SERVER_RESET_QUERY}
 max_client_conn = ${PGBOUNCER_MAX_CLIENT_CONN:-100}
 default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-1}
 reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-1}
