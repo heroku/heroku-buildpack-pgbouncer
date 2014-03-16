@@ -32,7 +32,7 @@ mkfifo $psmgr
 (
   #We expect stunnel to run in the foreground.
   echo 'buildpack=pgbouncer at=stunnel-start'
-  vendor/stunnel/bin/stunnel vendor/stunnel/stunnel-pgbouncer.conf
+  (trap '' SIGTERM; exec vendor/stunnel/bin/stunnel vendor/stunnel/stunnel-pgbouncer.conf)
   echo 'stunnel' >$psmgr
 ) &
 
@@ -40,7 +40,7 @@ mkfifo $psmgr
 (
   #We expect pgbouncer to run in the foreground.
   echo 'buildpack=pgbouncer at=pgbouncer-start'
-  vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini
+  (trap '' SIGTERM; exec vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini)
   echo 'pgbouncer' >$psmgr
 ) &
 
