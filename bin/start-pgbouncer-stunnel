@@ -15,18 +15,13 @@ do
   eval ${POSTGRES_URL}=\$${POSTGRES_URL}_PGBOUNCER
 done
 
+#Use named pipes to detect exit of any sub process
 psmgr=/tmp/pgbouncer-buildpack-wait
 rm -f $psmgr
 mkfifo $psmgr
 
-#Start App Server
-(
-  #Take the command passed to this bin and start it.
-  #E.g. bin/start-pgbouncer-stunnel bundle exec unicorn -c config/unicorn.rb
-  echo "buildpack=pgbouncer at=app-start cmd=$*"
-  "$@"
-  echo 'app' >$psmgr
-) &
+#Do not exit top script until all sub processes are done
+trap '' SIGTERM
 
 #Start stunnel
 (
@@ -44,6 +39,16 @@ mkfifo $psmgr
   echo 'pgbouncer' >$psmgr
 ) &
 
+#Start App Server
+(
+  #Take the command passed to this bin and start it.
+  #E.g. bin/start-pgbouncer-stunnel bundle exec unicorn -c config/unicorn.rb
+  echo "buildpack=pgbouncer at=app-start cmd=$*"
+  "$@"
+  echo 'app' >$psmgr
+) &
+subshell=$!
+
 #This read will block the process waiting on a msg to be put into the fifo.
 #If any of the processes defined above should exit,
 #a msg will be put into the fifo causing the read operation
@@ -52,4 +57,18 @@ mkfifo $psmgr
 #process to stdout.
 read exit_process <$psmgr
 echo "buildpack=pgbouncer at=exit process=$exit_process"
+
+#Clean up any running processes
+#SIGTERM application just in case something else crashed
+echo "Sending SIGTERM to application"
+kill -SIGTERM $subshell
+
+wait %3
+
+echo "Sending SIGINT to pgbouncer"
+pkill -SIGINT pgbouncer
+
+echo "Sending SIGINT to stunnel"
+pkill -SIGINT stunnel
+
 exit 1
