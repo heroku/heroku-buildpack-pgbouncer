@@ -11,8 +11,8 @@ set -e
 unset GIT_DIR
 
 # config
-PGBOUNCER_VERSION="1.5.4"
-STUNNEL_VERSION="4.56"
+PGBOUNCER_VERSION="1.5.4-heroku"
+STUNNEL_VERSION="5.00"
 S3_BUCKET="gregburek-buildpack-pgbouncer"
 
 # parse and derive params

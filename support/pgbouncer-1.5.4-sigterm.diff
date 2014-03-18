@@ -1,0 +1,27 @@
+From 1f349a5a70ffc3954274db38e1703f869ceb5188 Mon Sep 17 00:00:00 2001
+From: Greg Burek <greg.burek@gmail.com>
+Date: Sun, 16 Mar 2014 20:00:27 -0700
+Subject: [PATCH] Disable SIGTERM
+
+---
+ src/main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/src/main.c b/src/main.c
+index cd80377..459354f 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -331,9 +331,7 @@ static struct event ev_sigint;
+ 
+ static void handle_sigterm(int sock, short flags, void *arg)
+ {
+-	log_info("Got SIGTERM, fast exit");
+-	/* pidfile cleanup happens via atexit() */
+-	exit(1);
++	log_info("Got SIGTERM, ignoring!");
+ }
+ 
+ static void handle_sigint(int sock, short flags, void *arg)
+-- 
+1.9.0
+
