@@ -56,7 +56,7 @@ run-pgbouncer() {
   # Kill the auxiliary processes.
   # Send each one SIGHUP which will be translated by the trap in aux-start.
   declare name
-  for name in "${!pids[*]}"; do
+  for name in "${!pids[@]}"; do
     at "kill-aux name=$name pid=${pids[$name]} signal=${signals[$name]}"
     kill -SIGHUP "${pids[$name]}"
   done
