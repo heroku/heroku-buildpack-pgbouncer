@@ -2,6 +2,16 @@
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
 main() {
+  if ! is-enabled "${PGBOUNCER_ENABLED:-1}"; then
+    at pgbouncer-disabled
+    exec "$@"
+  fi
+
+  at pgbouncer-enabled
+  run-pgbouncer "$@"
+}
+
+run-pgbouncer() {
   declare psmgr=/tmp/pgbouncer-buildpack-wait
   declare -A pids signals
 
@@ -130,6 +140,12 @@ app-start() {
 
 at() {
   echo "buildpack=pgbouncer at=$*"
+}
+
+is-enabled() {
+  ( shopt -s extglob nocasematch
+    [[ $1 == @(1|true|yes|on) ]]
+  )
 }
 
 [[ "$0" != "$BASH_SOURCE" ]] || main "$@"
