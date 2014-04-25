@@ -47,17 +47,21 @@ function package_download() {
 echo "Using pgbouncer version: ${PGBOUNCER_VERSION}" | indent
 echo "Using stunnel version: ${STUNNEL_VERSION}" | indent
 
+# vendor directories
+VENDORED_PGBOUNCER="vendor/pgbouncer"
+VENDORED_STUNNEL="vendor/stunnel"
+
 # vendor pgbouncer into the slug
-PATH="$BUILD_DIR/vendor/pgbouncer/bin:$PATH"
+PATH="$BUILD_DIR/$VENDORED_PGBOUNCER/bin:$PATH"
 echo "-----> Fetching and vendoring pgbouncer into slug"
-mkdir -p "$BUILD_DIR/vendor/"
-package_download "pgbouncer" "${PGBOUNCER_VERSION}" "${BUILD_DIR}/vendor"
+mkdir -p "$BUILD_DIR/$VENDORED_PGBOUNCER"
+package_download "pgbouncer" "${PGBOUNCER_VERSION}" "${BUILD_DIR}/${VENDORED_PGBOUNCER}"
 
 # vendor stunnel into the slug
-PATH="$BUILD_DIR/vendor/stunnel/bin:$PATH"
+PATH="$BUILD_DIR/$VENDORED_STUNNEL/bin:$PATH"
 echo "-----> Fetching and vendoring stunnel into slug"
-mkdir -p "$BUILD_DIR/vendor/"
-package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/vendor"
+mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
+package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}"
 
 echo "-----> Moving the configuration generation script into app/bin"
 mkdir -p $BUILD_DIR/bin
