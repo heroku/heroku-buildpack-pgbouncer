@@ -1,3 +1,18 @@
+## v0.3.0 (April 24, 2014)
+
+* Adds PGBOUNCER_MAX_CLIENT_CONN, PGBOUNCER_CONNECTION_RETRY,
+ PGBOUNCER_CONNECTION_RETRY, PGBOUNCER_LOG_DISCONNECTIONS,
+ PGBOUNCER_LOG_POOLER_ERRORS, PGBOUNCER_STATS_PERIOD and
+ PGBOUNCER_SERVER_RESET_QUERY configs (thanks to khamaileon and jhorman)
+* Uses an MD5 hashed password in the filesystem
+* Waits until dyno boot to generate configs
+* Uses a patched pgbouncer 1.5.4 to not eagerly exit on SIGTERMs
+* Better signal handling allows app code to clean up before exiting stunnel and
+ pgbouncer (thanks to agriffis)
+* Replaces vulcan with docker for compiling stunnel and pgbouncer binaries for
+ heroku
+* Upgrades to stunnel v5.01
+
 ## v0.2.2 (November 26, 2013)
 
 * Uses `PGBOUNCER_URLS` to connect to multiple databases
