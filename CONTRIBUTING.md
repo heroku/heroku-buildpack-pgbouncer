@@ -1,37 +1,21 @@
-## Compiling new versions of pgbouncer and stunnel using Vulcan
+## Compiling new versions of pgbouncer and stunnel using Docker
 
-Install [vulcan](https://github.com/heroku/vulcan) and create your own build server. Use any
-app name you want and vulcan will remember it in a `~/.vulcan` config file.
-
-```
-gem install vulcan
-vulcan create builder-bob
-```
-
-Store your S3 credentials in `~/.aws/`
-
-```
-mkdir -p ~/.aws
-echo 'YOUR_AWS_KEY' > ~/.aws/key-pgbouncer.access
-echo 'YOUR_AWS_SECRET' > ~/.aws/key-pgbouncer.secret
-```
-
-Add a credentials exporter to your `.bash_profile` or `.bashrc`
-
-```
-setup_pgbouncer_env () {
-  export AWS_ID=$(cat ~/.aws/key-pgbouncer.access)
-  export AWS_SECRET=$(cat ~/.aws/key-pgbouncer.secret)
-  export S3_BUCKET="heroku-buildpack-pgbouncer"
-}
-```
+Install [docker](https://www.docker.io/). For OSX, I recommend using
+[dvm](http://fnichol.github.io/dvm/) to get virtualbox, vagrant and boot2docker
+set up correctly.
 
 Build:
 
 ```
-setup_pgbouncer_env
-support/package_pgbouncer <pgbouncer-version>
-support/package_stunnel <stunnel-version>
+$ cd support
+$ docker build -t your-username/pgbouncer-builder .
+$ docker run -i -v /home/docker/cache:/var/cache \
+  -e PGBOUNCER_VERSION=<pgbouncer-version> \
+  -e STUNNEL_VERSION=<stunnel-version> \
+  -e AWS_ACCESS_KEY_ID=<ur-key> \
+  -e AWS_SECRET_ACCESS_KEY=<ur-secret-key> \
+  -e S3_BUCKET="gregburek-buildpack-pgbouncer" \
+  your-username/pgbouncer-builder
 ```
 
 ## Publishing buildpack updates
