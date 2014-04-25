@@ -12,10 +12,10 @@ git apply /pgbouncer-patch
 make
 make install
 
-cd /app/vendor
-tar -zcf - pgbouncer | /gof3r put -b $S3_BUCKET -k pgbouncer-$PGBOUNCER_VERSION-heroku.tgz
+cd /app/vendor/pgbouncer
+tar -zcf - . | /gof3r put -b $S3_BUCKET -k pgbouncer-$PGBOUNCER_VERSION-heroku.tgz
 
-cd -
+cd /
 
 if [ ! -f "/var/cache/stunnel-$STUNNEL_VERSION.tar.gz" ]; then
   wget -q --no-check-certificate -O /var/cache/stunnel-$STUNNEL_VERSION.tar.gz https://www.stunnel.org/downloads/stunnel-$STUNNEL_VERSION.tar.gz
@@ -29,5 +29,5 @@ cd stunnel-$STUNNEL_VERSION
 make
 make install
 
-cd /app/vendor
-tar -zcf - stunnel | /gof3r put -b $S3_BUCKET -k stunnel-$STUNNEL_VERSION.tgz
+cd /app/vendor/stunnel
+tar -zcf - . | /gof3r put -b $S3_BUCKET -k stunnel-$STUNNEL_VERSION.tgz
