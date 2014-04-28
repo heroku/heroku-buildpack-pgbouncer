@@ -26,7 +26,8 @@ Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgB
 
 
 Disable Prepared Statements
------ With Rails 4.1, you can disable prepared statements by appending
+-----
+With Rails 4.1, you can disable prepared statements by appending
 `?prepared_statements=false` to the database's URI.  Set the
 `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack to do
 that for you.
