@@ -111,7 +111,7 @@ It is possible to connect to multiple databases through pgbouncer by setting
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/deamhhcj6q0d31
 
 ### Don't use with Octopus
-(Octopus)[https://github.com/tchandy/octopus] is a ruby gem that allows for
+[Octopus](https://github.com/tchandy/octopus) is a ruby gem that allows for
 using a leader db for writes and a hot standby follower for reads, which the
 project refers to as [Replication](https://github.com/tchandy/octopus#replication).
 PGBouncer doesn't do well with this in two ways:
@@ -122,10 +122,10 @@ PGBouncer doesn't do well with this in two ways:
 your leader db URL will not match `DATABASE_URL`, leading it to be used as a
 read only follower, doubling the number of connections. A work around is to set
 `PGBOUNCER_URLS` to include `DATABASE_URL` as well as the
-`HEROKU_POSTGRESQL_.*_URL` form of your leader. Octopus will then respect the
+`HEROKU_POSTGRESQL_.*_URL` of the leader. Octopus will then respect the
 leader URL and PGBouncer will deduplicate the connections.
 
-2. PGBouncer can't destinguish between a leader and follower db, as they share
+2. PGBouncer can't distinguish between a leader and follower db, as they share
    db name and creds. Your app will round robin between them, leaving some
 writes to go to the follower and some reads to go to the leader. It is not
 recommended to PGBounce a leader and follower db from inside the dyno.
