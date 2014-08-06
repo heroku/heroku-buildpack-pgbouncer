@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+# bin/compile <build-dir> <cache-dir> <env-dir>
 
 # fail fast
 set -e
@@ -38,14 +38,16 @@ function package_download() {
   engine="$1"
   version="$2"
   location="$3"
+  stack="$4"
 
   mkdir -p $location
-  package="https://${S3_BUCKET}.s3.amazonaws.com/$engine-$version.tgz"
+  package="https://${S3_BUCKET}.s3.amazonaws.com/$stack/$engine-$version.tgz"
   curl $package -s -o - | tar xzf - -C $location
 }
 
 echo "Using pgbouncer version: ${PGBOUNCER_VERSION}" | indent
 echo "Using stunnel version: ${STUNNEL_VERSION}" | indent
+echo "Using stack version: ${STACK}" | indent
 
 # vendor directories
 VENDORED_PGBOUNCER="vendor/pgbouncer"
@@ -55,13 +57,13 @@ VENDORED_STUNNEL="vendor/stunnel"
 PATH="$BUILD_DIR/$VENDORED_PGBOUNCER/bin:$PATH"
 echo "-----> Fetching and vendoring pgbouncer into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_PGBOUNCER"
-package_download "pgbouncer" "${PGBOUNCER_VERSION}" "${BUILD_DIR}/${VENDORED_PGBOUNCER}"
+package_download "pgbouncer" "${PGBOUNCER_VERSION}" "${BUILD_DIR}/${VENDORED_PGBOUNCER}" "${STACK}"
 
 # vendor stunnel into the slug
 PATH="$BUILD_DIR/$VENDORED_STUNNEL/bin:$PATH"
 echo "-----> Fetching and vendoring stunnel into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
-package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}"
+package_download "stunnel" "${STUNNEL_VERSION}" "${BUILD_DIR}/${VENDORED_STUNNEL}" "${STACK}"
 
 echo "-----> Moving the configuration generation script into app/bin"
 mkdir -p $BUILD_DIR/bin
