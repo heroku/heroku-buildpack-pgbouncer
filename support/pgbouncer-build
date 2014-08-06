@@ -13,7 +13,7 @@ make
 make install
 
 cd /app/vendor/pgbouncer
-tar -zcf - . | /gof3r put -b $S3_BUCKET -k pgbouncer-$PGBOUNCER_VERSION-heroku.tgz
+tar -zcf - . | /gof3r put -b $S3_BUCKET -k cedar-14/pgbouncer-$PGBOUNCER_VERSION-heroku.tgz
 
 cd /
 
@@ -30,4 +30,4 @@ make
 make install
 
 cd /app/vendor/stunnel
-tar -zcf - . | /gof3r put -b $S3_BUCKET -k stunnel-$STUNNEL_VERSION.tgz
+tar -zcf - . | /gof3r put -b $S3_BUCKET -k cedar-14/stunnel-$STUNNEL_VERSION.tgz
