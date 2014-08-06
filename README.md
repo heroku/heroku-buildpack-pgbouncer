@@ -1,5 +1,4 @@
-Heroku buildpack: pgbouncer
-=========================
+# Heroku buildpack: pgbouncer
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that
 allows one to run pgbouncer and stunnel in a dyno alongside application code.
@@ -14,8 +13,7 @@ connection limits and Out Of Memory errors on the Postgres server.
 It uses [stunnel](http://stunnel.org/) and [pgbouncer](http://wiki.postgresql.org/wiki/PgBouncer).
 
 
-FAQ
-----
+## FAQ
 - Q: Why should I use transaction pooling?
 - A: You have many workers per dyno that hold open idle Postgres connections and
 and you want to reduce the number of unused connections. [This is a slightly more complete answer from stackoverflow](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
@@ -25,8 +23,7 @@ and you want to reduce the number of unused connections. [This is a slightly mor
 Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes) for all transaction pooling caveats.
 
 
-Disable Prepared Statements
------
+## Disable Prepared Statements
 With Rails 4.1, you can disable prepared statements by appending
 `?prepared_statements=false` to the database's URI.  Set the
 `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack to do
@@ -57,8 +54,7 @@ end
 ```
 
 
-Usage
------
+## Usage
 
 Example usage:
 
@@ -99,8 +95,7 @@ The buildpack will install and configure pgbouncer and stunnel to connect to
 to any process in the Procfile to run pgbouncer and stunnel alongside that process.
 
 
-Multiple Databases
-----
+## Multiple Databases
 It is possible to connect to multiple databases through pgbouncer by setting
 `PGBOUNCER_URLS` to a list of config vars. Example:
 
@@ -115,8 +110,27 @@ It is possible to connect to multiple databases through pgbouncer by setting
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db6h3bkfuk5430
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/deamhhcj6q0d31
 
-Tweak settings
------
+### Don't use with Octopus
+(Octopus)[https://github.com/tchandy/octopus] is a ruby gem that allows for
+using a leader db for writes and a hot standby follower for reads, which the
+project refers to as [Replication](https://github.com/tchandy/octopus#replication).
+PGBouncer doesn't do well with this in two ways:
+
+1. The recommended config for Octopus on Heroku adds all
+   `HEROKU_POSTGRESQL_.*_URL` as follower dbs, except those that match
+`DATABASE_URL`. As the pgbouncer buildpack changes `DATABASE_URL` on dyno boot,
+your leader db URL will not match `DATABASE_URL`, leading it to be used as a
+read only follower, doubling the number of connections. A work around is to set
+`PGBOUNCER_URLS` to include `DATABASE_URL` as well as the
+`HEROKU_POSTGRESQL_.*_URL` form of your leader. Octopus will then respect the
+leader URL and PGBouncer will deduplicate the connections.
+
+2. PGBouncer can't destinguish between a leader and follower db, as they share
+   db name and creds. Your app will round robin between them, leaving some
+writes to go to the follower and some reads to go to the leader. It is not
+recommended to PGBounce a leader and follower db from inside the dyno.
+
+## Tweak settings
 Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
 [pgbouncer](http://pgbouncer.projects.pgfoundry.org/doc/config.html#_generic_settings)
 and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what settings are right for you.
