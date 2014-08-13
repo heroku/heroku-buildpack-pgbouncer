@@ -110,25 +110,19 @@ It is possible to connect to multiple databases through pgbouncer by setting
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db6h3bkfuk5430
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/deamhhcj6q0d31
 
-### Don't use with Octopus
+### Be careful with Octopus
 [Octopus](https://github.com/tchandy/octopus) is a ruby gem that allows for
 using a leader db for writes and a hot standby follower for reads, which the
 project refers to as [Replication](https://github.com/tchandy/octopus#replication).
-PGBouncer doesn't do well with this in two ways:
+PGBouncer works with Octopus as long as:
 
-1. The recommended config for Octopus on Heroku adds all
-   `HEROKU_POSTGRESQL_.*_URL` as follower dbs, except those that match
-`DATABASE_URL`. As the pgbouncer buildpack changes `DATABASE_URL` on dyno boot,
-your leader db URL will not match `DATABASE_URL`, leading it to be used as a
-read only follower, doubling the number of connections. A work around is to set
-`PGBOUNCER_URLS` to include `DATABASE_URL` as well as the
-`HEROKU_POSTGRESQL_.*_URL` of the leader. Octopus will then respect the
-leader URL and PGBouncer will deduplicate the connections.
-
-2. PGBouncer can't distinguish between a leader and follower db, as they share
-   db name and creds. Your app will round robin between them, leaving some
-writes to go to the follower and some reads to go to the leader. It is not
-recommended to PGBounce a leader and follower db from inside the dyno.
+1. No follower can use PGBouncer. The same creds for leader and follower will
+   result in PGBouncer sending some writes to the follower and throwing an
+error.
+2. You must set `PGBOUNCER_URLS` to include `DATABASE_URL` and the
+   `HEROKU_POSTGRESQL_.*_URL` of the leader. Otherwise, Octopus will
+attempt to use your leader as a read-only replica, potentially doubling your
+connection count.
 
 ## Tweak settings
 Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
