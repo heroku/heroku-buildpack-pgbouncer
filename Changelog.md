@@ -1,3 +1,8 @@
+## v0.3.1 (August 13, 2014)
+
+* Adds support for cedar-14 Heroku stack
+* Adds Octopus info to README
+
 ## v0.3.0 (April 24, 2014)
 
 * Adds PGBOUNCER_MAX_CLIENT_CONN, PGBOUNCER_CONNECTION_RETRY,
