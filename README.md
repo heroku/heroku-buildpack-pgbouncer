@@ -64,7 +64,7 @@ Example usage:
     $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
     $ cat .buildpacks
-    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.3.0
+    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.3.1
     https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ cat Procfile
@@ -78,7 +78,8 @@ Example usage:
     =====> Downloading Buildpack: https://github.com/gregburek/heroku-buildpack-pgbouncer.git
     =====> Detected Framework: pgbouncer-stunnel
            Using pgbouncer version: 1.5.4
-           Using stunnel version: 4.56
+           Using stunnel version: 5.02
+           Using stack version: cedar
     -----> Fetching and vendoring pgbouncer into slug
     -----> Fetching and vendoring stunnel into slug
     -----> Moving the configuration generation script into app/bin
