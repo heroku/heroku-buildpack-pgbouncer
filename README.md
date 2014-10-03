@@ -64,7 +64,7 @@ Example usage:
     $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
     $ cat .buildpacks
-    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.3.1
+    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.3.2
     https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ cat Procfile
@@ -103,27 +103,25 @@ It is possible to connect to multiple databases through pgbouncer by setting
     $ heroku config:add PGBOUNCER_URLS="DATABASE_URL HEROKU_POSTGRESQL_ROSE_URL"
     $ heroku run bash
 
-    ~ $ env | grep 'HEROKU_POSTGRESQL_ROSE_UR\|DATABASE_URL'
+    ~ $ env | grep 'HEROKU_POSTGRESQL_ROSE_URL\|DATABASE_URL'
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@ec2-107-20-228-134.compute-1.amazonaws.com:5482/db6h3bkfuk5430
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@ec2-50-19-210-113.compute-1.amazonaws.com:5622/deamhhcj6q0d31
 
     ~ $ bin/start-pgbouncer-stunnel env # filtered for brevity
-    HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db6h3bkfuk5430
-    DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/deamhhcj6q0d31
+    HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db2
+    DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/db1
 
-### Be careful with Octopus
-[Octopus](https://github.com/tchandy/octopus) is a ruby gem that allows for
-using a leader db for writes and a hot standby follower for reads, which the
-project refers to as [Replication](https://github.com/tchandy/octopus#replication).
-PGBouncer works with Octopus as long as:
+## Follower Replica Databases
+As of v0.3.2 of this buildpack, it is possible to use pgbouncer to connect to
+multiple databases that share a database name, such as a leader and follower.
+To use, add the follower's config var to `PGBOUNCER_URLS` as detailed in the
+[Multiple Databases](#multiple-databases) section.
 
-1. No follower can use PGBouncer. The same creds for leader and follower will
-   result in PGBouncer sending some writes to the follower and throwing an
-error.
-2. You must set `PGBOUNCER_URLS` to include `DATABASE_URL` and the
-   `HEROKU_POSTGRESQL_.*_URL` of the leader. Otherwise, Octopus will
-attempt to use your leader as a read-only replica, potentially doubling your
-connection count.
+If you are using [Octopus](https://github.com/tchandy/octopus)
+[Replication](https://github.com/tchandy/octopus#replication) to send reads to
+a replica, make sure to include the color url of your leader in the
+`SLAVE_DISABLED_FOLLOWERS` blacklist. Otherwise, Octopus will attempt to use
+your leader as a read-only replica, potentially doubling your connection count.
 
 ## Tweak settings
 Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
