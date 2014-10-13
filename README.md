@@ -140,5 +140,6 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is yes
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
+- `PGBOUNCER_IDLE_TRANSACTION_TIMEOUT` Default is 0.0
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
