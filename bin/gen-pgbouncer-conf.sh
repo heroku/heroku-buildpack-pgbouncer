@@ -38,6 +38,7 @@ pool_mode = ${POOL_MODE}
 server_reset_query = ${SERVER_RESET_QUERY}
 max_client_conn = ${PGBOUNCER_MAX_CLIENT_CONN:-100}
 default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-1}
+min_pool_size = ${PGBOUNCER_MIN_POOL_SIZE:-0}
 reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-1}
 reserve_pool_timeout = ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-5.0}
 log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
