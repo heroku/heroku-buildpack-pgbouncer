@@ -44,10 +44,11 @@ run-pgbouncer() {
   rm -f "$psmgr"
 
   # Clean up any running processes.
-  # SIGTERM application just in case something else crashed.
-  # If the dyno is shutting down, then SIGTERM has already been sent.
+  # SIGTERM the application's process group (hence the negative PID), just in
+  # case something else crashed. If the dyno is shutting down, then SIGTERM
+  # has already been sent.
   at "kill-app pid=$pid"
-  kill -SIGTERM $pid
+  kill -SIGTERM -$pid
 
   # Wait for the app to finish.
   at "wait-app pid=$pid"
@@ -90,9 +91,9 @@ aux-start() {
     # Start child in the background.
     "$@" &
 
-    # Translate SIGHUP to the appropriate signal to stop the child
-    # (anything except SIGTERM which is ignored). Since this doesn't
-    # exit, it won't cancel the wait.
+    # Translate SIGHUP to the appropriate signal to stop the child (anything
+    # except SIGTERM which is ignored). This *will* cancel the wait and may
+    # lead to the outer subshell exiting before the aux process
     trap "kill -$signal $!" SIGHUP
 
     # Wait for child to finish, either by crash or by $signal
@@ -121,10 +122,14 @@ app-start() {
     # SIGTERM on shutdown.
     "$@" &
 
-    # Translate SIGHUP/SIGTERM to the appropriate signal to stop the child
-    # (probably SIGTERM in this case). Since this doesn't exit, it won't
-    # cancel the wait.
-    trap "kill -$signal $!" SIGHUP SIGTERM
+    # Translate SIGHUP to the appropriate signal to stop the child
+    # (probably SIGTERM in this case). This *will* cancel the wait and may
+    # lead to the outer subshell exiting before the app.
+    trap "kill -$signal $!" SIGHUP
+
+    # Ignore SIGTERM because the dyno will broadcast it to all children --
+    # there is no need to translate it.
+    trap "" SIGTERM
 
     # Wait for the app to finish, either by crash or by $signal
     wait
