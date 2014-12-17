@@ -20,7 +20,9 @@ options = SINGLE_ECDH_USE
 options = SINGLE_DH_USE
 socket = r:TCP_NODELAY=1
 options = NO_SSLv3
-options = NO_TICKET
+if [ $ENABLE_STUNNEL_AMAZON_RDS_FIX == 1 ]; then
+  echo "options = NO_TICKET"
+fi
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 EOFEOF
 
