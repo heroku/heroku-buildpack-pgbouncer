@@ -12,7 +12,6 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
 fi
 
 # Enable this option to prevent stunnel failure with Amazon RDS when a dyno resumes after sleeping
-AMAZON_RDS_STUNNEL_OPTION = ''
 if [ $ENABLE_STUNNEL_AMAZON_RDS_FIX == 1 ]; then
   AMAZON_RDS_STUNNEL_OPTION = "options = NO_TICKET"
 fi
@@ -26,7 +25,7 @@ options = SINGLE_ECDH_USE
 options = SINGLE_DH_USE
 socket = r:TCP_NODELAY=1
 options = NO_SSLv3
-$AMAZON_RDS_STUNNEL_OPTION
+${AMAZON_RDS_STUNNEL_OPTION}
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 EOFEOF
 
