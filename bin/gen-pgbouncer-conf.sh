@@ -20,6 +20,7 @@ options = SINGLE_ECDH_USE
 options = SINGLE_DH_USE
 socket = r:TCP_NODELAY=1
 options = NO_SSLv3
+options = NO_TICKET
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 EOFEOF
 
