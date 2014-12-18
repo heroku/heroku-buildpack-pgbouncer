@@ -1,3 +1,9 @@
+## v0.3.3 (December 18, 2014)
+
+* Improves SIGTERM signal handling in wrapper script (thanks michaeldiscala)
+* Adds ENABLE_STUNNEL_AMAZON_RDS_FIX (thanks edwardotis)
+* Upgrades to stunnel v5.08
+
 ## v0.3.2 (October 2, 2014)
 
 * Adds support for dbs with the same db name, such as leaders and followers
