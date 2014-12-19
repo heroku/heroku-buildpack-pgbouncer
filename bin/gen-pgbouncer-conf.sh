@@ -8,12 +8,13 @@ n=1
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
 # http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
 if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
-    SERVER_RESET_QUERY="DISCARD ALL;"
+  SERVER_RESET_QUERY="DISCARD ALL;"
 fi
 
 # Enable this option to prevent stunnel failure with Amazon RDS when a dyno resumes after sleeping
-AMAZON_RDS_STUNNEL_OPTION=""
-if [ $ENABLE_STUNNEL_AMAZON_RDS_FIX == 1 ]; then
+if [ -z "${ENABLE_STUNNEL_AMAZON_RDS_FIX}" ]; then
+  AMAZON_RDS_STUNNEL_OPTION=""
+else
   AMAZON_RDS_STUNNEL_OPTION="options = NO_TICKET"
 fi
 
