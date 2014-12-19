@@ -12,7 +12,11 @@ unset GIT_DIR
 
 # config
 PGBOUNCER_VERSION="1.5.4-heroku"
-STUNNEL_VERSION="5.08"
+if [ "$STACK" == "cedar-14" ]; then
+  STUNNEL_VERSION="5.08"
+else
+  STUNNEL_VERSION="5.02"
+fi
 S3_BUCKET="gregburek-buildpack-pgbouncer"
 
 # parse and derive params
