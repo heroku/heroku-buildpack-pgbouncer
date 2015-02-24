@@ -29,7 +29,7 @@ With Rails 4.1, you can disable prepared statements by appending
 `PGBOUNCER_PREPARED_STATEMENTS` config var to `false` for the buildpack to do
 that for you.
 
-Rails versions 4.0.0 - 4.0.3, reportedly can't diable prepared statements at
+Rails versions 4.0.0 - 4.0.3, reportedly can't disable prepared statements at
 all. Make sure your framework is up to date before troubleshooting prepared
 statements failures.
 
