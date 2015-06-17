@@ -131,6 +131,7 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_POOL_MODE` Default is transaction
 - `PGBOUNCER_MAX_CLIENT_CONN` Default is 100
 - `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
+- `PGBOUNCER_MIN_POOL_SIZE` Default is 0 (disabled)
 - `PGBOUNCER_RESERVE_POOL_SIZE` Default is 1
 - `PGBOUNCER_RESERVE_POOL_TIMEOUT` Default is 5.0 seconds
 - `PGBOUNCER_URLS` Default is DATABASE_URL
@@ -140,6 +141,10 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is yes
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
+- `PGBOUNCER_QUERY_TIMEOUT` Default is 0.0 (disabled)
+- `PGBOUNCER_QUERY_WAIT_TIMEOUT` Default is 0.0 (disabled)
+- `PGBOUNCER_CLIENT_IDLE_TIMEOUT` Default is 0.0 (disabled)
+- `PGBOUNCER_IDLE_TRANSACTION_TIMEOUT` Default is 0.0 (disabled)
 
 - `ENABLE_STUNNEL_AMAZON_RDS_FIX` Default is 0. Set to 1 if you are connecting to an Amazon RDS instance of postgres.
  Ensures that stunnel will work correctly after a dyno resumes from sleep. Otherwise, the dyno will lose connectivity to RDS.
