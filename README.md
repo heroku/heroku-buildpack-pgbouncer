@@ -138,9 +138,9 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_SERVER_IDLE_TIMEOUT` Default is 600.0 seconds
 - `PGBOUNCER_URLS` should contain all config variables that will be overridden to connect to pgbouncer. For example, set this to `AMAZON_RDS_URL` to send RDS connections through pgbouncer. The default is `DATABASE_URL`.
 - `PGBOUNCER_CONNECTION_RETRY` Default is no
-- `PGBOUNCER_LOG_CONNECTIONS` Default is yes
-- `PGBOUNCER_LOG_DISCONNECTIONS` Default is yes
-- `PGBOUNCER_LOG_POOLER_ERRORS` Default is yes
+- `PGBOUNCER_LOG_CONNECTIONS` Default is 1
+- `PGBOUNCER_LOG_DISCONNECTIONS` Default is 1
+- `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
 
