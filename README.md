@@ -143,7 +143,7 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
-
+- `PGBOUNCER_STUNNEL_LOGLEVEL` Default is notice (5). Set this var to pass a syslog level name or number value to stunnel.  This corresponds to the stunnel global configuration option called "debug".
 - `ENABLE_STUNNEL_AMAZON_RDS_FIX` Default is unset. Set this var if you are connecting to an Amazon RDS instance of postgres.
  Adds `options = NO_TICKET` which is documented to make stunnel work correctly after a dyno resumes from sleep. Otherwise, the dyno will lose connectivity to RDS.
 
