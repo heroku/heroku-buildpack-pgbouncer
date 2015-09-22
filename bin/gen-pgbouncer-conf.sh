@@ -29,6 +29,7 @@ socket = r:TCP_NODELAY=1
 options = NO_SSLv3
 ${AMAZON_RDS_STUNNEL_OPTION}
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
 EOFEOF
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
