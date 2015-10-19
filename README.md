@@ -2,8 +2,7 @@
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that
 allows one to run pgbouncer and stunnel in a dyno alongside application code.
-It is meant to be used in conjunction with other buildpacks as part of a
-[multi-buildpack](https://github.com/ddollar/heroku-buildpack-multi).
+It is meant to be [used in conjunction with other buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
 The primary use of this buildpack is to allow for transaction pooling of
 PostgreSQL database connections among multiple workers in a dyno. For example,
@@ -59,36 +58,36 @@ end
 Example usage:
 
     $ ls -a
-    .buildpacks  Gemfile  Gemfile.lock  Procfile  config/  config.ru
-
-    $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
-
-    $ cat .buildpacks
-    https://github.com/gregburek/heroku-buildpack-pgbouncer.git#v0.3.3
-    https://github.com/heroku/heroku-buildpack-ruby.git
-
+    Gemfile  Gemfile.lock  Procfile  config/  config.ru
+   
+    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
+    Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
+    Run `git push heroku master` to create a new release using this buildpack.
+    
+    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ruby
+    Buildpack added. Next release on pgbouncer-test-app will use:
+      1. https://github.com/heroku/heroku-buildpack-pgbouncer
+      2. https://github.com/heroku/heroku-buildpack-ruby
+    Run `git push heroku master` to create a new release using these buildpacks.
+   
     $ cat Procfile
     web:    bin/start-pgbouncer-stunnel bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
     worker: bundle exec rake worker
-
+   
     $ git push heroku master
     ...
-    -----> Fetching custom git buildpack... done
     -----> Multipack app detected
-    =====> Downloading Buildpack: https://github.com/gregburek/heroku-buildpack-pgbouncer.git
-    =====> Detected Framework: pgbouncer-stunnel
-           Using pgbouncer version: 1.5.4
-           Using stunnel version: 5.02
-           Using stack version: cedar
+    -----> Fetching custom git buildpack... done
+    -----> pgbouncer-stunnel app detected
+           Using pgbouncer version: 1.5.4-heroku
+           Using stunnel version: 5.08
+           Using stack version: cedar-14
     -----> Fetching and vendoring pgbouncer into slug
     -----> Fetching and vendoring stunnel into slug
     -----> Moving the configuration generation script into app/bin
     -----> Moving the start-pgbouncer-stunnel script into app/bin
     -----> pgbouncer/stunnel done
-    =====> Downloading Buildpack: https://github.com/heroku/heroku-buildpack-ruby.git
-    =====> Detected Framework: Ruby/Rack
-    -----> Using Ruby version: ruby-1.9.3
-    -----> Installing dependencies using Bundler version 1.3.2
+    -----> Fetching custom git buildpack... done
     ...
 
 The buildpack will install and configure pgbouncer and stunnel to connect to
