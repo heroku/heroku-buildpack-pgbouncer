@@ -61,8 +61,7 @@ EOFEOF
 
 for POSTGRES_URL in $POSTGRES_URLS
 do
-  eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
-  IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5:$6:$7" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
+  IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL | perl -lne 'print "$1:$2:$3:$4:$5:$6:$7" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
   CLIENT_DB_NAME="db${n}"
