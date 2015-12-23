@@ -52,8 +52,8 @@ reserve_pool_size = ${PGBOUNCER_RESERVE_POOL_SIZE:-1}
 reserve_pool_timeout = ${PGBOUNCER_RESERVE_POOL_TIMEOUT:-5.0}
 server_lifetime = ${PGBOUNCER_SERVER_LIFETIME:-3600}
 server_idle_timeout = ${PGBOUNCER_SERVER_IDLE_TIMEOUT:-600}
-log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
-log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
+log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-0}
+log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-0}
 log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 [databases]
@@ -62,13 +62,8 @@ EOFEOF
 for POSTGRES_URL in $POSTGRES_URLS
 do
   eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
-  DB=$(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1 $2 $3 $4 $5 $6 $7" if /^postgres(?:ql)?:\/\/([^:]+):([^@]+)@(.*?):(.*?)\/(.*?)(\\?.*)?$/')
-  DB_URI=( $DB )
-  DB_USER=${DB_URI[0]}
-  DB_PASS=${DB_URI[1]}
-  DB_HOST=${DB_URI[2]}
-  DB_PORT=${DB_URI[3]}
-  DB_NAME=${DB_URI[4]}
+  IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)?$/')
+
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
   CLIENT_DB_NAME="db${n}"
