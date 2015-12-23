@@ -1,7 +1,7 @@
 # Heroku buildpack: pgbouncer
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that
-allows one to run pgbouncer and stunnel in a dyno alongside application code.
+allows one to run pgbouncer and (optionally) stunnel in a dyno alongside application code.
 It is meant to be [used in conjunction with other buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
 The primary use of this buildpack is to allow for transaction pooling of
@@ -78,21 +78,26 @@ Example usage:
     ...
     -----> Multipack app detected
     -----> Fetching custom git buildpack... done
-    -----> pgbouncer-stunnel app detected
-           Using pgbouncer version: 1.5.4-heroku
-           Using stunnel version: 5.08
-           Using stack version: cedar-14
-    -----> Fetching and vendoring pgbouncer into slug
-    -----> Fetching and vendoring stunnel into slug
-    -----> Moving the configuration generation script into app/bin
-    -----> Moving the start-pgbouncer-stunnel script into app/bin
-    -----> pgbouncer/stunnel done
+    -----> pgbouncer-buildpack: Installed pgbouncer version 1.7 (compiled by <@d46031ed-5ec9-4ef3-9f54-7b595b94f848> at 2015-12-23 21:44:44) to app/bin
+    -----> pgbouncer-buildpack: Installed stunnel to app/bin
+    -----> pgbouncer-buildpack: Added start-pgbouncer to app/bin
+    -----> pgbouncer-buildpack: Added start-pgbouncer-stunnel to app/bin
+    -----> Moving the configuration generation scripts into app/bin
+    -----> pgbouncer-buildpack: done
     -----> Fetching custom git buildpack... done
     ...
 
 The buildpack will install and configure pgbouncer and stunnel to connect to
 `DATABASE_URL` over a SSL connection. Prepend `bin/start-pgbouncer-stunnel`
 to any process in the Procfile to run pgbouncer and stunnel alongside that process.
+
+
+## Non-SSL/stunnel usage
+
+In situations where you do not wish to use stunnel (such as in docker
+deployments with the default `postgres` buildpack) instead of prepending
+`bin/start-pgbouncer-stunnel` to your Procfile prepend
+`bin/start-pgbouncer`.
 
 
 ## Multiple Databases

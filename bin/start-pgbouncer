@@ -22,7 +22,6 @@ run-pgbouncer() {
   mkfifo "$psmgr"
 
   # Start processes.
-  aux-start stunnel SIGINT bin/stunnel config/stunnel-pgbouncer.conf
   aux-start pgbouncer SIGINT bin/pgbouncer config/pgbouncer.ini
   app-start SIGTERM "$@"
   pid=$!
@@ -66,7 +65,7 @@ run-pgbouncer() {
 config-gen() {
   # Generate config files
   at config-gen-start
-  source bin/gen-pgbouncer-stunnel-conf.sh
+  source bin/gen-pgbouncer-conf.sh
   at config-gen-end
 
   # Overwrite config vars with pgbouncer targets
