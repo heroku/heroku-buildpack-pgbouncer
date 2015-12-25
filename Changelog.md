@@ -1,3 +1,16 @@
+## v0.4.0 (December 23, 2015)
+
+* Added `bin/start-pgbouncer`, allowing users to bypass stunnel
+* Included pgbouncer and stunnel binaries in buildpack
+* Moved to pgbouncer 1.7 and stunnel 5.28
+* Removed support for legacy cedar platform. Only cedar-14 is supported
+* Allowed building of pgbouncer and stunnel via heroku itself
+* Put stunnel and pgbouncer binaries in `bin/` folder, and configs in `config/`
+* Changed regex for URLs to support password-less postgres users
+* Removed noisy per-client-connection and per-client-disconnection logging
+ default, reducing log size for apps that connect to pgbouncer once per request
+
+
 ## v0.3.3 (December 18, 2014)
 
 * Improves SIGTERM signal handling in wrapper script (thanks michaeldiscala)
