@@ -59,21 +59,21 @@ Example usage:
 
     $ ls -a
     Gemfile  Gemfile.lock  Procfile  config/  config.ru
-   
+
     $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
     Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
     Run `git push heroku master` to create a new release using this buildpack.
-    
+
     $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ruby
     Buildpack added. Next release on pgbouncer-test-app will use:
       1. https://github.com/heroku/heroku-buildpack-pgbouncer
       2. https://github.com/heroku/heroku-buildpack-ruby
     Run `git push heroku master` to create a new release using these buildpacks.
-   
+
     $ cat Procfile
     web:    bin/start-pgbouncer-stunnel bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
     worker: bundle exec rake worker
-   
+
     $ git push heroku master
     ...
     -----> Multipack app detected
