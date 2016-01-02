@@ -1,33 +1,34 @@
 set -e
 
-if [ ! -f "/var/cache/pgbouncer-$PGBOUNCER_VERSION.tar.gz" ]; then
-  wget -q -O /var/cache/pgbouncer-$PGBOUNCER_VERSION.tar.gz http://pgfoundry.org/frs/download.php/3393/pgbouncer-$PGBOUNCER_VERSION.tar.gz
-fi
+PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.7}
+STUNNEL_VERSION=${STUNNEL_VERSION-5.28}
 
-tar zxf /var/cache/pgbouncer-$PGBOUNCER_VERSION.tar.gz
+pgbouncer_tarball_url=https://pgbouncer.github.io/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
+stunnel_tarball_url=https://www.stunnel.org/downloads/stunnel-${STUNNEL_VERSION}.tar.gz
 
-cd pgbouncer-$PGBOUNCER_VERSION
-git apply /pgbouncer-patch
-./configure --prefix=/app/vendor/pgbouncer
-make
-make install
+echo "Downloading $pgbouncer_tarball_url"
+curl -L $pgbouncer_tarball_url | tar xzv
 
-cd /app/vendor/pgbouncer
-tar -zcf - . | /gof3r put -b $S3_BUCKET -k cedar-14/pgbouncer-$PGBOUNCER_VERSION-heroku.tgz
+(
+    cd pgbouncer-${PGBOUNCER_VERSION}
+    git apply /pgbouncer-patch
+    ./configure \
+        --prefix=/app/vendor/pgbouncer
+    make
+    make install
+)
 
-cd /
+tar -zcvf /external/pgbouncer-${PGBOUNCER_VERSION}-heroku.tgz -C /app/vendor/pgbouncer .
 
-if [ ! -f "/var/cache/stunnel-$STUNNEL_VERSION.tar.gz" ]; then
-  wget -q --no-check-certificate -O /var/cache/stunnel-$STUNNEL_VERSION.tar.gz https://www.stunnel.org/downloads/stunnel-$STUNNEL_VERSION.tar.gz
-  # cert is for mirt.net, which does not match stunnel.org
-fi
+echo "Downloading $stunnel_tarball_url"
+curl -L $stunnel_tarball_url | tar xzv
 
-tar zxf /var/cache/stunnel-$STUNNEL_VERSION.tar.gz
+(
+    cd stunnel-${STUNNEL_VERSION}
+    ./configure \
+        --prefix=/app/vendor/stunnel
+    make
+    make install
+)
 
-cd stunnel-$STUNNEL_VERSION
-./configure --prefix=/app/vendor/stunnel
-make
-make install
-
-cd /app/vendor/stunnel
-tar -zcf - . | /gof3r put -b $S3_BUCKET -k cedar-14/stunnel-$STUNNEL_VERSION.tgz
+tar -zcvf /external/stunnel-${STUNNEL_VERSION}.tgz -C /app/vendor/stunnel .
