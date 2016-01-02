@@ -10,7 +10,7 @@ RUN mv gof3r_0.3.2_linux_amd64/gof3r .
 RUN rm -rf gof3r_0.3.2_linux_amd64*
 
 ADD pgbouncer-build pgbouncer-build
-ADD pgbouncer-1.5.4-sigterm.diff pgbouncer-patch
+ADD 0001-Disable-SIGTERM.patch pgbouncer-patch
 
 CMD ./pgbouncer-build
 
