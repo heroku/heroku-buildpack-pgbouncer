@@ -1,3 +1,14 @@
+## v0.3.4 (January 2, 2015)
+
+* Updates binary versions to pgbouncer 1.7 and stunnel 5.28
+* Uses `docker-compose up` for building binaries
+* Vendors binaries directly into this repo instead of pulling from s3
+* Removes cedar-10 version switch as that stack is EOL
+* Adds README warning of excessive logging if non-persistent database
+  connections are used
+* Options at the end of connection url are now kept on purpose, but are still
+  discouraged
+
 ## v0.3.3 (December 18, 2014)
 
 * Improves SIGTERM signal handling in wrapper script (thanks michaeldiscala)
