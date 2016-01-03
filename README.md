@@ -1,16 +1,14 @@
 # Heroku buildpack: pgbouncer
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) that
-allows one to run pgbouncer and stunnel in a dyno alongside application code.
-It is meant to be [used in conjunction with other buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
+allows one to run pgbouncer in a dyno alongside application code.  It is meant
+to be [used in conjunction with other
+buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
 The primary use of this buildpack is to allow for transaction pooling of
 PostgreSQL database connections among multiple workers in a dyno. For example,
 10 unicorn workers would be able to share a single database connection, avoiding
 connection limits and Out Of Memory errors on the Postgres server.
-
-It uses [stunnel](http://stunnel.org/) and [pgbouncer](http://wiki.postgresql.org/wiki/PgBouncer).
-
 
 ## FAQ
 - Q: Why should I use transaction pooling?
@@ -71,28 +69,27 @@ Example usage:
     Run `git push heroku master` to create a new release using these buildpacks.
 
     $ cat Procfile
-    web:    bin/start-pgbouncer-stunnel bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
+    web:    bin/start-pgbouncer bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
     worker: bundle exec rake worker
 
     $ git push heroku master
     ...
     -----> Multipack app detected
     -----> Fetching custom git buildpack... done
-    -----> pgbouncer-stunnel app detected
-           Using pgbouncer version: 1.5.4-heroku
-           Using stunnel version: 5.08
-           Using stack version: cedar-14
+    -----> pgbouncer app detected
+           Using pgbouncer version: 1.7-heroku
     -----> Fetching and vendoring pgbouncer into slug
-    -----> Fetching and vendoring stunnel into slug
     -----> Moving the configuration generation script into app/bin
-    -----> Moving the start-pgbouncer-stunnel script into app/bin
-    -----> pgbouncer/stunnel done
+    -----> Moving the start-pgbouncer script into app/bin
+    -----> pgbouncer done
     -----> Fetching custom git buildpack... done
     ...
 
-The buildpack will install and configure pgbouncer and stunnel to connect to
-`DATABASE_URL` over a SSL connection. Prepend `bin/start-pgbouncer-stunnel`
-to any process in the Procfile to run pgbouncer and stunnel alongside that process.
+
+The buildpack will install and configure pgbouncer to connect to
+`DATABASE_URL` over a TLS connection, where available. Prepend
+`bin/start-pgbouncer` to any process in the Procfile to run pgbouncer alongside
+that process.
 
 
 ## Multiple Databases
@@ -106,7 +103,7 @@ It is possible to connect to multiple databases through pgbouncer by setting
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@ec2-107-20-228-134.compute-1.amazonaws.com:5482/db6h3bkfuk5430
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@ec2-50-19-210-113.compute-1.amazonaws.com:5622/deamhhcj6q0d31
 
-    ~ $ bin/start-pgbouncer-stunnel env # filtered for brevity
+    ~ $ bin/start-pgbouncer env # filtered for brevity
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db2
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/db1
 
@@ -124,8 +121,13 @@ your leader as a read-only replica, potentially doubling your connection count.
 
 ## Tweak settings
 Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
+<<<<<<< HEAD
 [pgbouncer](https://pgbouncer.github.io/config.html)
 and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what settings are right for you.
+=======
+[pgbouncer](http://pgbouncer.projects.pgfoundry.org/doc/config.html#_generic_settings)
+configurations to see what settings are right for you.
+>>>>>>> Remove stunnel and use pgbouncer TLS
 
 - `PGBOUNCER_POOL_MODE` Default is transaction
 - `PGBOUNCER_MAX_CLIENT_CONN` Default is 100
@@ -142,9 +144,12 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
+<<<<<<< HEAD
 - `PGBOUNCER_STUNNEL_LOGLEVEL` Default is notice (5). Set this var to pass a syslog level name or number value to stunnel.  This corresponds to the stunnel global configuration option called "debug".
 - `ENABLE_STUNNEL_AMAZON_RDS_FIX` Default is unset. Set this var if you are connecting to an Amazon RDS instance of postgres.
  Adds `options = NO_TICKET` which is documented to make stunnel work correctly after a dyno resumes from sleep. Otherwise, the dyno will lose connectivity to RDS.
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
+=======
+>>>>>>> Remove stunnel and use pgbouncer TLS
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
