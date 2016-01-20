@@ -59,21 +59,21 @@ Example usage:
 
     $ ls -a
     Gemfile  Gemfile.lock  Procfile  config/  config.ru
-   
+
     $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
     Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
     Run `git push heroku master` to create a new release using this buildpack.
-    
+
     $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ruby
     Buildpack added. Next release on pgbouncer-test-app will use:
       1. https://github.com/heroku/heroku-buildpack-pgbouncer
       2. https://github.com/heroku/heroku-buildpack-ruby
     Run `git push heroku master` to create a new release using these buildpacks.
-   
+
     $ cat Procfile
     web:    bin/start-pgbouncer-stunnel bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
     worker: bundle exec rake worker
-   
+
     $ git push heroku master
     ...
     -----> Multipack app detected
@@ -137,8 +137,8 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_SERVER_IDLE_TIMEOUT` Default is 600.0 seconds
 - `PGBOUNCER_URLS` should contain all config variables that will be overridden to connect to pgbouncer. For example, set this to `AMAZON_RDS_URL` to send RDS connections through pgbouncer. The default is `DATABASE_URL`.
 - `PGBOUNCER_CONNECTION_RETRY` Default is no
-- `PGBOUNCER_LOG_CONNECTIONS` Default is 1
-- `PGBOUNCER_LOG_DISCONNECTIONS` Default is 1
+- `PGBOUNCER_LOG_CONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
+- `PGBOUNCER_LOG_DISCONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
