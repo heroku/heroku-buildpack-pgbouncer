@@ -56,6 +56,14 @@ log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
 log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
 log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
+
+; PW modification: enable hard-coded user name which can issue the
+; SHOW commands to get stats from pgbouncer.
+;
+; - jhw@prosperworks.com, 2016-02-09
+;
+stats_users = pgbouncer-stats
+
 [databases]
 EOFEOF
 
