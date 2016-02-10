@@ -110,7 +110,7 @@ EOFEOF
   #
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
-"pgbouncer-stats" "md5dfeafe5f5d25a3393d3dfa6f2d8d8d8c"
+"pgbouncer-stats" "vulnerable"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
