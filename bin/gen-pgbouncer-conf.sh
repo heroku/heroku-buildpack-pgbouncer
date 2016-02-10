@@ -97,20 +97,20 @@ EOFEOF
 
   # The password field for pgbouncer-stats was computed like so:
   #
-  #   echo -n PASSWORDpgbouncer-user | md5sum | awk '{print $1}'
+  #   echo -n PASSWORDpgbouncer-stats | md5sum | awk '{print "md5" $1}'
   #
   # ...except PASSWORD was something else.  See ali/bin/launcher.sh
   # for the actual password.
   #
-  # This is as above where DB_MD5_PASS is calculated, and also per
-  # https://pgbouncer.github.io/config.html, in the section
+  # This is much like above where DB_MD5_PASS is calculated, and also
+  # per https://pgbouncer.github.io/config.html, in the section
   # "Authentication file format".
   #
   # - jhw@prosperworks.com, 2016-02-09
   #
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
-"pgbouncer-stats" "vulnerable"
+"pgbouncer-stats" "md572c5dd36a292efeaf13075b5eeb28693"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
