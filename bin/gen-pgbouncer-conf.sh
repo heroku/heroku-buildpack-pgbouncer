@@ -94,8 +94,23 @@ connect = $DB_HOST:$DB_PORT
 retry = ${PGBOUNCER_CONNECTION_RETRY:-"no"}
 EOFEOF
 
+
+  # The password field for pgbouncer-stats was computed like so:
+  #
+  #   echo -n PASSWORDpgbouncer-user | md5sum | awk '{print $1}'
+  #
+  # ...except PASSWORD was something else.  See ali/bin/launcher.sh
+  # for the actual password.
+  #
+  # This is as above where DB_MD5_PASS is calculated, and also per
+  # https://pgbouncer.github.io/config.html, in the section
+  # "Authentication file format".
+  #
+  # - jhw@prosperworks.com, 2016-02-09
+  #
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
+"pgbouncer-stats" "md5dfeafe5f5d25a3393d3dfa6f2d8d8d8c"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
