@@ -16,12 +16,27 @@ run-pgbouncer() {
   declare -A pids signals
 
   config-gen
+  
+  echo
+  echo
+  echo 1111111
+  
+  set
+  
+  echo
+  echo
+  echo
 
   # Use named pipe to detect exit of any subprocess.
   rm -f "$psmgr"
   mkfifo "$psmgr"
 
   # Start processes.
+  echo vendor/stunnel/stunnel-pgbouncer.conf
+  cat vendor/stunnel/stunnel-pgbouncer.conf
+  echo vendor/pgbouncer/pgbouncer.ini
+  cat vendor/pgbouncer/pgbouncer.ini
+  
   aux-start stunnel SIGINT vendor/stunnel/bin/stunnel vendor/stunnel/stunnel-pgbouncer.conf
   aux-start pgbouncer SIGINT vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini
   app-start SIGTERM "$@"
