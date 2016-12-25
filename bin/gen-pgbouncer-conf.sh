@@ -43,6 +43,18 @@ mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 foreground = yes
 
+options = NO_SSLv2
+options = SINGLE_ECDH_USE
+options = SINGLE_DH_USE
+socket = r:TCP_NODELAY=1
+options = NO_SSLv3
+${AMAZON_RDS_STUNNEL_OPTION}
+ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-debug}
+EOFEOF
+
+
+
 
 echo 3
 echo 3
@@ -54,28 +66,7 @@ echo 3
 echo 3
 echo 
 
-options = NO_SSLv2
-options = SINGLE_ECDH_USE
-options = SINGLE_DH_USE
-socket = r:TCP_NODELAY=1
-options = NO_SSLv3
-${AMAZON_RDS_STUNNEL_OPTION}
-ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-debug}
-EOFEOF
-
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-
-
-echo 4
-echo 4
-echo 4
-
-cat /app/vendor/pgbouncer/pgbouncer.ini
-
-echo 4
-echo 4
-echo 
 
 [pgbouncer]
 listen_addr = 127.0.0.1
@@ -103,6 +94,18 @@ stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 [databases]
 EOFEOF
 
+
+echo 4
+echo 4
+echo 4
+
+cat /app/vendor/pgbouncer/pgbouncer.ini
+
+echo 4
+echo 4
+echo 
+
+
 for POSTGRES_URL in $POSTGRES_URLS
 do
   eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
@@ -110,7 +113,8 @@ do
 
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
-  CLIENT_DB_NAME="db${n}"
+  CLIENT_DB_NAME=${DB_NAME}
+  #"db${n}"
 
 
 echo 5
