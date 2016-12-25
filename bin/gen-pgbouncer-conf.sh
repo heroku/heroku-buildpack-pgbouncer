@@ -4,7 +4,16 @@ POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
 POOL_MODE=${PGBOUNCER_POOL_MODE:-transaction}
 SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY}
 n=1
+
+echo 1
+echo 1
+echo 1
+
 set
+
+echo 1
+echo 1
+echo 1
 
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
 # http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
@@ -19,9 +28,31 @@ else
   AMAZON_RDS_STUNNEL_OPTION="options = NO_TICKET"
 fi
 
+
+echo 2
+echo 2
+echo 2
+
+set
+
+echo 2
+echo 2
+echo 2
+
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 foreground = yes
+
+
+echo 3
+echo 3
+echo 3
+
+cat /app/vendor/stunnel/stunnel-pgbouncer.conf
+
+echo 3
+echo 3
+echo 
 
 options = NO_SSLv2
 options = SINGLE_ECDH_USE
@@ -30,10 +61,22 @@ socket = r:TCP_NODELAY=1
 options = NO_SSLv3
 ${AMAZON_RDS_STUNNEL_OPTION}
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
+debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-debug}
 EOFEOF
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+
+
+echo 4
+echo 4
+echo 4
+
+cat /app/vendor/pgbouncer/pgbouncer.ini
+
+echo 4
+echo 4
+echo 
+
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
@@ -69,6 +112,17 @@ do
 
   CLIENT_DB_NAME="db${n}"
 
+
+echo 5
+echo 5
+echo 5
+
+set
+
+echo 5
+echo 5
+echo 5
+
   echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
 
   if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
@@ -96,6 +150,37 @@ $CLIENT_DB_NAME= dbname=$DB_NAME port=610${n}
 EOFEOF
 
   let "n += 1"
+  
+  
+echo 3
+echo 3
+echo 3
+
+cat /app/vendor/stunnel/stunnel-pgbouncer.conf
+
+echo 3
+echo 3
+echo 
+echo 4
+echo 4
+echo 4
+
+cat /app/vendor/pgbouncer/pgbouncer.ini
+
+echo 4
+echo 4
+echo 
+
+echo 6
+echo 6
+echo 6
+
+set
+
+echo 6
+echo 6
+echo 6
+  
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*
