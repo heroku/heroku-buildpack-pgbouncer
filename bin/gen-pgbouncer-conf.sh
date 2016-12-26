@@ -5,15 +5,15 @@ POOL_MODE=${PGBOUNCER_POOL_MODE:-transaction}
 SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY}
 n=1
 
-echo 1
-echo 1
-echo 1
+echo ------------------------------------------------------------------------------------
+echo Printing all values, before any change was made
+echo VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 set
 
-echo 1
-echo 1
-echo 1
+echo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+echo End
+echo ------------------------------------------------------------------------------------
 
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
 # http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
@@ -27,17 +27,6 @@ if [ -z "${ENABLE_STUNNEL_AMAZON_RDS_FIX}" ]; then
 else
   AMAZON_RDS_STUNNEL_OPTION="options = NO_TICKET"
 fi
-
-
-echo 2
-echo 2
-echo 2
-
-set
-
-echo 2
-echo 2
-echo 2
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
@@ -55,16 +44,16 @@ EOFEOF
 
 
 
-
-echo 3
-echo 3
-echo 3
+echo ------------------------------------------------------------------------------------
+echo Printing file: /app/vendor/stunnel/stunnel-pgbouncer.conf
+echo VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 cat /app/vendor/stunnel/stunnel-pgbouncer.conf
 
-echo 3
-echo 3
-echo 
+echo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+echo End
+echo ------------------------------------------------------------------------------------
+
 
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 
@@ -95,15 +84,17 @@ stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 EOFEOF
 
 
-echo 4
-echo 4
-echo 4
+
+echo ------------------------------------------------------------------------------------
+echo Printing file: /app/vendor/pgbouncer/pgbouncer.ini
+echo VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 cat /app/vendor/pgbouncer/pgbouncer.ini
 
-echo 4
-echo 4
-echo 
+echo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+echo End
+echo ------------------------------------------------------------------------------------
+
 
 
 for POSTGRES_URL in $POSTGRES_URLS
@@ -117,15 +108,17 @@ do
   #"db${n}"
 
 
-echo 5
-echo 5
-echo 5
+# echo ------------------------------------------------------------------------------------
+# echo Printing all values, after changes were made,
+# echo esspecially these keys were added: DB_USER DB_PASS DB_HOST DB_PORT DB_NAME CLIENT_DB_NAME
+# echo VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
-set
+# set
 
-echo 5
-echo 5
-echo 5
+# echo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# echo End
+# echo ------------------------------------------------------------------------------------
+
 
   echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
 
@@ -156,34 +149,35 @@ EOFEOF
   let "n += 1"
   
   
-echo 3
-echo 3
-echo 3
+# echo 3
+# echo 3
+# echo 3
 
-cat /app/vendor/stunnel/stunnel-pgbouncer.conf
+# cat /app/vendor/stunnel/stunnel-pgbouncer.conf
 
-echo 3
-echo 3
-echo 
-echo 4
-echo 4
-echo 4
+# echo 3
+# echo 3
+# echo 
+# echo 4
+# echo 4
+# echo 4
 
-cat /app/vendor/pgbouncer/pgbouncer.ini
+# cat /app/vendor/pgbouncer/pgbouncer.ini
 
-echo 4
-echo 4
-echo 
+# echo 4
+# echo 4
+# echo 
 
-echo 6
-echo 6
-echo 6
+
+echo ------------------------------------------------------------------------------------
+echo Printing all values, after all changes were made
+echo VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 set
 
-echo 6
-echo 6
-echo 6
+echo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+echo End
+echo ------------------------------------------------------------------------------------
   
 done
 
