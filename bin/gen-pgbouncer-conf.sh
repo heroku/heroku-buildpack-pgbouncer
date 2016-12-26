@@ -29,12 +29,10 @@ socket = r:TCP_NODELAY=1
 options = NO_SSLv3
 ${AMAZON_RDS_STUNNEL_OPTION}
 ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-debug}
+debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
 EOFEOF
 
-
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
@@ -60,8 +58,6 @@ log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 [databases]
 EOFEOF
-
-
 
 for POSTGRES_URL in $POSTGRES_URLS
 do
@@ -99,8 +95,6 @@ $CLIENT_DB_NAME= dbname=$DB_NAME port=610${n}
 EOFEOF
 
   let "n += 1"
-  
-  
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*
