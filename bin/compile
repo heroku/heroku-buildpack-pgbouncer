@@ -11,8 +11,13 @@ set -e
 unset GIT_DIR
 
 # config
-PGBOUNCER_VERSION="1.7-heroku"
-STUNNEL_VERSION="5.28"
+if [ "$STACK" == "heroku-16" ]; then
+  PGBOUNCER_VERSION="1.7.2-heroku"
+  STUNNEL_VERSION="5.40"
+else
+  PGBOUNCER_VERSION="1.7-heroku"
+  STUNNEL_VERSION="5.28"
+fi
 
 # parse and derive params
 BUILD_DIR=$1
