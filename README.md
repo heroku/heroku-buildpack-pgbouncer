@@ -64,7 +64,7 @@ Example usage:
     Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
     Run `git push heroku master` to create a new release using this buildpack.
 
-    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-ruby
+    $ heroku buildpacks:add heroku/ruby
     Buildpack added. Next release on pgbouncer-test-app will use:
       1. https://github.com/heroku/heroku-buildpack-pgbouncer
       2. https://github.com/heroku/heroku-buildpack-ruby
