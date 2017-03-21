@@ -19,6 +19,10 @@ else
 fi
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
+rm -f /app/vendor/stunnel/stunnel-pgbouncer.conf
+rm -f /app/vendor/pgbouncer/pgbouncer.ini
+rm -f /app/vendor/pgbouncer/users.txt
+
 cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 foreground = yes
 
