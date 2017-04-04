@@ -66,7 +66,7 @@ do
 
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
-  CLIENT_DB_NAME="db${n}"
+  CLIENT_DB_NAME=${DB_NAME}
 
   echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
 
