@@ -23,7 +23,7 @@ run-pgbouncer() {
 
   # Start processes.
   aux-start stunnel SIGINT vendor/stunnel/bin/stunnel vendor/stunnel/stunnel-pgbouncer.conf
-  aux-start pgbouncer SIGINT vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini
+  aux-start pgbouncer SIGINT vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini $PGBOUNCER_OPTIONS
   app-start SIGTERM "$@"
   pid=$!
 
