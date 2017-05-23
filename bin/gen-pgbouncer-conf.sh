@@ -56,6 +56,7 @@ log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
 log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
 log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
+admin_users = pgbouncer
 [databases]
 EOFEOF
 
@@ -96,6 +97,13 @@ EOFEOF
 
   let "n += 1"
 done
+
+DB_USER=pgbouncer
+DB_PASS=pgbouncer
+DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
+cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+"$DB_USER" "$DB_MD5_PASS"
+EOFEOF
 
 chmod go-rwx /app/vendor/pgbouncer/*
 chmod go-rwx /app/vendor/stunnel/*
