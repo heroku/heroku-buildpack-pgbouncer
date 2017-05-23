@@ -98,5 +98,12 @@ EOFEOF
   let "n += 1"
 done
 
+DB_USER=pgbouncer
+DB_PASS=pgbouncer
+DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
+cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+"$DB_USER" "$DB_MD5_PASS"
+EOFEOF
+
 chmod go-rwx /app/vendor/pgbouncer/*
 chmod go-rwx /app/vendor/stunnel/*
