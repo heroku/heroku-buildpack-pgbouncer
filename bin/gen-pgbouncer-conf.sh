@@ -25,6 +25,7 @@ foreground = yes
 options = NO_SSLv2
 options = SINGLE_ECDH_USE
 options = SINGLE_DH_USE
+options = NO_TICKET
 socket = r:TCP_NODELAY=1
 options = NO_SSLv3
 ${AMAZON_RDS_STUNNEL_OPTION}
@@ -79,7 +80,6 @@ do
 
   cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 [$POSTGRES_URL]
-client = yes
 protocol = pgsql
 accept  = /tmp/.s.PGSQL.610${n}
 connect = $DB_HOST:$DB_PORT
