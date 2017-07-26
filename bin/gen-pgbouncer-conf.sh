@@ -19,7 +19,7 @@ else
 fi
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
-cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
+cat > /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 foreground = yes
 
 options = NO_SSLv2
@@ -32,7 +32,7 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
 EOFEOF
 
-cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+cat > /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
@@ -86,7 +86,7 @@ connect = $DB_HOST:$DB_PORT
 retry = ${PGBOUNCER_CONNECTION_RETRY:-"no"}
 EOFEOF
 
-  cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+  cat > /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
 EOFEOF
 
