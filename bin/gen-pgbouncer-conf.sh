@@ -86,7 +86,7 @@ connect = $DB_HOST:$DB_PORT
 retry = ${PGBOUNCER_CONNECTION_RETRY:-"no"}
 EOFEOF
 
-  cat > /app/vendor/pgbouncer/users.txt << EOFEOF
+  cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
 EOFEOF
 
