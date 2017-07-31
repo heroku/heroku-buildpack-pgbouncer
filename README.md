@@ -124,7 +124,7 @@ your leader as a read-only replica, potentially doubling your connection count.
 
 ## Tweak settings
 Some settings are configurable through app config vars at runtime. Refer to the appropriate documentation for
-[pgbouncer](http://pgbouncer.projects.pgfoundry.org/doc/config.html#_generic_settings)
+[pgbouncer](https://pgbouncer.github.io/config.html)
 and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what settings are right for you.
 
 - `PGBOUNCER_POOL_MODE` Default is transaction
