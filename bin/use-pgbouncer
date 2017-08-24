@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Adapted from 
+set -e
+
+main() {
+  at pgbouncer-enabled
+  POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+
+  for POSTGRES_URL in $POSTGRES_URLS
+  do
+    at "mutating-${POSTGRES_URL}"
+    eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
+
+    pattern='^postgres(ql)?:\/\/([^:\/]+):([^@\/]*)@([^:\/?]+):([0-9]+)(\/[^?]*)?(\?[^#]*)?$'
+    [[ "$POSTGRES_URL_VALUE" =~ $pattern ]] || return 1;
+
+    db_user=${BASH_REMATCH[2]}
+    db_password=${BASH_REMATCH[3]}
+    db_host=${BASH_REMATCH[4]}
+    db_port=${BASH_REMATCH[5]}
+    db_path=${BASH_REMATCH[6]}
+    db_query=${BASH_REMATCH[7]}
+
+    at "adding-one-to-${db_port}"
+    client_port=$((db_port + 1))
+
+    export ${POSTGRES_URL}_PGBOUNCER=postgres://"$db_user":"$db_password"@"$db_host":"$client_port""$db_path""$db_query"
+    eval "$POSTGRES_URL=\$${POSTGRES_URL}_PGBOUNCER"
+  done
+  at starting-app
+  exec "$@"
+}
+
+at() {
+  echo "buildpack=pgbouncer at=$*"
+}
+
+[[ "$0" != "$BASH_SOURCE" ]] || main "$@"
