@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Adapted from 
-set -e
 
 main() {
   at pgbouncer-enabled
