@@ -66,3 +66,4 @@ load test/helper
   assert_line 'DATABASE_URL=postgres://user:pass@host:5433/name?query'
   assert_line 'OTHER_URL=postgres://user:pass@host2:5433/name?query'
 }
+
