@@ -6,4 +6,4 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq bats
 script:
-  - ./run_all.sh
+  - ./test/run_all.sh
