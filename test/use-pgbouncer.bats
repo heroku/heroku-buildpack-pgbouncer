@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load test/helper
+load helper
 
 @test "returns exit code of 1 with nothing to parse" {
   run bin/use-pgbouncer "printenv"

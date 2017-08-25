@@ -6,4 +6,4 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq bats
 script:
-  - env -i TERM=xterm bash -c "bats ./test.bats"
+  - ./run_all.sh
