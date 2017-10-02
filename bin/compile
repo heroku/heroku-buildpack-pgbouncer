@@ -67,4 +67,9 @@ mkdir -p $BUILD_DIR/bin
 cp "$BUILDPACK_DIR/bin/start-pgbouncer-stunnel" $BUILD_DIR/bin/
 chmod +x $BUILD_DIR/bin/start-pgbouncer-stunnel
 
+echo "-----> Moving the use-pgbouncer script into app/bin"
+mkdir -p $BUILD_DIR/bin
+cp "$BUILDPACK_DIR/bin/use-pgbouncer" $BUILD_DIR/bin/
+chmod +x $BUILD_DIR/bin/use-pgbouncer
+
 echo "-----> pgbouncer/stunnel done"
