@@ -93,7 +93,7 @@ EOFEOF
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-$CLIENT_DB_NAME= dbname=$DB_NAME port=610${n} connect_query='${PGBOUNCER_CONNECT_QUERY}'
+$CLIENT_DB_NAME= dbname=$DB_NAME port=610${n} connect_query='${PGBOUNCER_CONNECT_QUERY//\'/\'\'}'
 EOFEOF
 
   let "n += 1"
