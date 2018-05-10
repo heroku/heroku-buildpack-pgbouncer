@@ -19,7 +19,7 @@ else
 fi
 
 mkdir -p /app/vendor/stunnel/var/run/stunnel/
-cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
+cat > /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
 foreground = yes
 
 options = NO_SSLv2
@@ -32,9 +32,9 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
 EOFEOF
 
-cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+cat > /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
-listen_addr = localhost
+listen_addr = 127.0.0.1
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
@@ -56,6 +56,7 @@ log_connections = ${PGBOUNCER_LOG_CONNECTIONS:-1}
 log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
 log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
+ignore_startup_parameters = ${PGBOUNCER_IGNORE_STARTUP_PARAMETERS}
 
 ; PW modification: enable hard-coded user name which can issue the
 ; SHOW commands to get stats from pgbouncer.
