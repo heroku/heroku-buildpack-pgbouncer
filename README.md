@@ -156,5 +156,4 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_TCP_KEEPCNT` Default is 9.
 - `PGBOUNCER_TCP_KEEPIDLE` Default is 7200.
 - `PGBOUNCER_TCP_KEEPINTVL` Default is 75.
-
-For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
+- `PGBOUNCER_STATS_USERNAME` and `PGBOUNCER_STATS_PASSWORD` Set these to enable stats_users SHOW access to pgbouncer.
