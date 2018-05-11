@@ -1,7 +1,7 @@
 set -e
 
-PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.7}
-STUNNEL_VERSION=${STUNNEL_VERSION-5.28}
+PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.7.2}
+STUNNEL_VERSION=${STUNNEL_VERSION-5.40}
 
 pgbouncer_tarball_url=https://pgbouncer.github.io/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 stunnel_tarball_url=https://www.stunnel.org/downloads/stunnel-${STUNNEL_VERSION}.tar.gz
