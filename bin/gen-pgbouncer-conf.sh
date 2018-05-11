@@ -122,20 +122,6 @@ connect = $DB_HOST:$DB_PORT
 retry = ${PGBOUNCER_CONNECTION_RETRY:-"no"}
 EOFEOF
 
-
-  # The password field for pgbouncer-stats was computed like so:
-  #
-  #   echo -n PASSWORDpgbouncer-stats | md5sum | awk '{print "md5" $1}'
-  #
-  # ...except PASSWORD was something else.  See ali/bin/launcher.sh
-  # for the actual password.
-  #
-  # This is much like above where DB_MD5_PASS is calculated, and also
-  # per https://pgbouncer.github.io/config.html, in the section
-  # "Authentication file format".
-  #
-  # - jhw@prosperworks.com, 2016-02-09
-  #
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
 "pgbouncer-stats" "md572c5dd36a292efeaf13075b5eeb28693"
@@ -147,6 +133,23 @@ EOFEOF
 
   let "n += 1"
 done
+
+# The password field for pgbouncer-stats was computed like so:
+#
+#   echo -n PASSWORDpgbouncer-stats | md5sum | awk '{print "md5" $1}'
+#
+# ...except PASSWORD was something else.  See ali/bin/launcher.sh for
+# the actual password.
+#
+# This is much like above where DB_MD5_PASS is calculated, and also
+# per https://pgbouncer.github.io/config.html, in the section
+# "Authentication file format".
+#
+# - jhw@prosperworks.com, 2016-02-09
+#
+cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+"pgbouncer-stats" "md572c5dd36a292efeaf13075b5eeb28693"
+EOFEOF
 
 chmod go-rwx /app/vendor/pgbouncer/*
 chmod go-rwx /app/vendor/stunnel/*
