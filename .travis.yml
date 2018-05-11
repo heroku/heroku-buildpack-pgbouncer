@@ -5,5 +5,7 @@ before_install:
   - sudo add-apt-repository ppa:duggan/bats --yes
   - sudo apt-get update -qq
   - sudo apt-get install -qq bats
+  - sudo mkdir -p /app/vendor
+  - sudo chmod 777 /app/vendor
 script:
   - ./test/run_all.sh
