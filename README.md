@@ -146,5 +146,15 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `ENABLE_STUNNEL_AMAZON_RDS_FIX` Default is unset. Set this var if you are connecting to an Amazon RDS instance of postgres.
  Adds `options = NO_TICKET` which is documented to make stunnel work correctly after a dyno resumes from sleep. Otherwise, the dyno will lose connectivity to RDS.
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
+- `PGBOUNCER_PKT_BUF` Default is 4096.
+- `PGBOUNCER_MAX_PACKET_SIZE` Default is 2147483647.
+- `PGBOUNCER_LISTEN_BACKLOG` Default is 128.
+- `PGBOUNCER_SBUF_LOOPCNT` Default is 5.
+- `PGBOUNCER_SUSPEND_TIMEOUT` Default is 10.
+- `PGBOUNCER_TCP_DEFER_ACCEPT` Default is 45.
+- `PGBOUNCER_TCP_KEEPALIVE` Default is 1.
+- `PGBOUNCER_TCP_KEEPCNT` Default is 9.
+- `PGBOUNCER_TCP_KEEPIDLE` Default is 7200.
+- `PGBOUNCER_TCP_KEEPINTVL` Default is 75.
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
