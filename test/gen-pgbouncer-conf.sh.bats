@@ -84,12 +84,21 @@ load helper
   #
   assert grep    cognoscente    /app/vendor/pgbouncer/pgbouncer.ini
   assert grep -v arcanus        /app/vendor/pgbouncer/pgbouncer.ini
-  assert grep -v 'md5468.*559c' /app/vendor/pgbouncer/users.txt
+  assert grep -v 'md5e98.*12d3' /app/vendor/pgbouncer/users.txt
   #
   # user.txt should contain the username and the hashed form of the
   # password but not the plaintext password.
   #
   assert grep    cognoscente    /app/vendor/pgbouncer/users.txt
   assert grep -v arcanus        /app/vendor/pgbouncer/users.txt
-  assert grep    'md5468.*559c' /app/vendor/pgbouncer/users.txt
+  assert grep    'md5e98.*12d3' /app/vendor/pgbouncer/users.txt
+}
+
+@test "specific known-good username password pair" {
+  export PGBOUNCER_STATS_USERNAME=pgbouncer-stats
+  export PGBOUNCER_STATS_PASSWORD=naked
+  rm -f /app/vendor/pgbouncer/pgbouncer.ini
+  run bash bin/gen-pgbouncer-conf.sh
+  assert_success
+  assert grep 'md572c.*693' /app/vendor/pgbouncer/users.txt
 }

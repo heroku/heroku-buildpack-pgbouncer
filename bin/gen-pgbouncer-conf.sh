@@ -89,7 +89,7 @@ EOFEOF
 rm -f /app/vendor/pgbouncer/users.txt
 if [ -n "$PGBOUNCER_STATS_USERNAME" ] && [ -n "$PGBOUNCER_STATS_PASSWORD" ]
 then
-    STATS_MD5_PASS="md5"`echo -n ${PGBOUNCER_STATS_USERNAME}${PGBOUNCER_STATS_PASSWORD} | md5sum | awk '{print $1}'`
+    STATS_MD5_PASS="md5"`echo -n ${PGBOUNCER_STATS_PASSWORD}${PGBOUNCER_STATS_USERNAME} | md5sum | awk '{print $1}'`
     cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 stats_users = $PGBOUNCER_STATS_USERNAME
 EOFEOF
