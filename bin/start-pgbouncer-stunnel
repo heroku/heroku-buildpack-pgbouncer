@@ -26,6 +26,7 @@ run-pgbouncer() {
   aux-start pgbouncer SIGINT vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini
   app-start SIGTERM "$@"
   pid=$!
+  pgid=$(ps -o pgid= $pid | xargs)
 
   # Don't exit top script until all subprocesses are done.
   trap '' SIGTERM
@@ -48,7 +49,7 @@ run-pgbouncer() {
   # case something else crashed. If the dyno is shutting down, then SIGTERM
   # has already been sent.
   at "kill-app pid=$pid"
-  kill -SIGTERM -$pid
+  kill -SIGTERM -$pgid
 
   # Wait for the app to finish.
   at "wait-app pid=$pid"
