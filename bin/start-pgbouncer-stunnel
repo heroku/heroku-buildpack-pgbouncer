@@ -26,7 +26,7 @@ run-pgbouncer() {
   aux-start pgbouncer SIGINT vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini
   app-start SIGTERM "$@"
   pid=$!
-  pgid=$(ps -o pgid= $pid)
+  pgid=$(ps -o pgid= $pid | xargs)
 
   # Don't exit top script until all subprocesses are done.
   trap '' SIGTERM
