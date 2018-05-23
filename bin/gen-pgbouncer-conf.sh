@@ -32,6 +32,7 @@ ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
 EOFEOF
 
+mkdir -p /app/vendor/pgbouncer
 cat > /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
@@ -58,6 +59,46 @@ log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 ignore_startup_parameters = ${PGBOUNCER_IGNORE_STARTUP_PARAMETERS}
 
+; Low-level network settings, defaults as per pgbouncer:
+;
+;   https://pgbouncer.github.io/config.html#low-level-network-settings
+;
+; tcp_keepcnt, tcp_keepidle, and tcp_keepidle, supported with defaults
+; for Linux as documented above.
+;
+; These defaults match both pgbouncer 1.7 and pgbouncer HEAD.
+;
+;   https://github.com/pgbouncer/pgbouncer/blob/pgbouncer_1_7/etc/pgbouncer.ini
+;   https://github.com/pgbouncer/pgbouncer/blob/master/etc/pgbouncer.ini
+;
+pkt_buf = ${PGBOUNCER_PKT_BUF:-4096}
+max_packet_size = ${PGBOUNCER_MAX_PACKET_SIZE:-2147483647}
+listen_backlog = ${PGBOUNCER_LISTEN_BACKLOG:-128}
+sbuf_loopcnt = ${PGBOUNCER_SBUF_LOOPCNT:-5}
+suspend_timeout = ${PGBOUNCER_SUSPEND_TIMEOUT:-10}
+tcp_defer_accept = ${PGBOUNCER_TCP_DEFER_ACCEPT:-45}
+tcp_keepalive = ${PGBOUNCER_TCP_KEEPALIVE:-1}
+tcp_keepcnt = ${PGBOUNCER_TCP_KEEPCNT:-9}
+tcp_keepidle = ${PGBOUNCER_TCP_KEEPIDLE:-7200}
+tcp_keepintvl = ${PGBOUNCER_TCP_KEEPINTVL:-75}
+EOFEOF
+
+# If PGBOUNCER_STATS_USERNAME and PGBOUNCER_STATS_PASSWORD are
+# defined, enable SHOW commands from pgbouncer with those credentials.
+#
+rm -f /app/vendor/pgbouncer/users.txt
+if [ -n "$PGBOUNCER_STATS_USERNAME" ] && [ -n "$PGBOUNCER_STATS_PASSWORD" ]
+then
+    STATS_MD5_PASS="md5"`echo -n ${PGBOUNCER_STATS_PASSWORD}${PGBOUNCER_STATS_USERNAME} | md5sum | awk '{print $1}'`
+    cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+stats_users = $PGBOUNCER_STATS_USERNAME
+EOFEOF
+    cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
+"$PGBOUNCER_STATS_USERNAME" "$STATS_MD5_PASS"
+EOFEOF
+fi
+
+cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [databases]
 EOFEOF
 
