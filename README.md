@@ -148,3 +148,12 @@ and [stunnel](http://linux.die.net/man/8/stunnel) configurations to see what set
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Notes
+Currently, the connection string parsing requires the connection string to be in a specific format:
+
+```
+postgres://<user>:<pass>@<host>:<port>/<database>
+```
+
+This corresponds to the regular expression `^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$`. All components must be present in order for the buildpack to correctly parse the connection string.
