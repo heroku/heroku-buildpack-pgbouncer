@@ -9,7 +9,7 @@ main() {
   echo "Using bin/start-pgbouncer-stunnel, which is a deprecated init script. Use bin/start-pgbouncer instead."
   echo ""
 
-  bin/start-pgbouncer "$@"
+  exec bin/start-pgbouncer "$@"
 }
 
 [[ "$0" != "$BASH_SOURCE" ]] || main "$@"
