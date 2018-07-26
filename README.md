@@ -12,8 +12,7 @@ connection limits and Out Of Memory errors on the Postgres server.
 
 ## FAQ
 - Q: Why should I use transaction pooling?
-- A: You have many workers per dyno that hold open idle Postgres connections and
-and you want to reduce the number of unused connections. [This is a slightly more complete answer from stackoverflow](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
+- A: You have many workers per dyno that hold open idle Postgres connections and you want to reduce the number of unused connections. [This is a slightly more complete answer from stackoverflow](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
 
 - Q: Why shouldn't I use transaction pooling?
 - A: If you need to use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level.
