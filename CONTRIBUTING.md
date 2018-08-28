@@ -1,4 +1,4 @@
-## Compiling new versions of pgbouncer and stunnel using Docker
+## Compiling new versions of pgbouncer using Docker
 
 Install [docker](https://www.docker.com/). Use the Get Started button at the
 top of the page, which autodetects your OS and presents the appropriate
