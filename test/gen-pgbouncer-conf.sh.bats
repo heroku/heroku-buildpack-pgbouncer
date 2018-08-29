@@ -2,13 +2,6 @@
 
 load helper
 
-@test "generates /app/vendor/stunnel/stunnel-pgbouncer.conf" {
-  rm -f /app/vendor/stunnel/stunnel-pgbouncer.conf
-  run bash bin/gen-pgbouncer-conf.sh
-  assert_success
-  assert test -f /app/vendor/stunnel/stunnel-pgbouncer.conf
-}
-
 @test "generates /app/vendor/pgbouncer/pgbouncer.ini" {
   rm -f /app/vendor/pgbouncer/pgbouncer.ini
   run bash bin/gen-pgbouncer-conf.sh
