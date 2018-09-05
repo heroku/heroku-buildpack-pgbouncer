@@ -11,34 +11,16 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
   SERVER_RESET_QUERY="DISCARD ALL;"
 fi
 
-# Enable this option to prevent stunnel failure with Amazon RDS when a dyno resumes after sleeping
-if [ -z "${ENABLE_STUNNEL_AMAZON_RDS_FIX}" ]; then
-  AMAZON_RDS_STUNNEL_OPTION=""
-else
-  AMAZON_RDS_STUNNEL_OPTION="options = NO_TICKET"
-fi
-
-mkdir -p /app/vendor/stunnel/var/run/stunnel/
-cat > /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
-foreground = yes
-
-options = NO_SSLv2
-options = SINGLE_ECDH_USE
-options = SINGLE_DH_USE
-socket = r:TCP_NODELAY=1
-options = NO_SSLv3
-${AMAZON_RDS_STUNNEL_OPTION}
-ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-debug = ${PGBOUNCER_STUNNEL_LOGLEVEL:-notice}
-EOFEOF
-
 mkdir -p /app/vendor/pgbouncer
-cat > /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
+server_tls_sslmode = prefer
+server_tls_protocols = secure
+server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 
 ; When server connection is released back to pool:
 ;   session      - after client disconnects
@@ -58,6 +40,31 @@ log_disconnections = ${PGBOUNCER_LOG_DISCONNECTIONS:-1}
 log_pooler_errors = ${PGBOUNCER_LOG_POOLER_ERRORS:-1}
 stats_period = ${PGBOUNCER_STATS_PERIOD:-60}
 ignore_startup_parameters = ${PGBOUNCER_IGNORE_STARTUP_PARAMETERS}
+query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
+
+; Low-level network settings, defaults as per pgbouncer:
+;
+;   https://pgbouncer.github.io/config.html#low-level-network-settings
+;
+; tcp_keepcnt, tcp_keepidle, and tcp_keepidle, supported with defaults
+; for Linux as documented above.
+;
+; These defaults match both pgbouncer 1.7 and pgbouncer HEAD.
+;
+;   https://github.com/pgbouncer/pgbouncer/blob/pgbouncer_1_7/etc/pgbouncer.ini
+;   https://github.com/pgbouncer/pgbouncer/blob/master/etc/pgbouncer.ini
+;
+pkt_buf = ${PGBOUNCER_PKT_BUF:-4096}
+max_packet_size = ${PGBOUNCER_MAX_PACKET_SIZE:-2147483647}
+listen_backlog = ${PGBOUNCER_LISTEN_BACKLOG:-128}
+sbuf_loopcnt = ${PGBOUNCER_SBUF_LOOPCNT:-5}
+suspend_timeout = ${PGBOUNCER_SUSPEND_TIMEOUT:-10}
+tcp_defer_accept = ${PGBOUNCER_TCP_DEFER_ACCEPT:-45}
+tcp_keepalive = ${PGBOUNCER_TCP_KEEPALIVE:-1}
+tcp_keepcnt = ${PGBOUNCER_TCP_KEEPCNT:-9}
+tcp_keepidle = ${PGBOUNCER_TCP_KEEPIDLE:-7200}
+tcp_keepintvl = ${PGBOUNCER_TCP_KEEPINTVL:-75}
+EOFEOF
 
 ; Low-level network settings, defaults as per pgbouncer:
 ;
@@ -120,25 +127,15 @@ do
     export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME
   fi
 
-  cat >> /app/vendor/stunnel/stunnel-pgbouncer.conf << EOFEOF
-[$POSTGRES_URL]
-client = yes
-protocol = pgsql
-accept  = /tmp/.s.PGSQL.610${n}
-connect = $DB_HOST:$DB_PORT
-retry = ${PGBOUNCER_CONNECTION_RETRY:-"no"}
-EOFEOF
-
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
 "$DB_USER" "$DB_MD5_PASS"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-$CLIENT_DB_NAME= dbname=$DB_NAME port=610${n}
+$CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT
 EOFEOF
 
   let "n += 1"
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*
-chmod go-rwx /app/vendor/stunnel/*
