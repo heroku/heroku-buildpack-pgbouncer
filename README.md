@@ -57,7 +57,7 @@ Example usage:
     $ ls -a
     Gemfile  Gemfile.lock  Procfile  config/  config.ru
 
-    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
+    $ heroku buildpacks:add heroku/pgbouncer
     Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
     Run `git push heroku master` to create a new release using this buildpack.
 
@@ -142,6 +142,12 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_QUERY_WAIT_TIMEOUT` Default is 120 seconds, helps when the server is down or the database rejects connections for any reason. If this is disabled, clients will be queued infinitely.
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Using the edge version of the buildpack
+
+The `heroku/pgbouncer` buildpack points to the latest stable version of the buildpack published in the [Buildpack Registry](https://devcenter.heroku.com/articles/buildpack-registry). To use the latest version of the buildpack (the code in this repository, run the following command:
+
+    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
 
 ## Notes
 Currently, the connection string parsing requires the connection string to be in a specific format:
