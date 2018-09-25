@@ -58,7 +58,7 @@ Example usage:
     Gemfile  Gemfile.lock  Procfile  config/  config.ru
 
     $ heroku buildpacks:add heroku/pgbouncer
-    Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
+    Buildpack added. Next release on pgbouncer-test-app will use heroku/pgbouncer.
     Run `git push heroku master` to create a new release using this buildpack.
 
     $ heroku buildpacks:add heroku/ruby
