@@ -13,5 +13,5 @@ build-heroku-18:
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -e "PGBOUNCER_VERSION=1.8.1" -w /buildpack heroku/heroku:18-build support/pgbouncer-build
 
 shell:
-	@echo "Opening heroku-16 shell..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-16" -e "PORT=5000" -w /buildpack heroku/heroku:16 bash
+	@echo "Opening heroku-18 shell..."
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -e "PORT=5000" -w /buildpack heroku/heroku:18 bash
