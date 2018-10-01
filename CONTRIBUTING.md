@@ -4,12 +4,14 @@ Install [docker](https://www.docker.com/). Use the Get Started button at the
 top of the page, which autodetects your OS and presents the appropriate
 instructions.
 
-Build:
-
+Build for all stacks:
 ```
-$ cd support
-$ docker-compose build
-$ docker-compose up
+$ make build
+```
+
+Build for a specific stack:
+```
+$ make build-$STACK
 ```
 
 ## Publishing buildpack updates
