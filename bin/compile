@@ -11,7 +11,9 @@ set -e
 unset GIT_DIR
 
 # config
-if [ "$STACK" == "heroku-16" ]; then
+if [ "$STACK" == "heroku-18" ]; then
+  PGBOUNCER_VERSION="1.8.1-heroku"
+elif [ "$STACK" == "heroku-16" ]; then
   PGBOUNCER_VERSION="1.7.2-heroku"
 else
   PGBOUNCER_VERSION="1.7-heroku"
