@@ -132,7 +132,6 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_SERVER_LIFETIME` Default is 3600.0 seconds
 - `PGBOUNCER_SERVER_IDLE_TIMEOUT` Default is 600.0 seconds
 - `PGBOUNCER_URLS` should contain all config variables that will be overridden to connect to pgbouncer. For example, set this to `AMAZON_RDS_URL` to send RDS connections through pgbouncer. The default is `DATABASE_URL`.
-- `PGBOUNCER_CONNECTION_RETRY` Default is no
 - `PGBOUNCER_LOG_CONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_DISCONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
