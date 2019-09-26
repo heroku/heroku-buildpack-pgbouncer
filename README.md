@@ -57,8 +57,8 @@ Example usage:
     $ ls -a
     Gemfile  Gemfile.lock  Procfile  config/  config.ru
 
-    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
-    Buildpack added. Next release on pgbouncer-test-app will use https://github.com/heroku/heroku-buildpack-pgbouncer.
+    $ heroku buildpacks:add heroku/pgbouncer
+    Buildpack added. Next release on pgbouncer-test-app will use heroku/pgbouncer.
     Run `git push heroku master` to create a new release using this buildpack.
 
     $ heroku buildpacks:add heroku/ruby
@@ -132,7 +132,6 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_SERVER_LIFETIME` Default is 3600.0 seconds
 - `PGBOUNCER_SERVER_IDLE_TIMEOUT` Default is 600.0 seconds
 - `PGBOUNCER_URLS` should contain all config variables that will be overridden to connect to pgbouncer. For example, set this to `AMAZON_RDS_URL` to send RDS connections through pgbouncer. The default is `DATABASE_URL`.
-- `PGBOUNCER_CONNECTION_RETRY` Default is no
 - `PGBOUNCER_LOG_CONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_DISCONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
@@ -153,6 +152,12 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_STATS_USERNAME` and `PGBOUNCER_STATS_PASSWORD` Set these to enable stats_users SHOW access to pgbouncer.
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Using the edge version of the buildpack
+
+The `heroku/pgbouncer` buildpack points to the latest stable version of the buildpack published in the [Buildpack Registry](https://devcenter.heroku.com/articles/buildpack-registry). To use the latest version of the buildpack (the code in this repository, run the following command:
+
+    $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-pgbouncer
 
 ## Notes
 Currently, the connection string parsing requires the connection string to be in a specific format:

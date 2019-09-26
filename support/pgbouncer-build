@@ -1,19 +1,25 @@
+#!/bin/bash
+
 set -e
 
 PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.7.2}
 
 pgbouncer_tarball_url=https://pgbouncer.github.io/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 
+temp_dir=$(mktemp -d /tmp/pgbouncer.XXXXXXXXXX)
+
+cd $temp_dir
+echo "Temp dir: $temp_dir"
+
 echo "Downloading $pgbouncer_tarball_url"
 curl -L $pgbouncer_tarball_url | tar xzv
 
 (
-    cd pgbouncer-${PGBOUNCER_VERSION}
-    git apply /pgbouncer-patch
+  cd pgbouncer-${PGBOUNCER_VERSION}
+  git apply /buildpack/support/0001-Disable-SIGTERM.patch
     ./configure \
-        --prefix=/app/vendor/pgbouncer
-    make
-    make install
+      --prefix=/tmp/pgbouncer
+  make -j 2 install
 )
 
-tar -zcvf /external/pgbouncer-${PGBOUNCER_VERSION}-heroku.tgz -C /app/vendor/pgbouncer .
+tar -zcvf /buildpack/pgbouncer-${PGBOUNCER_VERSION}-heroku.tgz -C /tmp/pgbouncer .
