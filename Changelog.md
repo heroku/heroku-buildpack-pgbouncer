@@ -1,3 +1,7 @@
+## unreleased
+
+* Updates development tooling
+
 ## v0.3.4 (January 2, 2015)
 
 * Updates binary versions to pgbouncer 1.7 and stunnel 5.28
