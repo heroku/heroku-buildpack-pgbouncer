@@ -153,4 +153,14 @@ is-enabled() {
   )
 }
 
+config-jdbc() {
+  if [ -f .profile.d/jdbc.sh ]; then
+    unset JDBC_DATABASE_URL
+    unset SPRING_DATASOURCE_URL
+    source .profile.d/jdbc.sh
+  fi
+
+  eval "$@"
+}
+
 [[ "$0" != "$BASH_SOURCE" ]] || main "$@"

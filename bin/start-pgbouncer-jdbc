@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# This script is remaining around for compatability purposes. We don't use
+# stunnel anymore but the scripts in our docs state we should use
+# bin/start-pgbouncer-stunnel. Keeping this around for a bit to give users
+# a chance to move over to bin/start-pgbouncer.
+main() {
+  exec bin/start-pgbouncer config-jdbc "$@"
+}
+
+[[ "$0" != "$BASH_SOURCE" ]] || main "$@"
