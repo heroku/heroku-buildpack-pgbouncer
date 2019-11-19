@@ -76,6 +76,9 @@ config-gen() {
     at "config-gen-override $POSTGRES_URL"
     eval "$POSTGRES_URL=\$${POSTGRES_URL}_PGBOUNCER"
   done
+
+  # Overwrite JDBC env vars with pgbouncer targets
+  config-jdbc
 }
 
 aux-start() {
@@ -158,7 +161,14 @@ config-jdbc() {
     at "config-jdbc $JDBC_DATABASE_URL"
     unset JDBC_DATABASE_URL
     unset SPRING_DATASOURCE_URL
+    PGSSLMODE="disable"
     source .profile.d/jdbc.sh
+
+    at config-gen-jdbc-start
+    PGBOUNCER_IGNORE_STARTUP_PARAMETERS="${PGBOUNCER_IGNORE_STARTUP_PARAMETERS:-extra_float_digits}"
+    rm /app/vendor/pgbouncer/pgbouncer.ini
+    source bin/gen-pgbouncer-conf.sh
+    at config-gen-jdbc-end
   fi
 }
 

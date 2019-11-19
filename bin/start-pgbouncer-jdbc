@@ -6,11 +6,7 @@
 # a chance to move over to bin/start-pgbouncer.
 main() {
 
-  export PGBOUNCER_IGNORE_STARTUP_PARAMETERS="${PGBOUNCER_IGNORE_STARTUP_PARAMETERS:-extra_float_digits}"
-  export PGSSLMODE="disable"
-  export CI="true" # temporary until heroku/jvm can receive updates
   exec bin/start-pgbouncer config-jdbc "$@"
-  unset CI
 }
 
 [[ "$0" != "$BASH_SOURCE" ]] || main "$@"
