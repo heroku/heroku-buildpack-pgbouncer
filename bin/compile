@@ -60,11 +60,6 @@ mkdir -p $BUILD_DIR/bin
 cp "$BUILDPACK_DIR/bin/start-pgbouncer" $BUILD_DIR/bin/
 chmod +x $BUILD_DIR/bin/start-pgbouncer
 
-echo "-----> Moving the start-pgbouncer-jdbc script into app/bin"
-mkdir -p $BUILD_DIR/bin
-cp "$BUILDPACK_DIR/bin/start-pgbouncer-jdbc" $BUILD_DIR/bin/
-chmod +x $BUILD_DIR/bin/start-pgbouncer-jdbc
-
 echo "-----> Moving the (legacy) start-pgbouncer-stunnel script into app/bin"
 mkdir -p $BUILD_DIR/bin
 cp "$BUILDPACK_DIR/bin/start-pgbouncer-stunnel" $BUILD_DIR/bin/
