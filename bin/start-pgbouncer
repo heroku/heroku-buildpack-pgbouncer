@@ -76,6 +76,14 @@ config-gen() {
     at "config-gen-override $POSTGRES_URL"
     eval "$POSTGRES_URL=\$${POSTGRES_URL}_PGBOUNCER"
   done
+
+  # Overwrite JDBC env vars with pgbouncer targets
+  if [ -f .profile.d/jdbc.sh ]; then
+    at "config-gen-override-jdbc $JDBC_DATABASE_URL"
+    unset JDBC_DATABASE_URL
+    unset SPRING_DATASOURCE_URL
+    source .profile.d/jdbc.sh
+  fi
 }
 
 aux-start() {
