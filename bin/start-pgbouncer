@@ -158,17 +158,10 @@ is-enabled() {
 
 config-jdbc() {
   if [ -f .profile.d/jdbc.sh ]; then
-    at "config-jdbc $JDBC_DATABASE_URL"
+    at "config-gen-override \$JDBC_DATABASE_URL"
     unset JDBC_DATABASE_URL
     unset SPRING_DATASOURCE_URL
-    PGSSLMODE="disable"
     source .profile.d/jdbc.sh
-
-    at config-gen-jdbc-start
-    PGBOUNCER_IGNORE_STARTUP_PARAMETERS="${PGBOUNCER_IGNORE_STARTUP_PARAMETERS:-extra_float_digits}"
-    rm /app/vendor/pgbouncer/pgbouncer.ini
-    source bin/gen-pgbouncer-conf.sh
-    at config-gen-jdbc-end
   fi
 }
 
