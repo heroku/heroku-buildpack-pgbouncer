@@ -1,6 +1,7 @@
 ## unreleased
 
 * Updates development tooling
+* Adds PGBOUNCER_SERVER_RESET_QUERY_ALWAYS config
 
 ## v0.3.4 (January 2, 2015)
 
