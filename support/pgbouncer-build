@@ -14,12 +14,23 @@ echo "Temp dir: $temp_dir"
 echo "Downloading $pgbouncer_tarball_url"
 curl -L $pgbouncer_tarball_url | tar xzv
 
+if [ -d "/buildpack/support/patchfiles/${PGBOUNCER_VERSION}" ]
+then
+		PATCHFILES=$(find /buildpack/support/patchfiles/${PGBOUNCER_VERSION} -name '*.patch')
+else
+		PATCHFILES=$(find /buildpack/support/patchfiles/default -name '*.patch')
+fi
+
 (
-  cd pgbouncer-${PGBOUNCER_VERSION}
-  git apply /buildpack/support/0001-Disable-SIGTERM.patch
-    ./configure \
-      --prefix=/tmp/pgbouncer
-  make -j 2 install
+	cd pgbouncer-${PGBOUNCER_VERSION}
+	for f in $PATCHFILES
+	do
+		patch -p0 < $f
+	done
+
+		./configure \
+			--prefix=/tmp/pgbouncer
+	make -j 2 install
 )
 
 tar -zcvf /buildpack/pgbouncer-${PGBOUNCER_VERSION}-heroku.tgz -C /tmp/pgbouncer .
