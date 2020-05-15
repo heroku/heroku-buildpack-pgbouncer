@@ -33,4 +33,4 @@ fi
 	make -j 2 install
 )
 
-tar -zcvf /buildpack/pgbouncer-${PGBOUNCER_VERSION}-heroku.tgz -C /tmp/pgbouncer .
+tar -zcvf /buildpack/pgbouncer-${PGBOUNCER_VERSION}-${STACK}.tgz -C /tmp/pgbouncer .
