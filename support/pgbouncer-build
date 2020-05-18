@@ -4,7 +4,7 @@ set -e
 
 PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.13.0}
 
-pgbouncer_tarball_url=http://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
+pgbouncer_tarball_url=https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 
 temp_dir=$(mktemp -d /tmp/pgbouncer.XXXXXXXXXX)
 
