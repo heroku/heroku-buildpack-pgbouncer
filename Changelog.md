@@ -1,7 +1,10 @@
-## unreleased
+## v0.5.0 (May 18, 2020)
 * Updates pgbouncer to 1.13 for Heroku-18
 * Updates pgbouncer to 1.13 for Heroku-16
 * Updates to Buildpack tooling
+
+## v0.4.0 (October 8, 2018)
+* Support for Heroku-18
 
 ## v0.3.4 (January 2, 2015)
 
