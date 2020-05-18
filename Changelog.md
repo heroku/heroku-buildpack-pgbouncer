@@ -1,6 +1,7 @@
 ## unreleased
-
-* Updates development tooling
+* Updates pgbouncer to 1.13 for Heroku-18
+* Updates pgbouncer to 1.13 for Heroku-16
+* Updates to Buildpack tooling
 
 ## v0.3.4 (January 2, 2015)
 

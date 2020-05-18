@@ -12,12 +12,12 @@ unset GIT_DIR
 
 # config
 if [ "$STACK" == "heroku-18" ]; then
-  PGBOUNCER_VERSION="1.8.1-heroku"
+  PGBOUNCER_VERSION="1.13.0"
   STUNNEL_VERSION=""
 elif [ "$STACK" == "heroku-16" ]; then
-  PGBOUNCER_VERSION="1.7.2-heroku"
+  PGBOUNCER_VERSION="1.13.0"
 else
-  PGBOUNCER_VERSION="1.7-heroku"
+  PGBOUNCER_VERSION="1.7"
 fi
 
 # parse and derive params
@@ -48,7 +48,7 @@ VENDORED_PGBOUNCER="vendor/pgbouncer"
 PATH="$BUILD_DIR/$VENDORED_PGBOUNCER/bin:$PATH"
 echo "-----> Fetching and vendoring pgbouncer into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_PGBOUNCER"
-tar xzf pgbouncer-${PGBOUNCER_VERSION}.tgz -C ${BUILD_DIR}/${VENDORED_PGBOUNCER}
+tar xzf pgbouncer-${PGBOUNCER_VERSION}-${STACK}.tgz -C ${BUILD_DIR}/${VENDORED_PGBOUNCER}
 
 echo "-----> Moving the configuration generation script into app/bin"
 mkdir -p $BUILD_DIR/bin
