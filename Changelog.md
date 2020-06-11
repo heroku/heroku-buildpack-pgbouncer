@@ -1,5 +1,8 @@
-## Unreleased
+## v0.6.0 (June 11, 2020)
 * Add support for Heroku-20
+* Updates pgbouncer to 1.14 for Heroku-20
+* Updates pgbouncer to 1.14 for Heroku-18
+* Updates pgbouncer to 1.14 for Heroku-16
 
 ## v0.5.0 (May 18, 2020)
 * Updates pgbouncer to 1.13 for Heroku-18

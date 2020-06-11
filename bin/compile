@@ -30,7 +30,7 @@ function indent() {
 }
 
 if [[ "${STACK}" == "heroku-16" || "${STACK}" == "heroku-18" || "${STACK}" == "heroku-20" ]]; then
-  PGBOUNCER_VERSION="1.13.0"
+  PGBOUNCER_VERSION="1.14.0"
 elif [[ "${STACK}" == "cedar-14" ]]; then
   PGBOUNCER_VERSION="1.7"
 else
