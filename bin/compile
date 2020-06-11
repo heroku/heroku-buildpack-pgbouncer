@@ -10,16 +10,6 @@ set -e
 # clean up leaking environment
 unset GIT_DIR
 
-# config
-if [ "$STACK" == "heroku-18" ]; then
-  PGBOUNCER_VERSION="1.13.0"
-  STUNNEL_VERSION=""
-elif [ "$STACK" == "heroku-16" ]; then
-  PGBOUNCER_VERSION="1.13.0"
-else
-  PGBOUNCER_VERSION="1.7"
-fi
-
 # parse and derive params
 BUILD_DIR=$1
 CACHE_DIR=$2
@@ -38,6 +28,14 @@ function indent() {
     *)      sed -u "$c";;
   esac
 }
+
+if [[ "${STACK}" == "heroku-16" || "${STACK}" == "heroku-18" || "${STACK}" == "heroku-20" ]]; then
+  PGBOUNCER_VERSION="1.13.0"
+elif [[ "${STACK}" == "cedar-14" ]]; then
+  PGBOUNCER_VERSION="1.7"
+else
+  error "Stack ${STACK} is unsupported!"
+fi
 
 echo "Using pgbouncer version: ${PGBOUNCER_VERSION}" | indent
 
