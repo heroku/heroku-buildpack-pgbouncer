@@ -1,5 +1,6 @@
 ## Unreleased
 * streamline bin/compile
+* add sha512 checksums for tar packages
 
 ## v0.6.0 (June 12, 2020)
 * Add support for Heroku-20
