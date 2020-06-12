@@ -1,3 +1,6 @@
+## Unreleased
+* streamline bin/compile
+
 ## v0.6.0 (June 12, 2020)
 * Add support for Heroku-20
 * Updates pgbouncer to 1.14 for Heroku-20
