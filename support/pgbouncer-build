@@ -34,3 +34,5 @@ fi
 )
 
 tar -zcvf /buildpack/pgbouncer-"${STACK}".tgz -C /tmp/pgbouncer .
+cd /buildpack/
+shasum -a 512 pgbouncer-"${STACK}".tgz > pgbouncer-"${STACK}".tgz.sha512
