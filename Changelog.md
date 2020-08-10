@@ -1,6 +1,9 @@
 ## Unreleased
 * streamline bin/compile
 
+## v0.7.0 (August 7, 2020)
+* Change default branch name from master to main
+
 ## v0.6.0 (June 12, 2020)
 * Add support for Heroku-20
 * Updates pgbouncer to 1.14 for Heroku-20

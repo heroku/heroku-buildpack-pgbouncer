@@ -59,19 +59,19 @@ Example usage:
 
     $ heroku buildpacks:add heroku/pgbouncer
     Buildpack added. Next release on pgbouncer-test-app will use heroku/pgbouncer.
-    Run `git push heroku master` to create a new release using this buildpack.
+    Run `git push heroku main` to create a new release using this buildpack.
 
     $ heroku buildpacks:add heroku/ruby
     Buildpack added. Next release on pgbouncer-test-app will use:
       1. https://github.com/heroku/heroku-buildpack-pgbouncer
       2. https://github.com/heroku/heroku-buildpack-ruby
-    Run `git push heroku master` to create a new release using these buildpacks.
+    Run `git push heroku main` to create a new release using these buildpacks.
 
     $ cat Procfile
     web:    bin/start-pgbouncer bundle exec unicorn -p $PORT -c ./config/unicorn.rb -E $RACK_ENV
     worker: bundle exec rake worker
 
-    $ git push heroku master
+    $ git push heroku main
     ...
     -----> Multipack app detected
     -----> Fetching custom git buildpack... done
