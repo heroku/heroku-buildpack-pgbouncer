@@ -139,6 +139,17 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
 - `PGBOUNCER_QUERY_WAIT_TIMEOUT` Default is 120 seconds, helps when the server is down or the database rejects connections for any reason. If this is disabled, clients will be queued infinitely.
+- `PGBOUNCER_PKT_BUF` Default is 4096.
+- `PGBOUNCER_MAX_PACKET_SIZE` Default is 2147483647.
+- `PGBOUNCER_LISTEN_BACKLOG` Default is 128.
+- `PGBOUNCER_SBUF_LOOPCNT` Default is 5.
+- `PGBOUNCER_SUSPEND_TIMEOUT` Default is 10.
+- `PGBOUNCER_TCP_DEFER_ACCEPT` Default is 45.
+- `PGBOUNCER_TCP_KEEPALIVE` Default is 1.
+- `PGBOUNCER_TCP_KEEPCNT` Default is 9.
+- `PGBOUNCER_TCP_KEEPIDLE` Default is 7200.
+- `PGBOUNCER_TCP_KEEPINTVL` Default is 75.
+- `PGBOUNCER_STATS_USERNAME` and `PGBOUNCER_STATS_PASSWORD` Set these to enable stats_users SHOW access to pgbouncer.
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
 
