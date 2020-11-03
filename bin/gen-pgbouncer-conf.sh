@@ -44,10 +44,17 @@ query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
 [databases]
 EOFEOF
 
+function urldecode() {
+  echo "$1" | sed -e 's@+@ @g;s@%@\\x@g' | xargs -0 printf "%b"
+}
+
 for POSTGRES_URL in $POSTGRES_URLS
 do
   eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
   IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
+
+  DB_USER="$(urldecode "$DB_USER")"
+  DB_PASS="$(urldecode "$DB_PASS")"
 
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
 
