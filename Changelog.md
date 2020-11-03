@@ -1,5 +1,6 @@
 ## Unreleased
 * streamline bin/compile
+* add support for urlencoded special chars like `@` in usernames and passwords (@zyv)
 
 ## v0.7.0 (August 7, 2020)
 * Change default branch name from master to main
