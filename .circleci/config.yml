@@ -4,7 +4,7 @@ orbs:
   bats: circleci/bats@1.0.0
 
 workflows:
-  test-my-app:
+  tests:
     jobs:
       - bats/run:
           path: ./test/run_all.sh
