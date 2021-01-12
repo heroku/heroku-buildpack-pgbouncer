@@ -1,8 +1,4 @@
-build: build-cedar-14 build-heroku-16 build-heroku-18 build-heroku-20
-
-build-cedar-14:
-	@echo "Building pgbouncer in Docker for cedar-14..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=cedar-14" -e "PGBOUNCER_VERSION=1.7" -w /buildpack heroku/cedar:14 support/pgbouncer-build
+build: build-heroku-16 build-heroku-18 build-heroku-20
 
 build-heroku-16:
 	@echo "Building pgbouncer in Docker for heroku-16..."
