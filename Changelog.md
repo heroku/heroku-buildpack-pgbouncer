@@ -1,6 +1,7 @@
 ## Unreleased
 * streamline bin/compile
 * moving to CircleCI
+* remove support for Cedar 14
 
 ## v0.7.0 (August 7, 2020)
 * Change default branch name from master to main
