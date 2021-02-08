@@ -14,7 +14,7 @@ fi
 mkdir -p /app/vendor/pgbouncer
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
-listen_addr = 127.0.0.1
+listen_addr = ${PGBOUNCER_LISTEN_ADDR:-127.0.0.1}
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
