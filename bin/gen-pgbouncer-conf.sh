@@ -12,13 +12,20 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
 fi
 
 mkdir -p /app/vendor/pgbouncer
-cp ./certs/root.crt /app/vendor/pgbouncer
+cp ./certs/* /app/vendor/pgbouncer
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = ${PGBOUNCER_LISTEN_ADDR:-127.0.0.1}
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
+
+client_tls_sslmode = require
+client_tls_protocols = secure
+client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+client_tls_key_file = /app/vendor/pgbouncer/pgbouncerI.key
+client_tls_cert_file = /app/vendor/pgbouncer/pgbouncerI.crt
+client_tls_ca_file = /app/vendor/pgbouncer/root.crt
 
 server_tls_sslmode = verify-ca
 server_tls_protocols = secure
