@@ -12,15 +12,18 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
 fi
 
 mkdir -p /app/vendor/pgbouncer
+cp ./certs/root.crt /app/vendor/pgbouncer
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = ${PGBOUNCER_LISTEN_ADDR:-127.0.0.1}
 listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
-server_tls_sslmode = prefer
+
+server_tls_sslmode = verify-ca
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+server_tls_ca_file = /app/vendor/pgbouncer/root.crt
 
 ; When server connection is released back to pool:
 ;   session      - after client disconnects
