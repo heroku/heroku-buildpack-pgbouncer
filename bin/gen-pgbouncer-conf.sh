@@ -9,9 +9,9 @@ n=1
 # we need root.crt , certificate and key of pgbouncer on place for verifying, for handling secrets in security compliant manner 
 # they will be encrypted and come from SEO
 
-CLIENT_TLS_KEY_FILE=${PGBOUNCER_TLS_KEY_FILE:-INTERNAL_TLS_KEY}
-CLIENT_TLS_CRT_FILE=${PGBOUNCER_TLS_CRT_FILE:-INTERNAL_TLS_CRT}
-
+CLIENT_TLS_KEY_FILE=${CLIENT_TLS_KEY_FILE:-INTERNAL_TLS_KEY}
+CLIENT_TLS_CRT_FILE=${CLIENT_TLS_CRT_FILE:-INTERNAL_TLS_CRT}
+CLIENT_TLS_CA_FILE=${CLIENT_TLS_CA_FILE:-INTERNAL_TLS_CA}
 
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
 # http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
@@ -20,7 +20,6 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
 fi
 
 mkdir -p /app/vendor/pgbouncer
-cp ./internal_root.crt /app/vendor/pgbouncer
 cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = ${PGBOUNCER_LISTEN_ADDR:-127.0.0.1}
@@ -31,12 +30,11 @@ auth_file = /app/vendor/pgbouncer/users.txt
 client_tls_sslmode = require
 client_tls_protocols = secure
 client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-client_tls_ca_file = /app/vendor/pgbouncer/internal_root.crt
 
 server_tls_sslmode = verify-ca
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-server_tls_ca_file = /app/vendor/pgbouncer/internal_root.crt
+
 
 ; When server connection is released back to pool:
 ;   session      - after client disconnects
@@ -83,10 +81,13 @@ tcp_keepidle = ${PGBOUNCER_TCP_KEEPIDLE:-7200}
 tcp_keepintvl = ${PGBOUNCER_TCP_KEEPINTVL:-75}
 EOFEOF
 
-# IF CLIENT_TLS_KEY_FILE and CLIENT_TLS_CRT_FILE are defined, We can add to pgbouncer.ini , have them ready for 
-# pgbouncer's client in which has server side "verify-ca"
+# add certificates, key to pgbouncer.ini
 #
-sed '/^client_tls_ciphers =.*/a client_tls_key_file = $CLIENT_TLS_KEY_FILE\nclient_tls_cert_file = $CLIENT_TLS_CRT_FILE' /app/vendor/pgbouncer/pgbouncer.ini 
+sed -i '/^client_tls_ciphers =.*/a client_tls_key_file = $CLIENT_TLS_KEY_FILE \
+client_tls_cert_file = $CLIENT_TLS_CRT_FILE \
+client_tls_ca_file = $CLIENT_TLS_CA_FILE' /app/vendor/pgbouncer/pgbouncer.ini 
+
+sed -i '/^server_tls_ciphers =.*/a server_tls_ca_file = $SERVER_TLS_CA_FILE' /app/vendor/pgbouncer/pgbouncer.ini 
 
 # If PGBOUNCER_STATS_USERNAME and PGBOUNCER_STATS_PASSWORD are
 # defined, enable SHOW commands from pgbouncer with those credentials.
