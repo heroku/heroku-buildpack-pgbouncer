@@ -28,10 +28,10 @@ echo $CLIENT_TLS_CRT_FILE | tr ' ' '\n' | sed '1,2d' | head -n -2 >> /app/vendor
 echo -e "-----END CERTIFICATE-----"  >> /app/vendor/pgbouncer/pgbouncer_client.crt
 
 echo -e "-----BEGIN CERTIFICATE-----" > /app/vendor/pgbouncer/pgbouncer_ca.crt
-echo $CLIENT_TLS_CA_FILE | tr ' ' '\n' | sed '1,2d' | head -n -2 >> /app/vendor/pgbouncer/pgbouncer_client.crt
+echo $CLIENT_TLS_CA_FILE | tr ' ' '\n' | sed '1,2d' | head -n -2 >> /app/vendor/pgbouncer/pgbouncer_ca.crt
 echo -e "-----END CERTIFICATE-----"  >> /app/vendor/pgbouncer/pgbouncer_ca.crt
 
-echo -e "-----END RSA PRIVATE KEY-----" > /app/vendor/pgbouncer/pgbouncer_client.key
+echo -e "-----BEGIN RSA PRIVATE KEY-----" > /app/vendor/pgbouncer/pgbouncer_client.key
 echo $CLIENT_TLS_KEY_FILE | tr ' ' '\n' | sed '1,4d' | head -n -4 >> /app/vendor/pgbouncer/pgbouncer_client.key
 echo -e "-----END RSA PRIVATE KEY-----"  >> /app/vendor/pgbouncer/pgbouncer_client.key
 
@@ -50,14 +50,14 @@ listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
 
-;client_tls_sslmode = require
-;client_tls_protocols = secure
-;client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-;client_tls_key_file = /app/vendor/pgbouncer/pgbouncer_client.key
-;client_tls_cert_file = /app/vendor/pgbouncer/pgbouncer_client.crt
-;client_tls_ca_file = /app/vendor/pgbouncer/pgbouncer_ca.crt
+client_tls_sslmode = require
+client_tls_protocols = secure
+client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+client_tls_key_file = /app/vendor/pgbouncer/pgbouncer_client.key
+client_tls_cert_file = /app/vendor/pgbouncer/pgbouncer_client.crt
+client_tls_ca_file = /app/vendor/pgbouncer/pgbouncer_ca.crt
 
-server_tls_sslmode = prefer
+server_tls_sslmode = verify-ca
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 server_tls_key_file = /app/vendor/pgbouncer/pgbouncer_client.key
