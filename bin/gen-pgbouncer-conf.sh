@@ -9,9 +9,9 @@ n=1
 # we need root.crt , certificate and key of pgbouncer on place for verifying, for handling secrets in security compliant manner 
 # they will be encrypted and come from SEO
 
-CLIENT_TLS_KEY_FILE=${CLIENT_TLS_KEY_FILE:-INTERNAL_TLS_KEY}
-CLIENT_TLS_CRT_FILE=${CLIENT_TLS_CRT_FILE:-INTERNAL_TLS_CRT}
-CLIENT_TLS_CA_FILE=${CLIENT_TLS_CA_FILE:-INTERNAL_TLS_CA}
+CLIENT_TLS_KEY_FILE=${CLIENT_TLS_KEY_FILE:-$INTERNAL_TLS_KEY}
+CLIENT_TLS_CRT_FILE=${CLIENT_TLS_CRT_FILE:-$INTERNAL_TLS_CRT}
+CLIENT_TLS_CA_FILE=${CLIENT_TLS_CA_FILE:-$INTERNAL_TLS_CA}
 
 # if the SERVER_RESET_QUERY and pool mode is session, pgbouncer recommends DISCARD ALL be the default
 # http://pgbouncer.projects.pgfoundry.org/doc/faq.html#_what_should_my_server_reset_query_be
@@ -23,12 +23,12 @@ mkdir -p /app/vendor/pgbouncer
 
 # add certificates, key to pgbouncer.ini
 #
-eval CLIENT_TLS_KEY_FILE_value=\$$CLIENT_TLS_KEY_FILE
-echo $CLIENT_TLS_KEY_FILE_value > /app/vendor/pgbouncer/pgbouncer_client.key
-eval CLIENT_TLS_CRT_FILE_value=\$$CLIENT_TLS_CRT_FILE
-echo $CLIENT_TLS_CRT_FILE_value > /app/vendor/pgbouncer/pgbouncer_client.crt
-eval TLS_CA_FILE_value=\$$CLIENT_TLS_CA_FILE
-echo $TLS_CA_FILE_value > /app/vendor/pgbouncer/pgbouncer_ca.crt
+
+echo $CLIENT_TLS_KEY_FILE > /app/vendor/pgbouncer/pgbouncer_client.key
+
+echo $CLIENT_TLS_CRT_FILE > /app/vendor/pgbouncer/pgbouncer_client.crt
+
+echo $CLIENT_TLS_CA_FILE > /app/vendor/pgbouncer/pgbouncer_ca.crt
 #sed -i '/^client_tls_ciphers =.*/a client_tls_key_file = $CLIENT_TLS_KEY_FILE \
 #client_tls_cert_file = $CLIENT_TLS_CRT_FILE \
 #client_tls_ca_file = $CLIENT_TLS_CA_FILE' /app/vendor/pgbouncer/pgbouncer.ini 
@@ -43,14 +43,14 @@ listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
 
-;client_tls_sslmode = require
-;client_tls_protocols = secure
-;client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-;client_tls_key_file = app/vendor/pgbouncer/pgbouncer_client.key
-;client_tls_cert_file = app/vendor/pgbouncer/pgbouncer_client.crt
-;client_tls_ca_file = app/vendor/pgbouncer/pgbouncer_ca.crt
+client_tls_sslmode = require
+client_tls_protocols = secure
+client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+client_tls_key_file = app/vendor/pgbouncer/pgbouncer_client.key
+client_tls_cert_file = app/vendor/pgbouncer/pgbouncer_client.crt
+client_tls_ca_file = app/vendor/pgbouncer/pgbouncer_ca.crt
 
-server_tls_sslmode = prefer
+server_tls_sslmode = verify-ca
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 server_tls_ca_file = app/vendor/pgbouncer/pgbouncer_ca.crt
