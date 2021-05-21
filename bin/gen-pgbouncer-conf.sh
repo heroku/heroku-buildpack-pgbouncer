@@ -23,12 +23,19 @@ mkdir -p /app/vendor/pgbouncer
 
 # add certificates, key to pgbouncer.ini
 #
+echo -e "-----BEGIN CERTIFICATE-----" > /app/vendor/pgbouncer/pgbouncer_client.crt
+echo $CLIENT_TLS_CRT_FILE | tr ' ' '\n' | sed '1,2d' | head -n -2 >> /app/vendor/pgbouncer/pgbouncer_client.crt
+echo -e "-----END CERTIFICATE-----"  >> /app/vendor/pgbouncer/pgbouncer_client.crt
 
-echo $CLIENT_TLS_KEY_FILE > /app/vendor/pgbouncer/pgbouncer_client.key
+echo -e "-----BEGIN CERTIFICATE-----" > /app/vendor/pgbouncer/pgbouncer_ca.crt
+echo $CLIENT_TLS_CA_FILE | tr ' ' '\n' | sed '1,2d' | head -n -2 >> /app/vendor/pgbouncer/pgbouncer_client.crt
+echo -e "-----END CERTIFICATE-----"  >> /app/vendor/pgbouncer/pgbouncer_ca.crt
 
-echo $CLIENT_TLS_CRT_FILE > /app/vendor/pgbouncer/pgbouncer_client.crt
+echo -e "-----END RSA PRIVATE KEY-----" > /app/vendor/pgbouncer/pgbouncer_client.key
+echo $CLIENT_TLS_KEY_FILE | tr ' ' '\n' | sed '1,4d' | head -n -4 >> /app/vendor/pgbouncer/pgbouncer_client.key
+echo -e "-----END RSA PRIVATE KEY-----"  >> /app/vendor/pgbouncer/pgbouncer_client.key
 
-echo $CLIENT_TLS_CA_FILE > /app/vendor/pgbouncer/pgbouncer_ca.crt
+
 #sed -i '/^client_tls_ciphers =.*/a client_tls_key_file = $CLIENT_TLS_KEY_FILE \
 #client_tls_cert_file = $CLIENT_TLS_CRT_FILE \
 #client_tls_ca_file = $CLIENT_TLS_CA_FILE' /app/vendor/pgbouncer/pgbouncer.ini 
