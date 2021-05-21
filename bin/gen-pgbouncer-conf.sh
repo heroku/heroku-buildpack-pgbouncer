@@ -43,12 +43,12 @@ listen_port = 6000
 auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
 
-client_tls_sslmode = require
-client_tls_protocols = secure
-client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
-client_tls_key_file = /app/vendor/pgbouncer/pgbouncer_client.key
-client_tls_cert_file = /app/vendor/pgbouncer/pgbouncer_client.crt
-client_tls_ca_file = /app/vendor/pgbouncer/pgbouncer_ca.crt
+;client_tls_sslmode = require
+;client_tls_protocols = secure
+;client_tls_ciphers =  HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+;client_tls_key_file = /app/vendor/pgbouncer/pgbouncer_client.key
+;client_tls_cert_file = /app/vendor/pgbouncer/pgbouncer_client.crt
+;client_tls_ca_file = /app/vendor/pgbouncer/pgbouncer_ca.crt
 
 server_tls_sslmode = prefer
 server_tls_protocols = secure
