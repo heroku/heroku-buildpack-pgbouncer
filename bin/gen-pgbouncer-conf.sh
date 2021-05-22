@@ -83,7 +83,7 @@ EOFEOF
 # add certificates, key to pgbouncer.ini and change sslmode 
 # if all of certs and key are present
 #
-if [ -n "${CLIENT_TLS_KEY_FILE}"] && [ -n "${CLIENT_TLS_CRT_FILE}"] && [ -n "${CLIENT_TLS_CA_FILE}"]
+if [ -n "${CLIENT_TLS_KEY_FILE}" ] && [ -n "${CLIENT_TLS_CRT_FILE}" ] && [ -n "${CLIENT_TLS_CA_FILE}" ]
 then 
   echo -e "-----BEGIN CERTIFICATE-----" > ${PGBOUNCER_DIR}/pgbouncer.crt
   echo $CLIENT_TLS_CRT_FILE | tr ' ' '\n' | sed '1,2d' | head -n -2 >> ${PGBOUNCER_DIR}/pgbouncer.crt
