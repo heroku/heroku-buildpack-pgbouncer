@@ -81,7 +81,8 @@ tcp_keepintvl = ${PGBOUNCER_TCP_KEEPINTVL:-75}
 EOFEOF
 
 # add certificates, key to pgbouncer.ini and change sslmode 
-# if all of certs and key are present
+# if all of certs and key are present and also adjust the certificates' formate 
+# from outputs of envrionment variables
 #
 if [ -n "${CLIENT_TLS_KEY_FILE}" ] && [ -n "${CLIENT_TLS_CRT_FILE}" ] && [ -n "${CLIENT_TLS_CA_FILE}" ]
 then 
