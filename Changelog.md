@@ -1,4 +1,4 @@
-## Unreleased
+## v0.8.0 (May 31, 2021)
 * pgbouncer 1.15
 * streamline bin/compile
 * moving to CircleCI
