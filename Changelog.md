@@ -1,4 +1,5 @@
 ## Unreleased
+* pgbouncer 1.15
 * streamline bin/compile
 * moving to CircleCI
 * remove support for Cedar 14
