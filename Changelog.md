@@ -1,4 +1,8 @@
-## Unreleased
+
+## v0.9.0 (June 4, 2021)
+* remove heroku-16
+
+## v0.8.0 (May 31, 2021)
 * pgbouncer 1.15
 * streamline bin/compile
 * moving to CircleCI
