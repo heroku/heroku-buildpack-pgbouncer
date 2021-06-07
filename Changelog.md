@@ -1,7 +1,7 @@
 
 ## v0.9.0 (June 4, 2021)
 * remove heroku-16
-
+* revert back to pgbouncer 1.14
 ## v0.8.0 (May 31, 2021)
 * pgbouncer 1.15
 * streamline bin/compile
