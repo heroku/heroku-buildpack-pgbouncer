@@ -15,9 +15,7 @@ cat > /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
-# TODO: find out if we can even think of dropping md5 support due to older Postgres revisions
-auth_type = scram-sha-256
-#auth_type = md5
+auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
 server_tls_sslmode = prefer
 server_tls_protocols = secure
@@ -46,6 +44,10 @@ query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
 [databases]
 EOFEOF
 
+# TODO: move this into the compile stage of the buildpack
+rm /tmp/scram-sha-256
+curl -sL https://github.com/supercaracal/scram-sha-256/releases/download/v1.0.0/scram-sha-256_1.0.0_linux_amd64.tar.gz | tar zx -C /tmp
+
 cat /dev/null > /app/vendor/pgbouncer/users.txt
 
 for POSTGRES_URL in $POSTGRES_URLS
@@ -54,6 +56,7 @@ do
   IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
 
   DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
+  DB_SCRAM_PASS=`/tmp/scram-sha-256 ${DB_PASS}`
 
   CLIENT_DB_NAME="db${n}"
 
@@ -66,9 +69,9 @@ do
     export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME
   fi
 
-# TODO: scram-sha-256 password generation, not plaintext
+# TODO: I think for backwards compat, we need to include an md5?
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$DB_USER" "$DB_PASS"
+"$DB_USER" "$DB_SCRAM_PASS"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
