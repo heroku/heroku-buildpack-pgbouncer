@@ -11,11 +11,13 @@ if [ -z "${SERVER_RESET_QUERY}" ] &&  [ "$POOL_MODE" == "session" ]; then
   SERVER_RESET_QUERY="DISCARD ALL;"
 fi
 
-cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
+cat > /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
-auth_type = md5
+# TODO: find out if we can even think of dropping md5 support due to older Postgres revisions
+auth_type = scram-sha-256
+#auth_type = md5
 auth_file = /app/vendor/pgbouncer/users.txt
 server_tls_sslmode = prefer
 server_tls_protocols = secure
@@ -44,6 +46,8 @@ query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
 [databases]
 EOFEOF
 
+cat /dev/null > /app/vendor/pgbouncer/users.txt
+
 for POSTGRES_URL in $POSTGRES_URLS
 do
   eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
@@ -62,8 +66,9 @@ do
     export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME
   fi
 
+# TODO: scram-sha-256 password generation, not plaintext
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
-"$DB_USER" "$DB_MD5_PASS"
+"$DB_USER" "$DB_PASS"
 EOFEOF
 
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
