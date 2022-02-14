@@ -16,7 +16,7 @@ connection limits and Out Of Memory errors on the Postgres server.
 
 - Q: Why shouldn't I use transaction pooling?
 - A: If you need to use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level.
-Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes) for all transaction pooling caveats.
+Please refer to PGBouncer's [feature matrix](https://www.pgbouncer.org/features.html#sql-feature-map-for-pooling-modes) for all transaction pooling caveats.
 
 
 ## Disable Prepared Statements
