@@ -66,8 +66,15 @@ do
 "$DB_USER" "$DB_MD5_PASS"
 EOFEOF
 
+if [ -z "$PGBOUNCER_CONNECT_QUERY" ]
+then
+  CONNECT_QUERY_ARG=""
+else
+  CONNECT_QUERY_ARG="connect_query=$PGBOUNCER_CONNECT_QUERY"
+fi
+
   cat >> /app/vendor/pgbouncer/pgbouncer.ini << EOFEOF
-$CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT connect_query=${PGBOUNCER_CONNECT_QUERY}
+$CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT $CONNECT_QUERY_ARG
 EOFEOF
 
   let "n += 1"
