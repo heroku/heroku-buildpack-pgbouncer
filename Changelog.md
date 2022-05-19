@@ -1,4 +1,6 @@
 ## Unreleased
+
+## v0.10.0 (May 19, 2022)
 * Add support for Heroku-22
 * Add codeowners
 
