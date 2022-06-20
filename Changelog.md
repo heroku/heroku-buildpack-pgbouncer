@@ -1,4 +1,5 @@
 ## Unreleased
+* Update to pgbouncer v1.17.0 on Heroku-22, to fix OpenSSL 3 related crashes
 
 ## v0.10.0 (May 19, 2022)
 * Add support for Heroku-22

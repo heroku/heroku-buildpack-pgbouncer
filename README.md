@@ -90,6 +90,11 @@ The buildpack will install and configure pgbouncer to connect to
 `bin/start-pgbouncer` to any process in the Procfile to run pgbouncer alongside
 that process.
 
+## PgBouncer Version
+
+- Heroku-18: `v1.14.0`
+- Heroku-20: `v1.14.0`
+- Heroku-22: `v1.17.0`
 
 ## Multiple Databases
 It is possible to connect to multiple databases through pgbouncer by setting
