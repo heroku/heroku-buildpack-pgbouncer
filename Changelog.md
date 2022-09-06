@@ -1,5 +1,8 @@
 ## Unreleased
 
+## v0.12.0 (September 6, 2022)
+* Add missing `SIGTERM` patch for v1.17.0 (corrects shutdown behaviour on Heroku-22)
+
 ## v0.11.0 (June 20, 2022)
 * Update to pgbouncer v1.17.0 on Heroku-22, to fix OpenSSL 3 related crashes
 
