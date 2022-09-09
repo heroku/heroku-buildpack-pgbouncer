@@ -1,5 +1,8 @@
 ## Unreleased
 
+## v0.13.0 (September 9, 2022)
+* Update pgbouncer to v1.17.0 for Heroku-18 and Heroku-20 (for parity with Heroku-22)
+
 ## v0.12.0 (September 6, 2022)
 * Add missing `SIGTERM` patch for v1.17.0 (corrects shutdown behaviour on Heroku-22)
 
