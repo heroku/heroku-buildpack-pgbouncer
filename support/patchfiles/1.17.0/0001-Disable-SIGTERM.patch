@@ -1,7 +1,7 @@
 --- src/main.c
 +++ src/main.c
-@@ -433,9 +433,7 @@ static struct event ev_sigint;
- 
+@@ -445,9 +445,7 @@
+
  static void handle_sigterm(evutil_socket_t sock, short flags, void *arg)
  {
 -	log_info("got SIGTERM, fast exit");
@@ -9,5 +9,5 @@
 -	exit(1);
 +	log_info("Got SIGTERM, ignoring!");
  }
- 
+
  static void handle_sigint(evutil_socket_t sock, short flags, void *arg)

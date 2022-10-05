@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.14.0}
+PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.17.0}
 
 pgbouncer_tarball_url=https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 
@@ -18,7 +18,8 @@ if [ -d "/buildpack/support/patchfiles/${PGBOUNCER_VERSION}" ]
 then
 		PATCHFILES=$(find /buildpack/support/patchfiles/"${PGBOUNCER_VERSION}" -name '*.patch')
 else
-		PATCHFILES=$(find /buildpack/support/patchfiles/default -name '*.patch')
+		echo "Missing patchfiles directory for ${PGBOUNCER_VERSION}!" >&2
+		exit 1
 fi
 
 (
