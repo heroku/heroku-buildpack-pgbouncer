@@ -144,6 +144,7 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
 - `PGBOUNCER_QUERY_WAIT_TIMEOUT` Default is 120 seconds, helps when the server is down or the database rejects connections for any reason. If this is disabled, clients will be queued infinitely.
+- `PGBOUNCER_CONNECT_QUERY` Default is ''.
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
 
