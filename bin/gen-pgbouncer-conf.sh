@@ -46,10 +46,29 @@ EOFEOF
 
 for POSTGRES_URL in $POSTGRES_URLS
 do
-  eval POSTGRES_URL_VALUE=\$$POSTGRES_URL
-  IFS=':' read DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< $(echo $POSTGRES_URL_VALUE | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')
+  eval POSTGRES_URL_VALUE="\$$POSTGRES_URL"
 
-  DB_MD5_PASS="md5"`echo -n ${DB_PASS}${DB_USER} | md5sum | awk '{print $1}'`
+  if [ -z "$POSTGRES_URL_VALUE" ]
+  then
+    echo "$POSTGRES_URL is empty. Exiting..."
+    exit 1
+  fi
+
+  IFS=':' read -r DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< "$(echo "$POSTGRES_URL_VALUE" | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')"
+
+  # We can ignore DB_NAME as this isn't strictly required.
+  CONN_STRING_PARTS=("$DB_USER" "$DB_PASS" "$DB_HOST" "$DB_PORT")
+  for CONN_STRING_PART in "${CONN_STRING_PARTS[@]}"
+  do
+    if [ -z "$CONN_STRING_PART" ]
+    then
+      # Don't dump the config variable value, only refer to it.
+      echo "$POSTGRES_URL is not a valid PostgresSQL connection string. Exiting..."
+      exit 1
+    fi
+  done
+
+  DB_MD5_PASS="md5"$(echo -n "${DB_PASS}""${DB_USER}" | md5sum | awk '{print $1}')
 
   CLIENT_DB_NAME="db${n}"
 
@@ -57,9 +76,9 @@ do
 
   if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
   then
-    export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME?prepared_statements=false
+    export "${POSTGRES_URL}"_PGBOUNCER=postgres://"$DB_USER":"$DB_PASS"@127.0.0.1:6000/$CLIENT_DB_NAME?prepared_statements=false
   else
-    export ${POSTGRES_URL}_PGBOUNCER=postgres://$DB_USER:$DB_PASS@127.0.0.1:6000/$CLIENT_DB_NAME
+    export "${POSTGRES_URL}"_PGBOUNCER=postgres://"$DB_USER":"$DB_PASS"@127.0.0.1:6000/$CLIENT_DB_NAME
   fi
 
   cat >> /app/vendor/pgbouncer/users.txt << EOFEOF
@@ -70,7 +89,7 @@ EOFEOF
 $CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT
 EOFEOF
 
-  let "n += 1"
+  (( n += 1 ))
 done
 
 chmod go-rwx /app/vendor/pgbouncer/*
