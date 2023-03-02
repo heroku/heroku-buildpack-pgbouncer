@@ -111,7 +111,7 @@ It is possible to connect to multiple databases through pgbouncer by setting
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db2
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/db1
 
-> ⚠️ A referenced configuration variable in `PGBOUNCER_URLS` must not be empty, or otherwise must be a valid PostgreSQL connection string.
+> ⚠️ A referenced configuration variable in `PGBOUNCER_URLS` must not be empty, and must be a valid PostgreSQL connection string.
 
 ## Follower Replica Databases
 As of v0.3.2 of this buildpack, it is possible to use pgbouncer to connect to
