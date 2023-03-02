@@ -140,6 +140,7 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_LOG_CONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_DISCONNECTIONS` Default is 1. If your app does not use persistent database connections, this may be noisy and should be set to 0.
 - `PGBOUNCER_LOG_POOLER_ERRORS` Default is 1
+- `PGBOUNCER_LOG_VERBOSE` Default is 0. Change to 1 or 2 to increase log verbosity.
 - `PGBOUNCER_STATS_PERIOD` Default is 60
 - `PGBOUNCER_SERVER_RESET_QUERY` Default is empty when pool mode is transaction, and "DISCARD ALL;" when session.
 - `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas. Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param"`
