@@ -64,6 +64,10 @@ run-pgbouncer() {
 }
 
 config-gen() {
+  if [ -f "vendor/pgbouncer/pgbouncer.ini" ]
+  then
+    return
+  fi
   # Generate config files
   at config-gen-start
   source bin/gen-pgbouncer-conf.sh
