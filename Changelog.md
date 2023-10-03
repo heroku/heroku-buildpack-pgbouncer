@@ -1,4 +1,5 @@
-## Unreleased
+## v0.14.0 (Oct 3, 2023)
+* Update pgbouncer to v1.19.1
 * Converted our remaining CircleCI tests to Github Actions
 * Add validation for PGBOUNCER_URLS
 * Add stack tests
