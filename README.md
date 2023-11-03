@@ -149,6 +149,10 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 
 For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
 
+## Monitoring
+
+You can set `PGBOUNCER_STATS_USER` and `PGBOUNCER_STATS_PASSWORD` to enable Datadog (or other provider) monitoring.
+
 ## Using the edge version of the buildpack
 
 The `heroku/pgbouncer` buildpack points to the latest stable version of the buildpack published in the [Buildpack Registry](https://devcenter.heroku.com/articles/buildpack-registry). To use the latest version of the buildpack (the code in this repository, run the following command:
