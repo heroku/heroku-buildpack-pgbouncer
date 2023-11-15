@@ -24,6 +24,7 @@ auth_file = $CONFIG_DIR/users.txt
 server_tls_sslmode = prefer
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
+stats_users = ${PGBOUNCER_STATS_USER}
 
 ; When server connection is released back to pool:
 ;   session      - after client disconnects
@@ -95,5 +96,12 @@ EOFEOF
 
   (( n += 1 ))
 done
+
+if [[ -n ${PGBOUNCER_STATS_USER} ]]; then
+  DB_MD5_STATS_PASS="md5"$(echo -n "${PGBOUNCER_STATS_PASSWORD}""${PGBOUNCER_STATS_USER}" | md5sum | awk '{print $1}')
+  cat >> "$CONFIG_DIR/users.txt" << EOFEOF
+"$PGBOUNCER_STATS_USER" "$DB_MD5_STATS_PASS"
+EOFEOF
+fi
 
 chmod go-rwx "$CONFIG_DIR"/*
