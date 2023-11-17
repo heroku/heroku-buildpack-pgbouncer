@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-env -i TERM=$TERM bash -c "bats ./test/*.bats"
+env -i TERM="${TERM}" PATH="${PATH}" bash -c "bats ./test/*.bats"

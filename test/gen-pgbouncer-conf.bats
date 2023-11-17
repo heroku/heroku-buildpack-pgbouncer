@@ -27,16 +27,48 @@ teardown_file() {
 }
 
 @test "successfully writes the config" {
-    export DATABASE_URL="postgres://user:pass@host:5432/name?query"
+    export DATABASE_URL="postgresql://user:pass@host:5432/name?query"
     export DATABASE_2_URL="postgresql://user2:pass@host2:7777/dbname"
     export PGBOUNCER_URLS="DATABASE_URL DATABASE_2_URL"
     run bash bin/gen-pgbouncer-conf.sh
     assert_success
     cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
-    assert_line 'Setting DATABASE_URL_PGBOUNCER config var'
+    assert_line 'Setting DATABASE_URL_PGBOUNCER variable...'
     assert grep "server_tls_sslmode = prefer" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
     assert grep "db1= host=host dbname=name?query port=5432" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
     assert grep "db2= host=host2 dbname=dbname port=7777" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "user" "$PGBOUNCER_CONFIG_DIR/users.txt"
+    assert grep "user2" "$PGBOUNCER_CONFIG_DIR/users.txt"
+}
+
+@test "uses custom database names are available via POSTGRES_URLS_NAMES" {
+    export DATABASE_URL="postgresql://user:pass@host:5432/name?query"
+    export DATABASE_2_URL="postgresql://user2:pass@host2:7777/dbname"
+    export PGBOUNCER_URLS="DATABASE_URL DATABASE_2_URL"
+    export POSTGRES_URL_NAMES="primary analytics"
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert_line 'Setting DATABASE_URL_PGBOUNCER variable...'
+    assert grep "server_tls_sslmode = prefer" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "primary= host=host dbname=name?query port=5432" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "analytics= host=host2 dbname=dbname port=7777" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "user" "$PGBOUNCER_CONFIG_DIR/users.txt"
+    assert grep "user2" "$PGBOUNCER_CONFIG_DIR/users.txt"
+}
+
+@test "uses custom database names are available via PGBOUNCER_URL_NAMES" {
+    export DATABASE_URL="postgresql://user:pass@host:5432/name?query"
+    export DATABASE_2_URL="postgresql://user2:pass@host2:7777/dbname"
+    export PGBOUNCER_URLS="DATABASE_URL DATABASE_2_URL"
+    export PGBOUNCER_URL_NAMES="primary analytics"
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert_line 'Setting DATABASE_URL_PGBOUNCER variable...'
+    assert grep "server_tls_sslmode = prefer" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "primary= host=host dbname=name?query port=5432" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "analytics= host=host2 dbname=dbname port=7777" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
     assert grep "user" "$PGBOUNCER_CONFIG_DIR/users.txt"
     assert grep "user2" "$PGBOUNCER_CONFIG_DIR/users.txt"
 }

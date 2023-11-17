@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
 POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+POSTGRES_URL_NAMES=${POSTGRES_URL_NAMES:-${PGBOUNCER_URL_NAMES:-''}}
 POOL_MODE=${PGBOUNCER_POOL_MODE:-transaction}
 SERVER_RESET_QUERY=${PGBOUNCER_SERVER_RESET_QUERY}
 CONFIG_DIR=${PGBOUNCER_CONFIG_DIR:-/app/vendor/pgbouncer}
-n=1
+
+declare -a POSTGRES_URL_NAMES_ARRAY
+export POSTGRES_URL_NAMES_ARRAY
+if [[ -n ${POSTGRES_URL_NAMES} ]]; then
+  mapfile -t POSTGRES_URL_NAMES_ARRAY < <(echo "${POSTGRES_URL_NAMES}" | tr ' ' '\n')
+fi
+
+index=0
 
 set -eo pipefail
 
@@ -49,9 +57,18 @@ query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
 [databases]
 EOFEOF
 
+function dbname() {
+  local idx="$1"
+  if [[ -n ${POSTGRES_URL_NAMES_ARRAY[*]} && ${#POSTGRES_URL_NAMES_ARRAY[@]} -gt ${idx} ]]; then
+    echo -n "${POSTGRES_URL_NAMES_ARRAY[$idx]}"
+  else
+    echo -n "db$((idx + 1))" # since $index starts at 0
+  fi
+}
+
 for POSTGRES_URL in $POSTGRES_URLS
 do
-  eval POSTGRES_URL_VALUE="\$$POSTGRES_URL"
+  eval POSTGRES_URL_VALUE="${!POSTGRES_URL}"
 
   if [ -z "$POSTGRES_URL_VALUE" ]
   then
@@ -75,9 +92,9 @@ do
 
   DB_MD5_PASS="md5"$(echo -n "${DB_PASS}""${DB_USER}" | md5sum | awk '{print $1}')
 
-  CLIENT_DB_NAME="db${n}"
+  CLIENT_DB_NAME="$(dbname $index)"
 
-  echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
+  echo "Setting ${POSTGRES_URL}_PGBOUNCER variable..."
 
   if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]
   then
@@ -94,7 +111,7 @@ EOFEOF
 $CLIENT_DB_NAME= host=$DB_HOST dbname=$DB_NAME port=$DB_PORT
 EOFEOF
 
-  (( n += 1 ))
+  (( index += 1 ))
 done
 
 if [[ -n ${PGBOUNCER_STATS_USER} ]]; then

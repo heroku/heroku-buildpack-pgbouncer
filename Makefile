@@ -15,3 +15,10 @@ build-heroku-22:
 shell:
 	@echo "Opening heroku-22 shell..."
 	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-22" -e "PORT=5000" -w /buildpack heroku/heroku:22-build bash
+
+bats:
+	@bash -c "command -v brew >/dev/null && { command -v bats  >/dev/null || brew install bats-core || npm install -g bats; } "
+
+test: 	bats
+	test/run_all.sh
+
