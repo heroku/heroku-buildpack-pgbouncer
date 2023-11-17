@@ -1,5 +1,7 @@
 # Heroku buildpack: pgbouncer
 
+[![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)
+
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
 that allows one to run pgbouncer in a dyno alongside application code. It is meant
 to be [used in conjunction with other buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
