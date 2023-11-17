@@ -1,29 +1,35 @@
-# Heroku buildpack: pgbouncer
+# Heroku Buildpack: pgBouncer
 
-[![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
+| Branch         | Test Result                                                                                                                                                                                                              |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `main`         | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                     |
+| `kig/dbnames`  | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kig%2Fdbnames)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml) |
+
+> This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
 that allows one to run pgbouncer in a dyno alongside application code. It is meant
 to be [used in conjunction with other buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
-The primary use of this buildpack is to allow for transaction pooling of
+> The primary use of this buildpack is to allow for transaction pooling of
 PostgreSQL database connections among multiple workers in a dyno. For example,
 10 unicorn workers would be able to share a single database connection, avoiding
 connection limits and Out Of Memory errors on the Postgres server.
 
-## Connection Calculation
+## HealthSherpa Modifications
+
+### Computing the number of DB Connections
 
 Bear in mind that Heroku allows maximum of 500 connections to the database total. 
 
 Therefore you'd want to take the maximum number of dynos you may be running EVER, and divide 500 (or a bit less) by that number. That's what you want to set `PGBOUNCER_DEFAULT_POOL_SIZE` to.
 
-## Globally Enabling or Disabling the Buildpack
+### Globally Enabling or Disabling the Build pack
 
 You must set the environment variable `PGBOUNCER_ENABLED=true` to activate the buildpack.
 
 Without this variable, even if the application is started via the `bin/start-pgbouncer` script, the pgbouncer won't get used.
 
-## Additional Features of this (HealthSherpa) Fork
+### Additional Features of this (HealthSherpa) Fork
 
 This fork of the build pack by HealthSherpa adds the following features:
 
@@ -55,6 +61,32 @@ Good names will match what we use in Datadog already, eg:
 export PGBOUNCER_URLS="DATABASE_URL OFFLOAD_DATABASE_URL DATABASE_REPLICA_01_URL DATABASE_REPLICA_02_URL" 
 export PGBOUNCER_URL_NAMES="app-primary offload-primary app-replica-01 app-replica-02"
 ```
+
+### Running Tests
+
+This build-pack uses [bats](https://bats-core.readthedocs.io/en/stable/installation.html) for testing BASH scripts. 
+
+You can use the convenient `make` target to both install `bats` on OS-X and run the tests:
+
+```bash
+❯ make test
+test/run_all.sh
+1..10
+ok 1 returns exit code of 1 when PGBOUNCER_URLS is empty
+ok 2 returns exit code of 1 if a value in PGBOUNCER_URLS is invalid
+ok 3 successfully writes the config
+ok 4 uses custom database names are available via POSTGRES_URLS_NAMES
+ok 5 uses custom database names are available via PGBOUNCER_URL_NAMES
+ok 6 returns exit code of 1 with nothing to parse
+ok 7 sets ups DATABASE_URL_PGBOUNCER
+ok 8 substitutes postgres for postgresql in scheme
+ok 9 does not mutate other config vars not listed in PGBOUNCER_URLS
+ok 10 does not mutates config vars listed in PGBOUNCER_URLS
+```
+
+You can also run the test script directly: `test/run_all.sh`
+
+---
 
 ## FAQ
 
