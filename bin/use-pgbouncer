@@ -28,8 +28,14 @@ main() {
     eval "export ${POSTGRES_URL}_PGBOUNCER=postgres://$db_user:$db_password@$db_host:$client_port$db_path$db_query"
     at "exported ${POSTGRES_URL_PGBOUNCER}"
   done
-  at starting-app
-  exec "$@"
+
+
+  if [[ -n "$*" ]]; then
+    at starting-app
+    exec "$@"
+  else
+    return 0
+  fi
 }
 
 at() {

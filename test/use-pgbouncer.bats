@@ -72,3 +72,13 @@ load helper
   assert_line 'OTHER_URL=postgresql://user:pass@host2:5432/name?query'
 }
 
+@test "when no arguments are passed to exec it sets PGBOUNCER_URLS and exits with 0" {
+  export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
+  export OTHER_URL='postgresql://user:pass@host2:5432/name?query'
+  export PGBOUNCER_URLS="DATABASE_URL OTHER_URL"
+
+  source bin/use-pgbouncer; main
+
+  [[ -n "${DATABASE_URL_PGBOUNCER}" ]]
+  [[ -n "${OTHER_URL_PGBOUNCER}" ]]
+}
