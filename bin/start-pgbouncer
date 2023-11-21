@@ -74,11 +74,10 @@ config-gen() {
   at config-gen-end
 
   # Overwrite config vars with pgbouncer targets
-  POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+  export POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
 
   for POSTGRES_URL in $POSTGRES_URLS; do
     at "config-gen-override $POSTGRES_URL"
-    eval "$POSTGRES_URL=\$${POSTGRES_URL}_PGBOUNCER"
   done
 }
 
@@ -157,4 +156,4 @@ is-enabled() {
   )
 }
 
-[[ "$0" != "$BASH_SOURCE" ]] || main "$@"
+[[ "$0" != "${BASH_SOURCE[0]}" ]] || main "$@"

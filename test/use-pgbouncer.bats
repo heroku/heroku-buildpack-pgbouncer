@@ -6,64 +6,79 @@ load helper
   run bin/use-pgbouncer "printenv"
   assert_failure
   assert_line 'buildpack=pgbouncer at=pgbouncer-enabled'
-  assert_line 'buildpack=pgbouncer at=mutating-DATABASE_URL'
+  assert_line 'buildpack=pgbouncer at=setting DATABASE_URL_PGBOUNCER'
   refute_line 'buildpack=pgbouncer at=adding-one-to-5432'
 }
 
-@test "mutates DATABASE_URL" {
-  export DATABASE_URL='postgres://user:pass@host:5432/name?query'
+@test "sets ups DATABASE_URL_PGBOUNCER" {
+  export PGBOUNCER_URLS="DATABASE_URL"
+  export ORIGINAL_DATABASE_URL='postgresql://user:pass@host:5432/name?query'
+  export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
   run bin/use-pgbouncer "printenv"
   assert_success
   assert_line 'buildpack=pgbouncer at=pgbouncer-enabled'
-  assert_line 'buildpack=pgbouncer at=mutating-DATABASE_URL'
+  assert_line 'buildpack=pgbouncer at=setting DATABASE_URL_PGBOUNCER'
   assert_line 'buildpack=pgbouncer at=adding-one-to-5432'
   assert_line 'buildpack=pgbouncer at=starting-app'
 
   assert_line 'DATABASE_URL_PGBOUNCER=postgres://user:pass@host:5433/name?query'
-  assert_line 'DATABASE_URL=postgres://user:pass@host:5433/name?query'
+  assert_line 'DATABASE_URL=postgresql://user:pass@host:5432/name?query'
 }
 
 @test "substitutes postgres for postgresql in scheme" {
+  export PGBOUNCER_URLS="DATABASE_URL"
   export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
   run bin/use-pgbouncer "printenv"
   assert_success
   assert_line 'buildpack=pgbouncer at=pgbouncer-enabled'
-  assert_line 'buildpack=pgbouncer at=mutating-DATABASE_URL'
+  assert_line 'buildpack=pgbouncer at=setting DATABASE_URL_PGBOUNCER'
   assert_line 'buildpack=pgbouncer at=adding-one-to-5432'
   assert_line 'buildpack=pgbouncer at=starting-app'
 
   assert_line 'DATABASE_URL_PGBOUNCER=postgres://user:pass@host:5433/name?query'
-  assert_line 'DATABASE_URL=postgres://user:pass@host:5433/name?query'
+  assert_line 'DATABASE_URL=postgresql://user:pass@host:5432/name?query'
 }
 
 @test "does not mutate other config vars not listed in PGBOUNCER_URLS" {
+  export PGBOUNCER_URLS="DATABASE_URL"
   export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
   export OTHER_URL='postgresql://user:pass@host2:5432/name?query'
   run bin/use-pgbouncer "printenv"
   assert_success
   assert_line 'buildpack=pgbouncer at=pgbouncer-enabled'
-  assert_line 'buildpack=pgbouncer at=mutating-DATABASE_URL'
+  assert_line 'buildpack=pgbouncer at=setting DATABASE_URL_PGBOUNCER'
   assert_line 'buildpack=pgbouncer at=adding-one-to-5432'
   assert_line 'buildpack=pgbouncer at=starting-app'
 
   assert_line 'DATABASE_URL_PGBOUNCER=postgres://user:pass@host:5433/name?query'
-  assert_line 'DATABASE_URL=postgres://user:pass@host:5433/name?query'
+  assert_line 'DATABASE_URL=postgresql://user:pass@host:5432/name?query'
   assert_line 'OTHER_URL=postgresql://user:pass@host2:5432/name?query'
 }
 
-@test "mutates all config vars listed in PGBOUNCER_URLS" {
-  export PGBOUNCER_URLS="DATABASE_URL OTHER_URL"
+@test "does not mutates config vars listed in PGBOUNCER_URLS" {
   export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
   export OTHER_URL='postgresql://user:pass@host2:5432/name?query'
+  export PGBOUNCER_URLS="DATABASE_URL OTHER_URL"
   run bin/use-pgbouncer "printenv"
   assert_success
   assert_line 'buildpack=pgbouncer at=pgbouncer-enabled'
-  assert_line 'buildpack=pgbouncer at=mutating-DATABASE_URL'
+  assert_line 'buildpack=pgbouncer at=setting DATABASE_URL_PGBOUNCER'
+  assert_line 'buildpack=pgbouncer at=setting OTHER_URL_PGBOUNCER'
   assert_line 'buildpack=pgbouncer at=adding-one-to-5432'
   assert_line 'buildpack=pgbouncer at=starting-app'
 
   assert_line 'DATABASE_URL_PGBOUNCER=postgres://user:pass@host:5433/name?query'
-  assert_line 'DATABASE_URL=postgres://user:pass@host:5433/name?query'
-  assert_line 'OTHER_URL=postgres://user:pass@host2:5433/name?query'
+  assert_line 'DATABASE_URL=postgresql://user:pass@host:5432/name?query'
+  assert_line 'OTHER_URL=postgresql://user:pass@host2:5432/name?query'
 }
 
+@test "when no arguments are passed to exec it sets PGBOUNCER_URLS and exits with 0" {
+  export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
+  export OTHER_URL='postgresql://user:pass@host2:5432/name?query'
+  export PGBOUNCER_URLS="DATABASE_URL OTHER_URL"
+
+  source bin/use-pgbouncer; main
+
+  [[ -n "${DATABASE_URL_PGBOUNCER}" ]]
+  [[ -n "${OTHER_URL_PGBOUNCER}" ]]
+}
