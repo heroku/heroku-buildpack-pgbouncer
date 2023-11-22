@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
-function check-pgbouncer-is-enabled() {
+function is-pgbouncer-service-enabled() {
   if ! is-enabled "${PGBOUNCER_ENABLED:-1}"; then
     at pgbouncer-disabled
     exec "$@"
@@ -9,7 +9,7 @@ function check-pgbouncer-is-enabled() {
 }
 
 function main() {
-  check-pgbouncer-is-enabled "$@"
+  is-pgbouncer-service-enabled "$@"
 
   at pgbouncer-enabled
 

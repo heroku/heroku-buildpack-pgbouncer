@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# vim: ft=bash
+
+export PGBOUNCER_PROCESS_REGEX="${PGBOUNCER_PROCESS_REGEX:-"[v]endor/pgbouncer/bin/pgbouncer"}"
+export PGBOUNCER_BUILD_PACK_PID
+
+function inf() {
+  echo -e "\e[1;32m — $* \e[0;0m"
+}
+
+function err() {
+   echo -e "\e[1;37;41m — $* \e[0;0m"
+}
+
+function is-enabled() {
+  ( shopt -s extglob nocasematch
+    [[ $1 == @(1|true|yes|on) ]]
+  )
+}
+
+function pgbouncer-current-pid() {
+  if [[ -z ${PGBOUNCER_PROCESS_REGEX} ]] ; then
+    err "pgBouncer process regex is not set!" >&2
+    return 1
+  else
+    /bin/ps -eopid,args | grep -E "${PGBOUNCER_PROCESS_REGEX}" | awk '{print $1}'
+  fi
+}
+
+function is-pgbouncer-running() {
+  local current_pid
+  current_pid=$(pgbouncer-current-pid)
+
+  [[ -n ${current_pid} && ${current_pid} -gt 0 ]] && {
+    if [[ -n ${PGBOUNCER_BUILD_PACK_PID} && ${PGBOUNCER_BUILD_PACK_PID} -eq ${current_pid} ]]; then
+      inf "pgbouncer-is-running-started-by-us"
+      return 0
+    else
+      err "pgbouncer-is-running-started-not-by-us"
+      return 1
+    fi
+  }
+
+  inf "pgbouncer-is-not-running"
+  return 1
+}
+
+function is-pgbouncer-service-enabled() {
+  if ! is-enabled "${PGBOUNCER_ENABLED}"; then
+    inf pgbouncer-is-disabled
+    return 1
+  fi
+
+  return 0
+}
+
+declare PGBOUNCER_BUILD_PACK_PID
+
+function main() {
+  is-pgbouncer-service-enabled || return 1
+
+  local stderr=$(mktemp)
+
+  [[ -x bin/start-pgbouncer ]] && nohup bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" 2>"${stderr}" &
+
+  sleep 1
+
+  is-pgbouncer-running || return 1
+
+  PGBOUNCER_BUILD_PACK_PID=$(pgbouncer-current-pid)
+  export PGBOUNCER_BUILD_PACK_PID
+
+  if [[ -n ${PGBOUNCER_BUILD_PACK_PID} && ${PGBOUNCER_BUILD_PACK_PID} -gt 0 ]] ; then
+    set +e
+    mkdir -f tmp/pids || true
+    echo "${PGBOUNCER_BUILD_PACK_PID}" > tmp/pids/pgbouncer.pid
+    inf "pgbouncer-started-ok-pid-s${PGBOUNCER_BUILD_PACK_PID}"
+    return 0
+  else
+    err "pgbouncer-failed-to-start"
+    [[ -s ${stderrs} ]] && {
+      err "pgbouncer-stderr:"
+      cat "${stderr}"
+      rm -f "${stderr}"
+    }
+    return 1
+  fi
+}
+
+[[ "$0" != "${BASH_SOURCE[0]}" ]] || main "$@"

@@ -24,7 +24,7 @@ function is-enabled() {
   )
 }
 
-function check-pgbouncer-is-enabled() {
+function is-pgbouncer-service-enabled() {
   if ! is-enabled "${PGBOUNCER_ENABLED}"; then
     echo pgbouncer-disabled
     return 1
@@ -32,7 +32,7 @@ function check-pgbouncer-is-enabled() {
   return 0
 }
 
-check-pgbouncer-is-enabled && {
+is-pgbouncer-service-enabled && {
   export POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
   export POSTGRES_URL_NAMES=${POSTGRES_URL_NAMES:-${PGBOUNCER_URL_NAMES:-''}}
 
@@ -96,7 +96,7 @@ function setup-client-pgbouncer() {
   echo "Client pgBouncer has been configured with ${index} database(s)."
 }
 
-check-pgbouncer-is-enabled && {
+is-pgbouncer-service-enabled && {
   echo "Client pgBouncer is enabled"
   setup-client-pgbouncer
 } || {

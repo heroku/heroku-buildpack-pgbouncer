@@ -3,9 +3,8 @@
 
 | Branch         | Test Result                                                                                                                                                                                                                                                   |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `main`         | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                                                          |
-| `kg-cr-rg/start-pgbouncer` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kg-cr-rg/client-side-pgbouncer)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                  |
-| `kg-cr-rg/start-pgbouncer-on-bg` |![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kg-cr-rg%2Fstart-pgbouncer-on-bg) |
+| `main` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                  |
+| `current` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                  |
 
 ---
 
@@ -25,15 +24,15 @@ The following are the list of scripts in the `bin` folder on this branch:
 We marked the scripts that are either modified or new as compared to the Heroku Original Repo by a bullet. 
 
 ```bash
-  bin/detect
-• bin/use-client-pgbouncer
-• bin/start-pgbouncer
-  bin/release
-  bin/compile
-  bin/start-pgbouncer-stunnel
-  bin/gen-pgbouncer-conf.sh
-• bin/use-server-pgbouncer
-• bin/start-pgbouncer-on-bg
+bin/compile
+bin/detect
+bin/gen-pgbouncer-conf.sh
+bin/release
+bin/start-pgbouncer             ✅
+bin/start-pgbouncer-as-service  ✅
+bin/start-pgbouncer-stunnel
+bin/use-client-pgbouncer        ✅
+bin/use-server-pgbouncer        ✅
 ```
 
 ### Original Buildpack: Good Intentions, But ... 
@@ -51,14 +50,30 @@ The script would then use the variable `PGBOUNCER_URLS` to determine which env v
 
 More over, the original scripts were also mutating the original `DATABASE_URL` variable, which we felt was a bad idea.
 
-████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████
-
 # HealthSherpa Buildpack: Client-Side pgBouncer
 
 We thoght that we'd want to:
 
- 1. Start pgBouncer so that it keeps on running
- 2. Take each database connection variable and, without mutating it, create another one with `_PGBOUNCER` suffix.
+ 1. Start pgBouncer so that it keeps on running on the background, and
+ 2. Take each database connection variable and, without mutating it, create another one with the `_PGBOUNCER` suffix.
+
+## Using This Buildpack
+
+To use this buildpack:
+
+ 1. Set the env variables:
+    * `PGBOUNCER_URLS` — a space-separated list of database connection variables to use with pgBouncer.
+    * `PGBOUNCER_URL_NAMES` — a space-separated list of database names corresponding to the connections vars.
+    * `PGBOUNCER_ENABLED` — set to `true` to enable the buildpack.
+ 2. In some other buildpack (for the time being) which is added AFTER pgBouncer buildpack, execute the following code:
+
+
+```bash
+if [[ ${PGBOUNCER_ENABLED} == "true" ]]; then
+  [[ -x bin/start-pgbouncer-as-service ]] && bin/start-pgbouncer-as-service
+  [[ -x bin/use-client-pgbouncer ]] && bin/use-client-pgbouncer
+fi
+```
 
 ## Computing the number of DB Connections
 
@@ -70,7 +85,7 @@ Therefore you'd want to take the maximum number of dynos you may be running EVER
 
 You must set the environment variable `PGBOUNCER_ENABLED=true` to activate the buildpack.
 
-Without this variable, even if the application is started via the `bin/start-pgbouncer-on-bg` script, the pgbouncer won't get used.
+Without this variable, even if the application is started via the `bin/start-pgbouncer-as-service` script, the pgbouncer won't get used.
 
 ## Additional Features of this (HealthSherpa) Fork
 
