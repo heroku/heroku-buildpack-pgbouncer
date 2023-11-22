@@ -23,7 +23,7 @@ Bear in mind that Heroku allows maximum of 500 connections to the database total
 
 Therefore you'd want to take the maximum number of dynos you may be running EVER, and divide 500 (or a bit less) by that number. That's what you want to set `PGBOUNCER_DEFAULT_POOL_SIZE` to.
 
-### Globally Enabling or Disabling the Build pack
+  ### Globally Enabling or Disabling the Build pack
 
 You must set the environment variable `PGBOUNCER_ENABLED=true` to activate the buildpack.
 

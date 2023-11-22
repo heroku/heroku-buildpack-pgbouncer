@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
-main() {
+function check-pgbouncer-is-enabled() {
   if ! is-enabled "${PGBOUNCER_ENABLED:-1}"; then
     at pgbouncer-disabled
     exec "$@"
   fi
+}
+
+function main() {
+  check-pgbouncer-is-enabled "$@"
 
   at pgbouncer-enabled
+
   run-pgbouncer "$@"
 }
 
-run-pgbouncer() {
+function run-pgbouncer() {
   declare psmgr=/tmp/pgbouncer-buildpack-wait
   declare -A pids signals
 
