@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# vim: ft=bash
+
+declare PGBOUNCER_PID
+
+function is-enabled() {
+  ( shopt -s extglob nocasematch
+    [[ $1 == @(1|true|yes|on) ]]
+  )
+}
+
+function is-pgbouncer-running() {
+  /bin/ps -efww | /usr/bin/grep -q [v]endor/pgbouncer/bin/pgbouncer
+}
+
+function check-pgbouncer-is-enabled() {
+  if ! is-enabled "${PGBOUNCER_ENABLED}"; then
+    echo pgbouncer-is-disabled
+    return 1
+  fi
+
+  is-pgbouncer-running && {
+    echo pgbouncer-running-already-yo
+    return 1
+  }
+
+  return 0
+}
+
+function main() {
+  check-pgbouncer-is-enabled || return 1
+
+  [[ -x bin/start-pgbouncer ]] && bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" &
+
+  sleep 1
+
+  declare PGBOUNCER_PID
+  PGBOUNCER_PID=$(ps -opid,args | grep "[v]endor/pgbouncer/bin/pgbouncer" | awk '{print $1}')
+  export PGBOUNCER_PID
+
+  if [[ ${PGBOUNCER_PID} -gt 0 ]] ; then
+    echo "${PGBOUNCER_PID}" > tmp/pids/pgbouncer.pid
+    echo -e "\e[1;33;42m ❯ Started pgbouncer with pid ${PGBOUNCER_PID} ❯ \e[0;0m"
+    return 0
+  else
+    echo -e "\e[1;37;41m ❯ Failed to start pgbouncer, no matching PID found ❯ \e[0;0m"
+    return 1
+  fi
+}
+
+[[ "$0" != "${BASH_SOURCE[0]}" ]] || main "$@"
