@@ -1,35 +1,78 @@
 # Heroku Buildpack: pgBouncer
 
 
-| Branch         | Test Result                                                                                                                                                                                                              |
-|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `main`         | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                     |
-| `kig/dbnames`  | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kig%2Fdbnames)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml) |
+| Branch         | Test Result                                                                                                                                                                                                                                                   |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `main`         | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                                                          |
+| `kg-cr-rg/start-pgbouncer` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kg-cr-rg/client-side-pgbouncer)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                  |
+| `kg-cr-rg/start-pgbouncer-on-bg` |![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kg-cr-rg%2Fstart-pgbouncer-on-bg) |
 
-> This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
+---
+
+> 🚨 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
 that allows one to run pgbouncer in a dyno alongside application code. It is meant
 to be [used in conjunction with other buildpacks](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
-> The primary use of this buildpack is to allow for transaction pooling of
+> 🔫 The primary use of this buildpack is to allow for transaction pooling of
 PostgreSQL database connections among multiple workers in a dyno. For example,
 10 unicorn workers would be able to share a single database connection, avoiding
 connection limits and Out Of Memory errors on the Postgres server.
 
-## HealthSherpa Modifications
+## BuildPack Scripts and Executables
 
-### Computing the number of DB Connections
+The following are the list of scripts in the `bin` folder on this branch:
+
+We marked the scripts that are either modified or new as compared to the Heroku Original Repo by a bullet. 
+
+```bash
+  bin/detect
+• bin/use-client-pgbouncer
+• bin/start-pgbouncer
+  bin/release
+  bin/compile
+  bin/start-pgbouncer-stunnel
+  bin/gen-pgbouncer-conf.sh
+• bin/use-server-pgbouncer
+• bin/start-pgbouncer-on-bg
+```
+
+### Original Buildpack: Good Intentions, But ... 
+
+AKA — How you were supposed to use this.
+
+The build-pack authors intended for you to run your application like so:
+
+```bash
+bin/start-pgbouncer bundle exec puma -C config/puma.rb
+bin/start-pgbouncer bundle exec sidekiq -C config/sidekiq/hole-digger.yml
+```
+
+The script would then use the variable `PGBOUNCER_URLS` to determine which env variables contain database credentials, and create a version of each variable with the suffix `_PGBOUNCER`. 
+
+More over, the original scripts were also mutating the original `DATABASE_URL` variable, which we felt was a bad idea.
+
+████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████
+
+# HealthSherpa Buildpack: Client-Side pgBouncer
+
+We thoght that we'd want to:
+
+ 1. Start pgBouncer so that it keeps on running
+ 2. Take each database connection variable and, without mutating it, create another one with `_PGBOUNCER` suffix.
+
+## Computing the number of DB Connections
 
 Bear in mind that Heroku allows maximum of 500 connections to the database total. 
 
 Therefore you'd want to take the maximum number of dynos you may be running EVER, and divide 500 (or a bit less) by that number. That's what you want to set `PGBOUNCER_DEFAULT_POOL_SIZE` to.
 
-  ### Globally Enabling or Disabling the Build pack
+## Globally Enabling or Disabling the Build pack
 
 You must set the environment variable `PGBOUNCER_ENABLED=true` to activate the buildpack.
 
-Without this variable, even if the application is started via the `bin/start-pgbouncer` script, the pgbouncer won't get used.
+Without this variable, even if the application is started via the `bin/start-pgbouncer-on-bg` script, the pgbouncer won't get used.
 
-### Additional Features of this (HealthSherpa) Fork
+## Additional Features of this (HealthSherpa) Fork
 
 This fork of the build pack by HealthSherpa adds the following features:
 
@@ -62,7 +105,7 @@ export PGBOUNCER_URLS="DATABASE_URL OFFLOAD_DATABASE_URL DATABASE_REPLICA_01_URL
 export PGBOUNCER_URL_NAMES="app-primary offload-primary app-replica-01 app-replica-02"
 ```
 
-### Running Tests
+s## Running Tests
 
 This build-pack uses [bats](https://bats-core.readthedocs.io/en/stable/installation.html) for testing BASH scripts. 
 
@@ -86,9 +129,9 @@ ok 10 does not mutates config vars listed in PGBOUNCER_URLS
 
 You can also run the test script directly: `test/run_all.sh`
 
----
+︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████
 
-## FAQ
+# FAQ
 
 - Q: Why should I use transaction pooling?
 - A: You have many workers per dyno that hold open idle Postgres connections and
