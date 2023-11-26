@@ -21,7 +21,7 @@ connection limits and Out Of Memory errors on the Postgres server.
 
 The following are the list of scripts in the `bin` folder on this branch:
 
-We marked the scripts that are either modified or new as compared to the Heroku Original Repo by a bullet. 
+We marked the scripts that are either modified or new as compared to the Heroku Original Repo by a checkmark. 
 
 ```bash
 bin/compile
