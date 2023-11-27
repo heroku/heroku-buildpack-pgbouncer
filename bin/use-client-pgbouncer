@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2015
+# vi: ft=bash
+
+# @description
+#    This is a HealthSherpa script that sets up client pgBouncer URLs, but does
+#    not mutate original database URL variables.
+#    This script is meant to be sourced by another script.
+#    To enable client side pgBouncer, set PGBOUNCER_ENABLED to true,
+#    and set PGBOUNCER_URLS to a space separated list of database URLs,
+#    and optionally set PGBOUNCER_URL_NAMES to a space separated list of
+#
+# @example
+#    PGBOUNCER_URLS="DATABASE_URL ANOTHER_DB_URL... "
+#    PGBOUNCER_URL_NAMES="main-db shitty-db..."
+
+set +e
+
+export PGBOUNCER_QUIET=${PGBOUNCER_QUIET:-false}
+
+function is-enabled() {
+  ( shopt -s extglob nocasematch
+    [[ $1 == @(1|true|yes|on) ]]
+  )
+}
+
+function check-pgbouncer-is-enabled() {
+  if ! is-enabled "${PGBOUNCER_ENABLED}"; then
+    echo pgbouncer-disabled
+    return 1
+  fi
+  return 0
+}
+
+check-pgbouncer-is-enabled && {
+  export POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+  export POSTGRES_URL_NAMES=${POSTGRES_URL_NAMES:-${PGBOUNCER_URL_NAMES:-''}}
+
+  declare -a POSTGRES_URL_NAMES_ARRAY
+  export POSTGRES_URL_NAMES_ARRAY
+  if [[ -n ${POSTGRES_URL_NAMES} ]]; then
+    mapfile -t POSTGRES_URL_NAMES_ARRAY < <(echo "${POSTGRES_URL_NAMES}" | tr ' ' '\n')
+  fi
+}
+
+index=0
+
+function dbname() {
+  local idx="$1"
+  if [[ -n ${POSTGRES_URL_NAMES_ARRAY[*]} && ${#POSTGRES_URL_NAMES_ARRAY[@]} -gt ${idx} ]]; then
+    echo -n "${POSTGRES_URL_NAMES_ARRAY[$idx]}"
+  else
+    echo -n "db$((idx + 1))" # since $index starts at 0
+  fi
+}
+
+function setup-client-pgbouncer() {
+  local postgres_url
+
+  for postgres_url in $POSTGRES_URLS; do
+    local postgresql_url_value="${!postgres_url}"
+
+    if [[ -z "$postgresql_url_value" ]]; then
+      echo "$postgres_url is empty. Exiting..." >&2
+      return 0
+    fi
+
+    IFS=':' read -r DB_USER DB_PASS DB_HOST DB_PORT <<<"$(echo "$postgresql_url_value" | perl -lne 'print "$1:$2:$3:$4" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')"
+
+    # We can ignore DB_NAME as this isn't strictly required.
+    local connection_parts=("$DB_USER" "$DB_PASS" "$DB_HOST" "$DB_PORT")
+    local connection_part
+    for connection_part in "${connection_parts[@]}"; do
+      if [[ -z "$connection_part" ]]; then
+        echo "$postgres_url is not a valid PostgresSQL connection string. Exiting..." >&2
+        return 0
+      fi
+    done
+
+    local client_db_name
+    client_db_name="$(dbname $index)"
+
+    local var_name="${postgres_url}_PGBOUNCER"
+
+    if [ "$PGBOUNCER_PREPARED_STATEMENTS" == "false" ]; then
+      export "${var_name}"=postgres://"$DB_USER":"$DB_PASS"@127.0.0.1:6000/$client_db_name?prepared_statements=false
+    else
+      export "${var_name}"=postgres://"$DB_USER":"$DB_PASS"@127.0.0.1:6000/$client_db_name
+    fi
+
+    ${PGBOUNCER_QUIET} || printf "   • pgBouncer URL: %02d \e[0;32m%30s\e[0;0m ➜ \e[0;33m%50s\e[0;0m\n" $(( index + 1)) ${var_name} ${!var_name}
+
+    ((index += 1))
+  done
+
+  echo "Client pgBouncer has been configured with ${index} database(s)."
+}
+
+check-pgbouncer-is-enabled && {
+  echo "Client pgBouncer is enabled"
+  setup-client-pgbouncer
+} || {
+  echo "pgBouncer is not enabled, skipping..."
+}
