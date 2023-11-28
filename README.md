@@ -1,10 +1,10 @@
 # Heroku Buildpack: pgBouncer
 
 
-| Branch         | Test Result                                                                                                                                                                                                                                                   |
-|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `main` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                  |
-| `current` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                  |
+| Branch         | Test Result                                                                                                                                                                                                                                           |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `main` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                                      |
+| `current` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=kig%2Fstart-pgbouncer-as-service)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)        | 
 
 ---
 
