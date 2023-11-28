@@ -5,8 +5,8 @@ load helper
 setup() {
   export PGBOUNCER_OUTPUT_URLS=true
   export PGBOUNCER_ENABLED=true
-  export PGBOUNCER_URLS="DATABASE_URL YOUR_MOMS_URL"
-  export PGBOUNCER_URL_NAMES="db-primary db-your-mom"
+  export PGBOUNCER_URLS="DATABASE_URL REPLICA_DATABASE_URL"
+  export PGBOUNCER_URL_NAMES="db-primary db-replica"
   export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
   export YOUR_MOMS_URL='postgresql://mom:password@neighbours:5432/house?query'
 }
@@ -19,7 +19,7 @@ teardown() {
   unset DATABASE_URL
   unset YOUR_MOMS_URL
   unset DATABASE_URL_PGBOUNCER
-  unset YOUR_MOMS_URL_PGBOUNCER
+  unset REPLICA_DATABASE_URL_PGBOUNCER
 }
 
 @test "returns success and disables when PGBOUNCER_ENABLED is not true" {
@@ -44,7 +44,7 @@ teardown() {
   assert_output <<EOF
 INFO:  Client pgBouncer is enabled
 INFO:               DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary
-INFO:              YOUR_MOMS_URL_PGBOUNCER | postgres://mom:********@127.0.0.1:6000/db-your-mom
+INFO:       REPLICA_DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-replica
 INFO:  pgBouncer has been configured with 2 database(s).
 EOF
 }
