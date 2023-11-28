@@ -16,7 +16,7 @@
 
 set +e
 
-export PGBOUNCER_QUIET=${PGBOUNCER_QUIET:-false}
+export PGBOUNCER_OUTPUT_URLS=${PGBOUNCER_OUTPUT_URLS:-false}
 
 function is-enabled() {
   ( shopt -s extglob nocasematch
@@ -88,7 +88,11 @@ function setup-client-pgbouncer() {
       export "${var_name}"=postgres://"$DB_USER":"$DB_PASS"@127.0.0.1:6000/$client_db_name
     fi
 
-    ${PGBOUNCER_QUIET} || printf "   • pgBouncer URL: %02d \e[0;32m%30s\e[0;0m ➜ \e[0;33m%50s\e[0;0m\n" $(( index + 1)) ${var_name} ${!var_name}
+    local db_url=${!var_name}
+    local secure_db_url
+    secure_db_url="$(echo ${db_url} | sed -E 's#postgres://([^:]*):([^@]*)@#postgres://\1:********@#g')"
+
+    [[ ${PGBOUNCER_OUTPUT_URLS} == "true" ]] && printf "%35.35s | %-50s\n" "${var_name}" "${secure_db_url}"
 
     ((index += 1))
   done
