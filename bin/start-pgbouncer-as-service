@@ -7,11 +7,11 @@ export PGBOUNCER_PROCESS_REGEX="[v]endor/pgbouncer/bin/pgbouncer"
 export PGBOUNCER_BUILD_PACK_PID
 
 function inf() {
-  echo -e "\e[1;32m — $* \e[0;0m"
+  echo -e "INFO:  $* "
 }
 
 function err() {
-   echo -e "\e[1;37;41m — $* \e[0;0m"
+   echo -e "ERROR: $* "
 }
 
 function is-enabled() {

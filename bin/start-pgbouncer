@@ -151,8 +151,17 @@ app-start() {
   at "$name-launched pid=$!"
 }
 
+
+function inf() {
+  echo -e "INFO:  $* "
+}
+
+function err() {
+   echo -e "ERROR: $* "
+}
+
 at() {
-  echo "buildpack=pgbouncer at=$*"
+  inf "buildpack=pgbouncer at=$*"
 }
 
 is-enabled() {

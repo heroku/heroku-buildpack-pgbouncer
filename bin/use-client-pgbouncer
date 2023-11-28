@@ -16,6 +16,14 @@
 
 set +e
 
+function inf() {
+  echo -e "INFO:  $*"
+}
+
+function err() {
+   echo -e "ERROR: $*"
+}
+
 export PGBOUNCER_OUTPUT_URLS=${PGBOUNCER_OUTPUT_URLS:-false}
 
 function is-enabled() {
@@ -26,7 +34,7 @@ function is-enabled() {
 
 function is-pgbouncer-service-enabled() {
   if ! is-enabled "${PGBOUNCER_ENABLED}"; then
-    echo pgbouncer-disabled
+    inf pgbouncer-disabled
     return 1
   fi
   return 0
@@ -61,7 +69,7 @@ function setup-client-pgbouncer() {
     local postgresql_url_value="${!postgres_url}"
 
     if [[ -z "$postgresql_url_value" ]]; then
-      echo "$postgres_url is empty. Exiting..." >&2
+      err "$postgres_url is empty. Exiting..." >&2
       return 0
     fi
 
@@ -72,7 +80,7 @@ function setup-client-pgbouncer() {
     local connection_part
     for connection_part in "${connection_parts[@]}"; do
       if [[ -z "$connection_part" ]]; then
-        echo "$postgres_url is not a valid PostgresSQL connection string. Exiting..." >&2
+        err "$postgres_url is not a valid PostgresSQL connection string. Exiting..." >&2
         return 0
       fi
     done
@@ -92,17 +100,17 @@ function setup-client-pgbouncer() {
     local secure_db_url
     secure_db_url="$(echo ${db_url} | sed -E 's#postgres://([^:]*):([^@]*)@#postgres://\1:********@#g')"
 
-    [[ ${PGBOUNCER_OUTPUT_URLS} == "true" ]] && printf "%35.35s | %-50s\n" "${var_name}" "${secure_db_url}"
+    [[ ${PGBOUNCER_OUTPUT_URLS} == "true" ]] && inf "$(printf "%35.35s | %-50s\n" "${var_name}" "${secure_db_url}")"
 
     ((index += 1))
   done
 
-  echo "Client pgBouncer has been configured with ${index} database(s)."
+  inf "pgBouncer has been configured with ${index} database(s)."
 }
 
 is-pgbouncer-service-enabled && {
-  echo "Client pgBouncer is enabled"
+  inf "Client pgBouncer is enabled"
   setup-client-pgbouncer
 } || {
-  echo "pgBouncer is not enabled, skipping..."
+  err "pgBouncer is not enabled, skipping..."
 }

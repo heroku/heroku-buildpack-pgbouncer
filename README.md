@@ -65,13 +65,28 @@ To use this buildpack:
     * `PGBOUNCER_URLS` — a space-separated list of database connection variables to use with pgBouncer.
     * `PGBOUNCER_URL_NAMES` — a space-separated list of database names corresponding to the connections vars.
     * `PGBOUNCER_ENABLED` — set to `true` to enable the buildpack.
+    * `PGBOUNCER_OUTPUT_URLS` — set to `true` to output the connection URLs to the console with obfuscated passwords, for example:
+
+        ```bash
+      
+        ❯ export PGBOUNCER_OUTPUT_URLS=true
+        ❯ source bin/use-client-pgbouncer printenv
+      
+        INFO:  Client pgBouncer is enabled
+        INFO:               DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary
+        INFO:              YOUR_MOMS_URL_PGBOUNCER | postgres://mom:********@127.0.0.1:6000/db-your-mom
+        INFO:  pgBouncer has been configured with 2 database(s).
+      
+        ```
+
  2. In some other buildpack (for the time being) which is added AFTER pgBouncer buildpack, execute the following code:
 
 
 ```bash
 if [[ ${PGBOUNCER_ENABLED} == "true" ]]; then
-  [[ -x bin/start-pgbouncer-as-service ]] && bin/start-pgbouncer-as-service
-  [[ -x bin/use-client-pgbouncer ]] && bin/use-client-pgbouncer
+  [[ -x bin/start-pgbouncer-as-service && -x bin/use-client-pgbouncer ]] && {
+    bin/start-pgbouncer-as-service && source bin/use-client-pgbouncer
+  } 
 fi
 ```
 

@@ -26,24 +26,27 @@ teardown() {
   unset PGBOUNCER_ENABLED
   run source bin/use-client-pgbouncer printenv
   assert_success
-  assert_line "pgbouncer-disabled"
+  assert_line "INFO:  pgbouncer-disabled"
+  assert_line "INFO:  pgbouncer-disabled"
+  assert_line "ERROR: pgBouncer is not enabled, skipping..."
 }
 
 @test "returns success and enables when PGBOUNCER_URLS is blank" {
   unset PGBOUNCER_URLS
   run source bin/use-client-pgbouncer printenv
   assert_success
-  assert_line "Client pgBouncer is enabled"
+  assert_line "INFO:  Client pgBouncer is enabled"
 }
 
 @test "returns success when all variables are properly set" {
-  run bash bin/use-client-pgbouncer printenv
+  run source bin/use-client-pgbouncer printenv
   assert_success
-
-  assert_line "Client pgBouncer is enabled"
-  assert_line "             DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary"
-  assert_line "            YOUR_MOMS_URL_PGBOUNCER | postgres://mom:********@127.0.0.1:6000/db-your-mom"
-  assert_line "Client pgBouncer has been configured with 2 database(s)."
+  assert_output <<EOF
+INFO:  Client pgBouncer is enabled
+INFO:               DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary
+INFO:              YOUR_MOMS_URL_PGBOUNCER | postgres://mom:********@127.0.0.1:6000/db-your-mom
+INFO:  pgBouncer has been configured with 2 database(s).
+EOF
 }
 
 @test "sets *_PGBOUNCER variables" {
