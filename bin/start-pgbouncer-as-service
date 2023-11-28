@@ -39,22 +39,25 @@ function is-pgbouncer-running() {
 
 function is-pgbouncer-service-enabled() {
   if ! is-enabled "${PGBOUNCER_ENABLED}"; then
-    inf pgbouncer-is-disabled
+    inf "pgbouncer-is-disabled"
     return 1
   fi
   return 0
 }
 
 function main() {
+  # Do not start the service if PgBouncer is not enabled
   is-pgbouncer-service-enabled || return 1
 
   local stderr
   stderr="$(mktemp)"
 
+  # Start PgBouncer process in the background
   [[ -x bin/start-pgbouncer ]] && bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" 2>"${stderr}" &
 
   sleep 1
 
+  # PgBouncer should be running now; if it isn't then return early
   is-pgbouncer-running || return 1
 
   PGBOUNCER_BUILD_PACK_PID=$(pgbouncer-current-pid)
