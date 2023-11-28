@@ -62,7 +62,7 @@ function main() {
 
   if [[ -n ${PGBOUNCER_BUILD_PACK_PID} && ${PGBOUNCER_BUILD_PACK_PID} -gt 0 ]] ; then
     set +e
-    mkdir -f tmp/pids || true
+    mkdir -p tmp/pids || true
     echo "${PGBOUNCER_BUILD_PACK_PID}" > tmp/pids/pgbouncer.pid
     inf "pgbouncer-started-ok-pid-s${PGBOUNCER_BUILD_PACK_PID}"
     return 0
