@@ -1,4 +1,5 @@
-.anvil
-cache
 .idea
+.anvil
+.run-test-pgbouncer*
+cache
 nohup.out
