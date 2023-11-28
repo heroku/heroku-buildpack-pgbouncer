@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # vim: ft=bash
 
-export PGBOUNCER_PROCESS_REGEX="${PGBOUNCER_PROCESS_REGEX:-"[v]endor/pgbouncer/bin/pgbouncer"}"
+set +e
+
+export PGBOUNCER_PROCESS_REGEX="[v]endor/pgbouncer/bin/pgbouncer"
 export PGBOUNCER_BUILD_PACK_PID
 
 function inf() {
@@ -19,12 +21,7 @@ function is-enabled() {
 }
 
 function pgbouncer-current-pid() {
-  if [[ -z ${PGBOUNCER_PROCESS_REGEX} ]] ; then
-    err "pgBouncer process regex is not set!" >&2
-    return 1
-  else
-    /bin/ps -eopid,args | grep -E "${PGBOUNCER_PROCESS_REGEX}" | awk '{print $1}'
-  fi
+  /bin/ps -eopid,args | grep -E "${PGBOUNCER_PROCESS_REGEX}" | awk '{print $1}'
 }
 
 function is-pgbouncer-running() {
@@ -32,13 +29,8 @@ function is-pgbouncer-running() {
   current_pid=$(pgbouncer-current-pid)
 
   [[ -n ${current_pid} && ${current_pid} -gt 0 ]] && {
-    if [[ -n ${PGBOUNCER_BUILD_PACK_PID} && ${PGBOUNCER_BUILD_PACK_PID} -eq ${current_pid} ]]; then
-      inf "pgbouncer-is-running-started-by-us"
-      return 0
-    else
-      err "pgbouncer-is-running-started-not-by-us"
-      return 1
-    fi
+    inf "pgbouncer-is-running: pid=${current_pid}"
+    return 0
   }
 
   inf "pgbouncer-is-not-running"
@@ -50,18 +42,16 @@ function is-pgbouncer-service-enabled() {
     inf pgbouncer-is-disabled
     return 1
   fi
-
   return 0
 }
-
-declare PGBOUNCER_BUILD_PACK_PID
 
 function main() {
   is-pgbouncer-service-enabled || return 1
 
-  local stderr=$(mktemp)
+  local stderr
+  stderr="$(mktemp)"
 
-  [[ -x bin/start-pgbouncer ]] && nohup bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" 2>"${stderr}" &
+  [[ -x bin/start-pgbouncer ]] && bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" 2>"${stderr}" &
 
   sleep 1
 
@@ -78,7 +68,7 @@ function main() {
     return 0
   else
     err "pgbouncer-failed-to-start"
-    [[ -s ${stderrs} ]] && {
+    [[ -s ${stderr} ]] && {
       err "pgbouncer-stderr:"
       cat "${stderr}"
       rm -f "${stderr}"
