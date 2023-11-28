@@ -1,6 +1,5 @@
 # Heroku Buildpack: pgBouncer
 
-
 | Branch         | Test Result                                                                                                                                                                                                                                           |
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `main` | [![Tests](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/healthsherpa/heroku-buildpack-pgbouncer/actions/workflows/tests.yml)                                      |
@@ -48,14 +47,16 @@ bin/start-pgbouncer bundle exec sidekiq -C config/sidekiq/hole-digger.yml
 
 The script would then use the variable `PGBOUNCER_URLS` to determine which env variables contain database credentials, and create a version of each variable with the suffix `_PGBOUNCER`. 
 
-More over, the original scripts were also mutating the original `DATABASE_URL` variable, which we felt was a bad idea.
+Moreover, the original scripts were also mutating the original `DATABASE_URL` variable, which we felt was a bad idea.
 
-# HealthSherpa Buildpack: Client-Side pgBouncer
+# HealthSherpa Buildpack
 
-We thoght that we'd want to:
+## Improvements to the Client-Side pgBouncer
 
- 1. Start pgBouncer so that it keeps on running on the background, and
- 2. Take each database connection variable and, without mutating it, create another one with the `_PGBOUNCER` suffix.
+We thoght that we'd want to diverge from the Heroku buildpack in the following ways:
+
+ 1. We'd prefer to start pgBouncer on EVERY dyno, whether it runs a rails or web process or not. That means we need to run pgBouncer as a "daemon" on the background.
+ 2. Take each database connection variable and (without mutating it) create a coupled version with the `_PGBOUNCER` suffix, eg for `DATABASE_URL` we would create `DATABASE_URL_PGBOUNCER`.
 
 ## Using This Buildpack
 
@@ -65,9 +66,11 @@ To use this buildpack:
     * `PGBOUNCER_URLS` — a space-separated list of database connection variables to use with pgBouncer.
     * `PGBOUNCER_URL_NAMES` — a space-separated list of database names corresponding to the connections vars.
     * `PGBOUNCER_ENABLED` — set to `true` to enable the buildpack.
-    * `PGBOUNCER_OUTPUT_URLS` — set to `true` to output the connection URLs to the console with obfuscated passwords, for example:
+    * `PGBOUNCER_OUTPUT_URLS` — set to `true` to output the connection URLs to the console with obfuscated passwords, 
 
-        ```bash
+   for example:
+
+    ```bash
       
         ❯ export PGBOUNCER_OUTPUT_URLS=true
         ❯ source bin/use-client-pgbouncer printenv
@@ -77,18 +80,18 @@ To use this buildpack:
         INFO:             DB_REPLICA_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-replica
         INFO:  pgBouncer has been configured with 2 database(s).
       
-        ```
+    ```
 
  2. In some other buildpack (for the time being) which is added AFTER pgBouncer buildpack, execute the following code:
 
 
-```bash
-if [[ ${PGBOUNCER_ENABLED} == "true" ]]; then
-  [[ -x bin/start-pgbouncer-as-service && -x bin/use-client-pgbouncer ]] && {
-    bin/start-pgbouncer-as-service && source bin/use-client-pgbouncer
-  } 
-fi
-```
+	```bash
+		if [[ ${PGBOUNCER_ENABLED} == "true" ]]; then
+		  [[ -x bin/start-pgbouncer-as-service && -x bin/use-client-pgbouncer ]] && {
+		    bin/start-pgbouncer-as-service && source bin/use-client-pgbouncer
+		  } 
+		fi
+	```
 
 ## Computing the number of DB Connections
 
@@ -131,11 +134,11 @@ the `pgbouncer.ini` file, and will be used in the Datadog metrics.
 Good names will match what we use in Datadog already, eg:
 
 ```bash
-export PGBOUNCER_URLS="DATABASE_URL OFFLOAD_DATABASE_URL DATABASE_REPLICA_01_URL DATABASE_REPLICA_02_URL" 
-export PGBOUNCER_URL_NAMES="app-primary offload-primary app-replica-01 app-replica-02"
+export PGBOUNCER_URLS="DATABASE_URL OFFLOAD_DATABASE_URL DATABASE_REPLICA_01_URL" 
+export PGBOUNCER_URL_NAMES="app-primary offload-primary app-replica-01"
 ```
 
-s## Running Tests
+## Running Tests
 
 This build-pack uses [bats](https://bats-core.readthedocs.io/en/stable/installation.html) for testing BASH scripts. 
 
@@ -144,22 +147,27 @@ You can use the convenient `make` target to both install `bats` on OS-X and run 
 ```bash
 ❯ make test
 test/run_all.sh
-1..10
+1..17
 ok 1 returns exit code of 1 when PGBOUNCER_URLS is empty
 ok 2 returns exit code of 1 if a value in PGBOUNCER_URLS is invalid
 ok 3 successfully writes the config
 ok 4 uses custom database names are available via POSTGRES_URLS_NAMES
 ok 5 uses custom database names are available via PGBOUNCER_URL_NAMES
-ok 6 returns exit code of 1 with nothing to parse
-ok 7 sets ups DATABASE_URL_PGBOUNCER
-ok 8 substitutes postgres for postgresql in scheme
-ok 9 does not mutate other config vars not listed in PGBOUNCER_URLS
-ok 10 does not mutates config vars listed in PGBOUNCER_URLS
+ok 6 returns success and disables when PGBOUNCER_ENABLED is not true
+ok 7 returns success and enables when PGBOUNCER_URLS is blank
+ok 8 returns success when all variables are properly set
+ok 9 sets *_PGBOUNCER variables
+ok 10 does not mutate original database URLs
+ok 11 when no arguments are passed to exec it sets PGBOUNCER_URLS and exits with 0
+ok 12 returns exit code of 1 with nothing to parse
+ok 13 sets ups DATABASE_URL_PGBOUNCER
+ok 14 substitutes postgres for postgresql in scheme
+ok 15 does not mutate other config vars not listed in PGBOUNCER_URLS
+ok 16 does not mutates config vars listed in PGBOUNCER_URLS
+ok 17 when no arguments are passed to exec it sets PGBOUNCER_URLS and exits with 0
 ```
 
 You can also run the test script directly: `test/run_all.sh`
-
-︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████︎████
 
 # FAQ
 
@@ -256,18 +264,23 @@ that process.
 
 ## Multiple Databases
 
-It is possible to connect to multiple databases through pgbouncer by setting
-`PGBOUNCER_URLS` to a list of config vars. Example:
+It is possible to connect to multiple databases through pgbouncer by setting `PGBOUNCER_URLS` and `PGBOUNCER_URL_NAMES` as two parallel lists: first consisting of database connection URLs, while the second consisting of the descriptive names you'd prefer to see in tools such as Datadog. 
+
+You must also set `PGBOUNCER_ENABLED` to `true`.
+
+### For example:
 
 ```
-$ heroku config:add PGBOUNCER_URLS="DATABASE_URL DATABASE_REPLICA_URL"
+$ heroku config:add PGBOUNCER_URLS="DATABASE_URL DATABASE_REPLICA_URL" \
+                    PGBOUNCER_URL_NAMES="app-primary app-replica" \
+                    PGBOUNCER_ENABLED=true
 $ heroku run bash
 
-~ $ env | grep 'DATABASE_REPLICA_URL\|DATABASE_URL'
+$ env | grep 'DATABASE_REPLICA_URL\|DATABASE_URL'
 DATABASE_REPLICA_URL=postgres://u9dih9htu2t3ll:password@ec2-107-20-228-134.compute-1.amazonaws.com:5482/db6h3bkfuk5430
 DATABASE_URL=postgres://uf2782hv7b3uqe:password@ec2-50-19-210-113.compute-1.amazonaws.com:5622/deamhhcj6q0d31
 
-~ $ bin/start-pgbouncer env # filtered for brevity
+$ bin/start-pgbouncer env # filtered for brevity
 DATABASE_REPLICA_URL_PGBOUNCER=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db2
 DATABASE_URL_PGBOUNCER=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/db1
 ```
@@ -315,9 +328,6 @@ settings are right for you.
 | `PGBOUNCER_IGNORE_STARTUP_PARAMETERS` | Adds parameters to ignore when pgbouncer is starting. Some postgres libraries, like Go's pq, append this parameter, making it impossible to use this buildpack. Default is empty and the most common ignored parameter is `extra_float_digits`. Multiple parameters can be seperated via commas.  Example: `PGBOUNCER_IGNORE_STARTUP_PARAMETERS="extra_float_digits, some_other_param`" |
 | `PGBOUNCER_QUERY_WAIT_TIMEOUT`        | Default is 120 seconds, helps when the server is down or the database rejects connections for any reason. If this is disabled, clients will be queued infinitely.                                                                                                                                                                                                                       
 
-
-For more info, see [CONTRIBUTING.md](CONTRIBUTING.md)
-
 ## Monitoring
 
 You can set `PGBOUNCER_STATS_USER` and `PGBOUNCER_STATS_PASSWORD` to enable
@@ -326,12 +336,16 @@ Datadog (or other provider) monitoring.
 ## Using the edge version of the buildpack
 
 The `heroku/pgbouncer` buildpack points to the latest stable version of the
-buildpack published in
-the [Buildpack Registry](https://devcenter.heroku.com/articles/buildpack-registry).
+buildpack published in the [Buildpack Registry](https://devcenter.heroku.com/articles/buildpack-registry).
 To use the latest version of the buildpack (the code in this repository, run the
 following command:
 
     $ heroku buildpacks:add https://github.com/healthsherpa/heroku-buildpack-pgbouncer
+    
+Or,  if you are adding a branch:
+
+    $ heroku buildpacks:add https://github.com/healthsherpa/heroku-buildpack-pgbouncer#branch-name
+
 
 ## Notes
 
@@ -342,7 +356,6 @@ a specific format:
 postgres://<user>:<pass>@<host>:<port>/<database>
 ```
 
-This corresponds to the regular
-expression `^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$`. All
-components must be present in order for the buildpack to correctly parse the
-connection string.
+This corresponds to the regular expression `^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$`. All
+components must be present in order for the buildpack to correctly parse the connection string.
+

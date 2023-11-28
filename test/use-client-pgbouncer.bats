@@ -8,7 +8,7 @@ setup() {
   export PGBOUNCER_URLS="DATABASE_URL REPLICA_DATABASE_URL"
   export PGBOUNCER_URL_NAMES="db-primary db-replica"
   export DATABASE_URL='postgresql://user:pass@host:5432/name?query'
-  export YOUR_MOMS_URL='postgresql://mom:password@neighbours:5432/house?query'
+  export REPLICA_DATABASE_URL='postgresql://user:password@neighbours:5432/house?query'
 }
 
 teardown() {
@@ -17,7 +17,7 @@ teardown() {
   unset PGBOUNCER_URLS
   unset PGBOUNCER_URL_NAMES
   unset DATABASE_URL
-  unset YOUR_MOMS_URL
+  unset REPLICA_DATABASE_URL
   unset DATABASE_URL_PGBOUNCER
   unset REPLICA_DATABASE_URL_PGBOUNCER
 }
