@@ -74,7 +74,7 @@ To use this buildpack:
       
         INFO:  Client pgBouncer is enabled
         INFO:               DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary
-        INFO:              YOUR_MOMS_URL_PGBOUNCER | postgres://mom:********@127.0.0.1:6000/db-your-mom
+        INFO:             DB_REPLICA_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-replica
         INFO:  pgBouncer has been configured with 2 database(s).
       
         ```
