@@ -37,6 +37,10 @@ echo "-----> pgbouncer-buildpack: Moving the start-pgbouncer script into app/bin
 cp "$BUILDPACK_DIR/bin/start-pgbouncer" "$BUILD_DIR/bin/"
 chmod +x "$BUILD_DIR/bin/start-pgbouncer"
 
+echo "-----> pgbouncer-buildpack: Moving the start-pgbouncer-as-service script into app/bin"
+cp "$BUILDPACK_DIR/bin/start-pgbouncer-as-service" "$BUILD_DIR/bin/"
+chmod +x "$BUILD_DIR/bin/start-pgbouncer-as-service"
+
 echo "-----> pgbouncer-buildpack: Moving the (legacy) start-pgbouncer-stunnel script into app/bin"
 cp "$BUILDPACK_DIR/bin/start-pgbouncer-stunnel" "$BUILD_DIR/bin/"
 chmod +x "$BUILD_DIR/bin/start-pgbouncer-stunnel"
