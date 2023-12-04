@@ -53,14 +53,7 @@ function main() {
   local stderr
   stderr="$(mktemp)"
 
-  trap '' SIGTERM
-
   [[ -x bin/start-pgbouncer ]] && bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" 2>"${stderr}" &
-
-  # Translate SIGHUP to the appropriate signal to stop the child (anything
-  # except SIGTERM which is ignored). This *will* cancel the wait and may
-  # lead to the outer subshell exiting before the aux process
-  trap "sleep 25; kill -SIGINT $!" SIGHUP
 
   sleep 1
 
