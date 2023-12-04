@@ -60,7 +60,7 @@ function main() {
   # Translate SIGHUP to the appropriate signal to stop the child (anything
   # except SIGTERM which is ignored). This *will* cancel the wait and may
   # lead to the outer subshell exiting before the aux process
-  trap "kill -SIGINT $!" SIGHUP
+  trap "sleep 25; kill -SIGINT $!" SIGHUP
 
   sleep 1
 
