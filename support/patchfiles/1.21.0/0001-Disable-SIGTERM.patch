@@ -1,0 +1,13 @@
+--- src/main.c
++++ src/main.c
+@@ -471,9 +471,7 @@ static struct event ev_sigint;
+
+ static void handle_sigterm(evutil_socket_t sock, short flags, void *arg)
+ {
+-	log_info("got SIGTERM, fast exit");
+-	/* pidfile cleanup happens via atexit() */
+-	exit(0);
++	log_info("ignoring SIGTERM, fast exit");
+ }
+
+ static void handle_sigint(evutil_socket_t sock, short flags, void *arg)
