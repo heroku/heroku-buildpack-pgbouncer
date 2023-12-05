@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.17.0}
+PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.21.0}
 
 pgbouncer_tarball_url=https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 
@@ -28,10 +28,9 @@ fi
 	do
 		patch -p0 < "$f"
 	done
-
 		./configure \
 			--prefix=/tmp/pgbouncer
-	make -j 2 install
+	make -j 4 install
 )
 
 tar -zcvf /buildpack/pgbouncer-"${STACK}".tgz -C /tmp/pgbouncer .

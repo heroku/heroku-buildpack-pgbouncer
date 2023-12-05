@@ -1,4 +1,6 @@
 ## Unreleased
+
+* Update pgBouncer to Version 1.21.0 (with support for prepared_statements in transaction pool_mode)
 * Converted our remaining CircleCI tests to Github Actions
 * Add validation for PGBOUNCER_URLS
 * Add stack tests
