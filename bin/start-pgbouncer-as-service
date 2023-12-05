@@ -11,11 +11,12 @@ function inf() {
 }
 
 function err() {
-   echo -e "ERROR: $* "
+  echo -e "ERROR: $* "
 }
 
 function is-enabled() {
-  ( shopt -s extglob nocasematch
+  (
+    shopt -s extglob nocasematch
     [[ $1 == @(1|true|yes|on) ]]
   )
 }
@@ -52,7 +53,6 @@ function main() {
   local stderr
   stderr="$(mktemp)"
 
-  # Start PgBouncer process in the background
   [[ -x bin/start-pgbouncer ]] && bin/start-pgbouncer /bin/bash -c "while true; do sleep 10000; done" 2>"${stderr}" &
 
   sleep 1
@@ -63,7 +63,7 @@ function main() {
   PGBOUNCER_BUILD_PACK_PID=$(pgbouncer-current-pid)
   export PGBOUNCER_BUILD_PACK_PID
 
-  if [[ -n ${PGBOUNCER_BUILD_PACK_PID} && ${PGBOUNCER_BUILD_PACK_PID} -gt 0 ]] ; then
+  if [[ -n ${PGBOUNCER_BUILD_PACK_PID} && ${PGBOUNCER_BUILD_PACK_PID} -gt 0 ]]; then
     set +e
     mkdir -p tmp/pids || true
     echo "${PGBOUNCER_BUILD_PACK_PID}" > tmp/pids/pgbouncer.pid

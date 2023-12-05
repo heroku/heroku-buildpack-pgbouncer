@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
+export PGBOUNCER_SLEEP_BEFORE_SIGINT=${PGBOUNCER_SLEEP_BEFORE_SIGINT:-28}
+
 function is-pgbouncer-service-enabled() {
   if ! is-enabled "${PGBOUNCER_ENABLED:-1}"; then
     at pgbouncer-disabled
@@ -102,7 +104,7 @@ aux-start() {
     # Translate SIGHUP to the appropriate signal to stop the child (anything
     # except SIGTERM which is ignored). This *will* cancel the wait and may
     # lead to the outer subshell exiting before the aux process
-    trap "kill -$signal $!" SIGHUP
+    trap "sleep ${PGBOUNCER_SLEEP_BEFORE_SIGINT}; kill -$signal $!" SIGHUP
 
     # Wait for child to finish, either by crash or by $signal
     wait

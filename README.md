@@ -70,28 +70,45 @@ To use this buildpack:
 
    for example:
 
-    ```bash
+```bash 
+❯ export PGBOUNCER_OUTPUT_URLS=true
+❯ source bin/use-client-pgbouncer printenv
+
+INFO:  Client pgBouncer is enabled
+INFO:               DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary
+INFO:             DB_REPLICA_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-replica
+INFO:  pgBouncer has been configured with 2 database(s).
       
-        ❯ export PGBOUNCER_OUTPUT_URLS=true
-        ❯ source bin/use-client-pgbouncer printenv
-      
-        INFO:  Client pgBouncer is enabled
-        INFO:               DATABASE_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-primary
-        INFO:             DB_REPLICA_URL_PGBOUNCER | postgres://user:********@127.0.0.1:6000/db-replica
-        INFO:  pgBouncer has been configured with 2 database(s).
-      
-    ```
+```
 
  2. In some other buildpack (for the time being) which is added AFTER pgBouncer buildpack, execute the following code:
 
 
-	```bash
-		if [[ ${PGBOUNCER_ENABLED} == "true" ]]; then
-		  [[ -x bin/start-pgbouncer-as-service && -x bin/use-client-pgbouncer ]] && {
-		    bin/start-pgbouncer-as-service && source bin/use-client-pgbouncer
-		  } 
-		fi
-	```
+```bash
+if [[ ${PGBOUNCER_ENABLED} == "true" ]]; then
+  [[ -x bin/start-pgbouncer-as-service && -x bin/use-client-pgbouncer ]] && {
+    bin/start-pgbouncer-as-service && source bin/use-client-pgbouncer
+  } 
+fi
+```
+
+## Using ExchangeCompare's `datadog/prerun.sh`
+
+In ExchangeCompare you can set an additional enviroment variable, `PGBOUNCER_VARS_DISABLED`, which will result in pgbouncer running as a daemon, but not exporting the `*_PGBOUNCER` variables.
+
+If you unset that variable, you should expect that any variable mentioned in `PGBOUNCER_URLS` will have a corresponding `<var>_PGBOUNCER` counter-part created, for instance `DATABASE_URL_PGBOUNCER`.
+
+Subsequently, your database.yml may look like this:
+
+```yaml
+---
+production:
+  primary:
+    url: <%= ENV['DATABASE_URL_PGBOUNCER'] ||         # client-side pgBouncer
+             ENV['DATABASE_CONNECTION_POOL_URL'] ||   # server-side pgBouncer
+             ENV['DATABASE_URL'] %>                   # direct connection
+```
+
 
 ## Computing the number of DB Connections
 
@@ -109,8 +126,7 @@ Without this variable, even if the application is started via the `bin/start-pgb
 
 This fork of the build pack by HealthSherpa adds the following features:
 
-* Unlike the original project, we do not mutate the database connection
-  variables.
+* Unlike the original project, we do not mutate the database connection variables.
 * Instead, for each variable defined in the `PGBOUNCER_URLS` the build-pack
   creates another variable, eg `DATABASE_URL_PGBOUNCER`. We felt that it was
   important to leave the original `DATABASE_URL` intact to allow our
