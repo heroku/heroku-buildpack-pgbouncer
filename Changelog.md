@@ -1,4 +1,27 @@
 ## Unreleased
+* Converted our remaining CircleCI tests to Github Actions
+* Add validation for PGBOUNCER_URLS
+* Add stack tests
+
+## v0.13.0 (September 9, 2022)
+* Update pgbouncer to v1.17.0 for Heroku-18 and Heroku-20 (for parity with Heroku-22)
+
+## v0.12.0 (September 6, 2022)
+* Add missing `SIGTERM` patch for v1.17.0 (corrects shutdown behaviour on Heroku-22)
+
+## v0.11.0 (June 20, 2022)
+* Update to pgbouncer v1.17.0 on Heroku-22, to fix OpenSSL 3 related crashes
+
+## v0.10.0 (May 19, 2022)
+* Add support for Heroku-22
+* Add codeowners
+
+## v0.9.0 (June 4, 2021)
+* remove heroku-16
+* revert back to pgbouncer 1.14
+
+## v0.8.0 (May 31, 2021)
+* pgbouncer 1.15
 * streamline bin/compile
 * moving to CircleCI
 * remove support for Cedar 14

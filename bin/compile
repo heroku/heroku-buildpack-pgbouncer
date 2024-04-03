@@ -25,7 +25,7 @@ mkdir -p "$BUILD_DIR/bin"
 mkdir -p "$BUILD_DIR/$VENDORED_PGBOUNCER"
 
 echo "-----> pgbouncer-buildpack: Vendoring pgbouncer into slug"
-tar xzf pgbouncer-"${STACK}".tgz -C "${BUILD_DIR}"/"${VENDORED_PGBOUNCER}"
+tar xzf "$BUILDPACK_DIR/pgbouncer-${STACK}".tgz -C "${BUILD_DIR}"/"${VENDORED_PGBOUNCER}"
 pgbouncer_version=$("${BUILD_DIR}"/"${VENDORED_PGBOUNCER}"/bin/pgbouncer -V 2>&1 | head -1 | awk '{ print $NF }')
 echo "-----> pgbouncer-buildpack: Installed pgbouncer ${pgbouncer_version}"
 

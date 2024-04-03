@@ -16,7 +16,7 @@ connection limits and Out Of Memory errors on the Postgres server.
 
 - Q: Why shouldn't I use transaction pooling?
 - A: If you need to use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level.
-Please refer to PGBouncer's [feature matrix](http://wiki.postgresql.org/wiki/PgBouncer#Feature_matrix_for_pooling_modes) for all transaction pooling caveats.
+Please refer to PGBouncer's [feature matrix](https://www.pgbouncer.org/features.html#sql-feature-map-for-pooling-modes) for all transaction pooling caveats.
 
 
 ## Disable Prepared Statements
@@ -90,6 +90,11 @@ The buildpack will install and configure pgbouncer to connect to
 `bin/start-pgbouncer` to any process in the Procfile to run pgbouncer alongside
 that process.
 
+## PgBouncer Version
+
+- Heroku-18: `v1.17.0`
+- Heroku-20: `v1.17.0`
+- Heroku-22: `v1.17.0`
 
 ## Multiple Databases
 It is possible to connect to multiple databases through pgbouncer by setting
@@ -105,6 +110,8 @@ It is possible to connect to multiple databases through pgbouncer by setting
     ~ $ bin/start-pgbouncer env # filtered for brevity
     HEROKU_POSTGRESQL_ROSE_URL=postgres://u9dih9htu2t3ll:password@127.0.0.1:6000/db2
     DATABASE_URL=postgres://uf2782hv7b3uqe:password@127.0.0.1:6000/db1
+
+> ⚠️ A referenced configuration variable in `PGBOUNCER_URLS` must not be empty, and must be a valid PostgreSQL connection string.
 
 ## Follower Replica Databases
 As of v0.3.2 of this buildpack, it is possible to use pgbouncer to connect to

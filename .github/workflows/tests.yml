@@ -1,0 +1,33 @@
+name: Tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  check_changelog:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Check that CHANGELOG is touched
+      run: |
+        cat $GITHUB_EVENT_PATH | jq .pull_request.title |  grep -i '\[\(\(changelog skip\)\|\(ci skip\)\)\]' ||  git diff remotes/origin/${{ github.base_ref }} --name-only | grep Changelog.md
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: run bats tests
+      run: docker run -t -v "${PWD}:/code" bats/bats:latest test/*.bats
+  test-stack:
+    strategy:
+      matrix:
+        stack: [heroku-18, heroku-20, heroku-22]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: run stack test
+      run: bash test/test-stack.sh ${{ matrix.stack }}
