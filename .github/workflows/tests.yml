@@ -25,7 +25,7 @@ jobs:
   test-stack:
     strategy:
       matrix:
-        stack: [heroku-20, heroku-22]
+        stack: [heroku-20, heroku-22, heroku-24]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

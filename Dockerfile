@@ -2,6 +2,7 @@ ARG BASE_IMAGE
 FROM $BASE_IMAGE
 
 ARG STACK
+USER root
 RUN mkdir -p /app /cache /env
 COPY . /buildpack
 # Sanitize the environment seen by the buildpack, to prevent reliance on
