@@ -10,7 +10,7 @@ jobs:
   check_changelog:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: Check that CHANGELOG is touched
@@ -19,7 +19,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: run bats tests
       run: docker run -t -v "${PWD}:/code" bats/bats:latest test/*.bats
   test-stack:
