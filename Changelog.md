@@ -3,8 +3,6 @@
 * Add validation for PGBOUNCER_URLS
 * Add stack tests
 * Remove support for Heroku-18
-
-## v0.14.0 (May 15, 2023)
 * Add support for Heroku-24
 
 ## v0.13.0 (September 9, 2022)
