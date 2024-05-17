@@ -1,8 +1,4 @@
-build: build-heroku-18 build-heroku-20 build-heroku-22
-
-build-heroku-18:
-	@echo "Building pgbouncer in Docker for heroku-18..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=heroku-18" -w /buildpack heroku/heroku:18-build support/pgbouncer-build
+build: build-heroku-20 build-heroku-22
 
 build-heroku-20:
 	@echo "Building pgbouncer in Docker for heroku-20..."
