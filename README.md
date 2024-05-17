@@ -92,7 +92,6 @@ that process.
 
 ## PgBouncer Version
 
-- Heroku-18: `v1.17.0`
 - Heroku-20: `v1.17.0`
 - Heroku-22: `v1.17.0`
 
