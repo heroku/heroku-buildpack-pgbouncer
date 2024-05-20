@@ -1,4 +1,6 @@
 ## Unreleased
+
+## v0.14.0 (May 20, 2024)
 * Converted our remaining CircleCI tests to Github Actions
 * Add validation for PGBOUNCER_URLS
 * Add stack tests
