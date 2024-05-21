@@ -19,9 +19,9 @@ cat >> "$CONFIG_DIR/pgbouncer.ini" << EOFEOF
 [pgbouncer]
 listen_addr = 127.0.0.1
 listen_port = 6000
-auth_type = md5
+auth_type = scram-sha-256
 auth_file = $CONFIG_DIR/users.txt
-server_tls_sslmode = prefer
+server_tls_sslmode = require
 server_tls_protocols = secure
 server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 
@@ -72,8 +72,6 @@ do
     fi
   done
 
-  DB_MD5_PASS="md5"$(echo -n "${DB_PASS}""${DB_USER}" | md5sum | awk '{print $1}')
-
   CLIENT_DB_NAME="db${n}"
 
   echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
@@ -86,7 +84,7 @@ do
   fi
 
   cat >> "$CONFIG_DIR/users.txt" << EOFEOF
-"$DB_USER" "$DB_MD5_PASS"
+"$DB_USER" "$DB_PASS"
 EOFEOF
 
   cat >> "$CONFIG_DIR/pgbouncer.ini" << EOFEOF

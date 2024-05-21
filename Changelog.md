@@ -1,4 +1,5 @@
 ## Unreleased
+* Support SCRAM authentication, use plain passwords in auth_file
 
 ## v0.14.0 (May 20, 2024)
 * Converted our remaining CircleCI tests to Github Actions
