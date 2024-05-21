@@ -44,3 +44,12 @@ teardown_file() {
     assert_line "buildpack=pgbouncer at=pgbouncer-disabled-scram"
     assert_line "DATABASE_URL uses SCRAM authentication, which is currently unsupported. pgbouncer will not be enabled."
 }
+
+@test "starts up when only non-SCRAM hosts are detected" {
+    export DATABASE_URL="postgres://utestuser:p1b1f7bc7b296294c96b3d6e5443f2d7a7826f7d73ac5a4d3f560c488799757e7@example.com:5432/d9876543219875"
+    export DATABASE_2_URL="postgres://utestuser:p1b1f7bc7b296294c96b3d6e5443f2d7a7826f7d73ac5a4d3f560c488799757e7@example.com:5432/d1234567891234"
+    export PGBOUNCER_URLS="DATABASE_2_URL DATABASE_URL"
+    run bash bin/start-pgbouncer "printenv"
+    assert_success
+    assert_line "buildpack=pgbouncer at=pgbouncer-enabled"
+}
