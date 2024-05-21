@@ -7,11 +7,53 @@ main() {
     exec "$@"
   fi
 
+  if essential-tier-scram; then
+    at pgbouncer-disabled-scram
+    exec "$@"
+  fi
+
   at pgbouncer-enabled
   run-pgbouncer "$@"
 }
 
+essential-tier-scram() {
+  POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
+  declare -i SKIP_PGBOUNCER=0
+  declare -i CLUSTER_IDENTIFIER_MATCH=0
+  declare -i DB_NAME_MATCH=0
+  declare -i DB_PASS_MATCH=0
+
+  for POSTGRES_URL in $POSTGRES_URLS
+  do
+    eval POSTGRES_URL_VALUE="\$$POSTGRES_URL"
+
+    if [ -z "$POSTGRES_URL_VALUE" ]
+    then
+      echo "$POSTGRES_URL is empty. Exiting..."
+      exit 1
+    fi
+
+    IFS=':' read -r DB_USER DB_PASS DB_HOST DB_PORT DB_NAME <<< "$(echo "$POSTGRES_URL_VALUE" | perl -lne 'print "$1:$2:$3:$4:$5" if /^postgres(?:ql)?:\/\/([^:]*):([^@]*)@(.*?):(.*?)\/(.*?)$/')"
+    IFS="" read -r CLUSTER_IDENTIFIER_MATCH <<< "$(echo "$DB_HOST" | perl -lne '/^c[a-z0-9]{13}\.cluster-/ ? print 1 : print 0')"
+    IFS="" read -r DB_NAME_MATCH <<< "$(echo "$DB_NAME" | perl -lne 'print 1 if /^d[a-z0-9]{13}/ ? print 1 : print 0')"
+    IFS="" read -r DB_PASS_MATCH <<< "$(echo "$DB_PASS" | perl -lne 'print 1 if /^p[a-z0-9]{64}/ ? print 1 : print 0')"
+
+    if [[ $CLUSTER_IDENTIFIER_MATCH != 0 && $DB_NAME_MATCH != 0 && $DB_PASS_MATCH != 0 ]]; then
+      SKIP_PGBOUNCER=1
+
+      echo "$POSTGRES_URL uses SCRAM authentication, which is currently unsupported. pgbouncer will not be enabled."
+      break
+    fi
+
+    [[ $SKIP_PGBOUNCER -eq 1 ]]
+  done
+}
+
 run-pgbouncer() {
+  if $START_PGBOUNCER_TEST; then
+    exit 0
+  fi
+
   declare psmgr=/tmp/pgbouncer-buildpack-wait
   declare -A pids signals
 
