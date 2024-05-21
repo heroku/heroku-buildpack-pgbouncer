@@ -1,5 +1,8 @@
 ## Unreleased
 * Support SCRAM authentication, use plain passwords in auth_file
+* Add PGBOUNCER_AUTH_TYPE config and update default to scram-sha-256
+* Add PGBOUNCER_SERVER_TLS_SSLMODE config and update default to require
+* Update server_tls_sslmode to require (from prefer)
 
 ## v0.14.0 (May 20, 2024)
 * Converted our remaining CircleCI tests to Github Actions
