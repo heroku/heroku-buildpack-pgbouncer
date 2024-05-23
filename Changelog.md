@@ -1,4 +1,6 @@
 ## Unreleased
+
+## v0.15.0 (May 23, 2024)
 * Support SCRAM authentication, use plain passwords in auth_file
 * Add PGBOUNCER_AUTH_TYPE config and update default to scram-sha-256
 * Add PGBOUNCER_SERVER_TLS_SSLMODE config and update default to require
