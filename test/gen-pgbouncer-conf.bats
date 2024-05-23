@@ -28,15 +28,34 @@ teardown_file() {
 
 @test "successfully writes the config" {
     export DATABASE_URL="postgres://user:pass@host:5432/name?query"
-    export DATABASE_2_URL="postgresql://user2:pass@host2:7777/dbname"
+    export DATABASE_2_URL="postgresql://user2:pass2@host2:7777/dbname"
     export PGBOUNCER_URLS="DATABASE_URL DATABASE_2_URL"
     run bash bin/gen-pgbouncer-conf.sh
     assert_success
     cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
     assert_line 'Setting DATABASE_URL_PGBOUNCER config var'
-    assert grep "server_tls_sslmode = prefer" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "auth_type = scram-sha-256" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "server_tls_sslmode = require" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
     assert grep "db1= host=host dbname=name?query port=5432" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
     assert grep "db2= host=host2 dbname=dbname port=7777" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
-    assert grep "user" "$PGBOUNCER_CONFIG_DIR/users.txt"
-    assert grep "user2" "$PGBOUNCER_CONFIG_DIR/users.txt"
+    assert grep "\"user\" \"pass\"" "$PGBOUNCER_CONFIG_DIR/users.txt"
+    assert grep "\"user2\" \"pass2\"" "$PGBOUNCER_CONFIG_DIR/users.txt"
+}
+
+@test "successfully allows changing of auth_type" {
+    export DATABASE_URL="postgres://user:pass@host:5432/name?query"
+    export PGBOUNCER_AUTH_TYPE="md5"
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "auth_type = md5" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+}
+
+@test "successfully allows changing of server_tls_sslmode" {
+    export DATABASE_URL="postgres://user:pass@host:5432/name?query"
+    export PGBOUNCER_SERVER_TLS_SSLMODE="prefer"
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "server_tls_sslmode = prefer" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
 }
