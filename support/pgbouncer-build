@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.17.0}
+PGBOUNCER_VERSION=${PGBOUNCER_VERSION-1.23.1}
 
 pgbouncer_tarball_url=https://www.pgbouncer.org/downloads/files/${PGBOUNCER_VERSION}/pgbouncer-${PGBOUNCER_VERSION}.tar.gz
 
