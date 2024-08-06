@@ -1,6 +1,6 @@
 ## Unreleased
 
-## v0.13.0 (August 5, 2024)
+## v0.16.0 (August 5, 2024)
 * Update pgbouncer to v1.23.1
 
 ## v0.15.0 (May 23, 2024)
