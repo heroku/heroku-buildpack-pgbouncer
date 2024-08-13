@@ -1,5 +1,8 @@
 ## Unreleased
 
+## v0.16.0 (August 5, 2024)
+* Update pgbouncer to v1.23.1
+
 ## v0.15.0 (May 23, 2024)
 * Support SCRAM authentication, use plain passwords in auth_file
 * Add PGBOUNCER_AUTH_TYPE config and update default to scram-sha-256
