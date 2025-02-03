@@ -1,4 +1,5 @@
 ## Unreleased
+* Add Dependabot configuration
 
 ## v0.16.0 (August 13, 2024)
 * Update pgbouncer to v1.23.1
