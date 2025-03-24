@@ -48,6 +48,8 @@ query_wait_timeout = ${PGBOUNCER_QUERY_WAIT_TIMEOUT:-120}
 [databases]
 EOFEOF
 
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
 for POSTGRES_URL in $POSTGRES_URLS
 do
   eval POSTGRES_URL_VALUE="\$$POSTGRES_URL"
@@ -72,6 +74,9 @@ do
     fi
   done
 
+  DECODED_DB_USER="$(urldecode "$DB_USER")"
+  DECODED_DB_PASS="$(urldecode "$DB_PASS")"
+
   CLIENT_DB_NAME="db${n}"
 
   echo "Setting ${POSTGRES_URL}_PGBOUNCER config var"
@@ -84,7 +89,7 @@ do
   fi
 
   cat >> "$CONFIG_DIR/users.txt" << EOFEOF
-"$DB_USER" "$DB_PASS"
+"$DECODED_DB_USER" "$DECODED_DB_PASS"
 EOFEOF
 
   cat >> "$CONFIG_DIR/pgbouncer.ini" << EOFEOF

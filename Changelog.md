@@ -1,5 +1,6 @@
 ## Unreleased
 * Add Dependabot configuration
+* Add handling for URI-encoded user/pass (@zyv)
 
 ## v0.16.0 (August 13, 2024)
 * Update pgbouncer to v1.23.1
