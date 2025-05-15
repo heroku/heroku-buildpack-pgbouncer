@@ -133,6 +133,7 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_AUTH_TYPE` Default is `scram-sha-256`. Can be changed to `md5` or `plain` depending on server support.
 - `PGBOUNCER_SERVER_TLS_SSLMODE` Default is `require`.
 - `PGBOUNCER_POOL_MODE` Default is transaction
+- `PGBOUNCER_MAX_PREPARED_STATEMENTS` Default is 0
 - `PGBOUNCER_MAX_CLIENT_CONN` Default is 100
 - `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
 - `PGBOUNCER_MIN_POOL_SIZE` Default is 0
