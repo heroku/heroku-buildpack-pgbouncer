@@ -60,6 +60,15 @@ teardown_file() {
     assert grep "server_tls_sslmode = prefer" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
 }
 
+@test "successfully allows changing of max_prepared_statements" {
+    export DATABASE_URL="postgres://user:pass@host:5432/name?query"
+    export PGBOUNCER_MAX_PREPARED_STATEMENTS="123"
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    cat "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+    assert grep "max_prepared_statements = 123" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+}
+
 @test "successfully handles URI-encoded user/pass combinations" {
     export DATABASE_URL="postgresql://%22I+have+speci%40l+charcters%22:c00lp%40%25sword@host:5432/name?query"
     run bash bin/gen-pgbouncer-conf.sh
