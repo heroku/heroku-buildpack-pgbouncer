@@ -15,7 +15,7 @@ connection limits and Out Of Memory errors on the Postgres server.
 - A: You have many workers per dyno that hold open idle Postgres connections and you want to reduce the number of unused connections. [This is a slightly more complete answer from stackoverflow](http://stackoverflow.com/questions/12189162/what-are-advantages-of-using-transaction-pooling-with-pgbouncer)
 
 - Q: Why shouldn't I use transaction pooling?
-- A: If you need to use named prepared statements, advisory locks, listen/notify, or other features that operate on a session level.
+- A: If you need to use advisory locks, listen/notify, or other features that operate on a session level.
 Please refer to PGBouncer's [feature matrix](https://www.pgbouncer.org/features.html#sql-feature-map-for-pooling-modes) for all transaction pooling caveats.
 
 
@@ -133,6 +133,7 @@ Some settings are configurable through app config vars at runtime. Refer to the 
 - `PGBOUNCER_AUTH_TYPE` Default is `scram-sha-256`. Can be changed to `md5` or `plain` depending on server support.
 - `PGBOUNCER_SERVER_TLS_SSLMODE` Default is `require`.
 - `PGBOUNCER_POOL_MODE` Default is transaction
+- `PGBOUNCER_MAX_PREPARED_STATEMENTS` Default is 0
 - `PGBOUNCER_MAX_CLIENT_CONN` Default is 100
 - `PGBOUNCER_DEFAULT_POOL_SIZE` Default is 1
 - `PGBOUNCER_MIN_POOL_SIZE` Default is 0

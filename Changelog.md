@@ -1,6 +1,7 @@
 ## Unreleased
 * Add Dependabot configuration
 * Add handling for URI-encoded user/pass (@zyv)
+* Add PGBOUNCER_MAX_PREPARED_STATEMENTS config with default of 0 (@habovh)
 
 ## v0.16.0 (August 13, 2024)
 * Update pgbouncer to v1.23.1

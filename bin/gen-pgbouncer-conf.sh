@@ -31,6 +31,7 @@ server_tls_ciphers = HIGH:!ADH:!AECDH:!LOW:!EXP:!MD5:!3DES:!SRP:!PSK:@STRENGTH
 ;   statement    - after statement finishes
 pool_mode = ${POOL_MODE}
 server_reset_query = ${SERVER_RESET_QUERY}
+max_prepared_statements = ${PGBOUNCER_MAX_PREPARED_STATEMENTS:-0}
 max_client_conn = ${PGBOUNCER_MAX_CLIENT_CONN:-100}
 default_pool_size = ${PGBOUNCER_DEFAULT_POOL_SIZE:-1}
 min_pool_size = ${PGBOUNCER_MIN_POOL_SIZE:-0}
