@@ -1,4 +1,6 @@
 ## Unreleased
+
+## v0.17.0 (May 28, 2025)
 * Add Dependabot configuration
 * Add handling for URI-encoded user/pass (@zyv)
 * Add PGBOUNCER_MAX_PREPARED_STATEMENTS config with default of 0 (@habovh)
