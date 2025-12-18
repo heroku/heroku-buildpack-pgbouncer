@@ -93,8 +93,8 @@ that process.
 ## PgBouncer Version
 
 - Heroku-20: `v1.23.1`
-- Heroku-22: `v1.23.1`
-- Heroku-24: `v1.23.1`
+- Heroku-22: `v1.24.1`
+- Heroku-24: `v1.24.1`
 
 ## Multiple Databases
 It is possible to connect to multiple databases through pgbouncer by setting
