@@ -1,5 +1,8 @@
 ## Unreleased
 
+## v0.18.0 (December 17, 2025)
+* Update pgbouncer to v1.24.1
+
 ## v0.17.0 (May 28, 2025)
 * Add Dependabot configuration
 * Add handling for URI-encoded user/pass (@zyv)
