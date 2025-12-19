@@ -76,7 +76,7 @@ Example usage:
     -----> Multipack app detected
     -----> Fetching custom git buildpack... done
     -----> pgbouncer app detected
-           Using pgbouncer version: 1.23.1-heroku
+           Using pgbouncer version: 1.24.1-heroku
     -----> Fetching and vendoring pgbouncer into slug
     -----> Moving the configuration generation script into app/bin
     -----> Moving the start-pgbouncer script into app/bin
@@ -92,9 +92,8 @@ that process.
 
 ## PgBouncer Version
 
-- Heroku-20: `v1.23.1`
-- Heroku-22: `v1.23.1`
-- Heroku-24: `v1.23.1`
+- Heroku-22: `v1.24.1`
+- Heroku-24: `v1.24.1`
 
 ## Multiple Databases
 It is possible to connect to multiple databases through pgbouncer by setting
