@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: run bats tests
       run: docker run -t -v "${PWD}:/code" bats/bats:latest test/*.bats
   test-stack:
@@ -19,6 +19,6 @@ jobs:
         stack: [heroku-22, heroku-24]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: run stack test
       run: bash test/test-stack.sh ${{ matrix.stack }}
