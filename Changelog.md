@@ -1,5 +1,8 @@
 ## Unreleased
 
+* Update pgbouncer to v1.25.1
+* Add heroku-26 support
+
 ## v0.18.0 (December 19, 2025)
 * Update pgbouncer to v1.24.1
 * Remove heroku-20 support
