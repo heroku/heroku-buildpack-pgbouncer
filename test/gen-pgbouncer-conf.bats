@@ -6,6 +6,10 @@ setup_file() {
     export PGBOUNCER_CONFIG_DIR=$(mktemp -d run-test-pgbouncer.XXXXXXXXXX)
 }
 
+setup() {
+    rm -f "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini" "$PGBOUNCER_CONFIG_DIR/users.txt"
+}
+
 teardown_file() {
     unset PGBOUNCER_URLS
     unset DATABASE_URL
@@ -74,4 +78,20 @@ teardown_file() {
     run bash bin/gen-pgbouncer-conf.sh
     assert_success
     assert grep '""I have speci@l charcters"" "c00lp@%sword"' "$PGBOUNCER_CONFIG_DIR/users.txt"
+}
+
+@test "successfully adds connect_query when PGBOUNCER_CONNECT_QUERY is set" {
+    export DATABASE_URL="postgres://user:pass@host:5432/name"
+    export PGBOUNCER_CONNECT_QUERY="SET statement_timeout = 30000"
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    assert grep "connect_query='SET statement_timeout = 30000'" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
+}
+
+@test "does not add connect_query when PGBOUNCER_CONNECT_QUERY is not set" {
+    export DATABASE_URL="postgres://user:pass@host:5432/name"
+    unset PGBOUNCER_CONNECT_QUERY
+    run bash bin/gen-pgbouncer-conf.sh
+    assert_success
+    refute grep "connect_query" "$PGBOUNCER_CONFIG_DIR/pgbouncer.ini"
 }

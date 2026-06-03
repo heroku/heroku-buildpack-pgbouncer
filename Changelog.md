@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.20.0 (Unreleased)
+
+* Add `PGBOUNCER_CONNECT_QUERY` config for per-database connect_query
+
 ## v0.19.0 (May 20, 2026)
 
 * Update pgbouncer to v1.25.1
