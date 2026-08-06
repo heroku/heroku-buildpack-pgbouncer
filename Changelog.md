@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Align community and licensing docs with salesforce/oss-template
+
 ## v0.21.0 (June 30, 2026)
 
 * * Update pgbouncer to v1.25.2
